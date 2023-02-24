@@ -1,0 +1,40 @@
+.background{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  color: white;
+  background-color: #102040;
+}
+
+.background h1{
+  margin: 30px;
+}
+
+.background a{
+  margin: 0 auto;
+  width: min-content;
+}
+
+.container{
+  flex-grow: 1;
+  display: flex;
+  padding: 30px;
+}
+
+.form{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: #fff2;
+}
+
+.form span{
+  text-align: left;
+}
+
+.form input{
+  width: 300px;
+  margin-bottom: 20px;
+}
