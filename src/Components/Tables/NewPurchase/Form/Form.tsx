@@ -12,8 +12,13 @@ export default function Form() {
       <label className="form-label" htmlFor="total">Total cost:</label>
       <input className="form-control" type="number" id="total" />
 
-      <label className="form-label" htmlFor="from">From of Purchase:</label>
-      <input className="form-control" type="text" id="from" />
+      <label className="form-label" htmlFor="from">
+        Form of Purchase:
+      </label>
+      <select className="form-select" id="from">
+        <option>Cash</option>
+        <option>Debit</option>
+      </select>
 
       <label className="form-label" htmlFor="source">Source:</label>
       <input className="form-control" type="text" id="source" />
