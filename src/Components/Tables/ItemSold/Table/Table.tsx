@@ -1,6 +1,6 @@
-import { Expenses } from "../../../../interfaces";
+/* import { Expenses } from "../../../../interfaces"; */
 
-import Rows from "./Rows/Rows";
+/* import Rows from "./Rows/Rows"; */
 
 import styles from "./Table.module.css";
 
