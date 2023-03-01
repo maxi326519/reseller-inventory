@@ -24,7 +24,7 @@ export default function Form({ handleSetExpense }: any) {
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <label className="form-label" htmlFor="date">
-        Date of Purchase:
+        Date of Expenses:
       </label>
       <input
         className="form-control"
@@ -47,7 +47,7 @@ export default function Form({ handleSetExpense }: any) {
       </select>
 
       <label className="form-label" htmlFor="amount">
-        Number of Items:
+        Number of Expenses:
       </label>
       <input
         className="form-control"
@@ -71,12 +71,14 @@ export default function Form({ handleSetExpense }: any) {
       <label className="form-label" htmlFor="from">
         Form of Purchase:
       </label>
+
       <select className="form-select" id="from" onChange={handleChangeSelect}>
         <option>Cash</option>
         <option>Debit</option>
       </select>
 
       <button className="btn btn-primary" type="submit">Add Expense</button>
+      <button className="btn btn-primary">Categories</button>
     </form>
   );
 }

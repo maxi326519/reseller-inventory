@@ -1,10 +1,18 @@
 export interface Items {
     id: number;
     invoiceId: number;
+    amount: number;
     state: boolean;
+    cost: number;
+    description: string;
+}
+
+export interface Invoice {
+    date: string;
+    solds: Array<number>;
     form: string;
     source: string;
-    description: string;
+    total: number;
 }
 
 export interface Sales {
@@ -15,6 +23,7 @@ export interface Sales {
 }
 
 export interface Expenses {
+    id: string;
     date: string;
     category: number;
     description: string;
@@ -24,10 +33,4 @@ export interface Expenses {
 export interface Categories {
     value: number;
     name: string;
-}
-
-export interface invoice {
-    date: string;
-    solds: Array<number>;
-    total: number;
 }

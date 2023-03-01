@@ -1,39 +1,33 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Items, Invoice } from "../../../interfaces";
 
 import Form from "./Form/Form";
 import Table from "./Table/Table";
 
 import styles from "../Tables.module.css";
+import style from "./NewPurchase.module.css";
+import InvoiceImage from "./InvoiceImage/InvoiceImage";
 
-interface Expense {
-  description: string;
-  amount: string;
-  price: string;
-  status: string;
-  id: string;
-}
-
-const initialState: Expense = {
-  description: "a",
-  amount: "a",
-  price: "a",
-  status: "a",
-  id: "a",
+const initialState: Invoice = {
+  date: new Date().toLocaleDateString(),
+  solds: [],
+  form: "Cash",
+  source: "",
+  total: 0,
 }
 
 export default function NewPurchase() {
-  const [rows, setRows] = useState<Expense[]>([initialState]);
+  const [items, setItems] = useState<Items[]>([]);
+  const [invoice, setInvoice] = useState<Invoice>(initialState);
 
-  function handleSetExpense(): void {
-    const newValue: Expense = {
-      description: "a",
-      amount: "a",
-      price: "a",
-      status: "a",
-      id: "a",
-    }
-    setRows([newValue]);
+  function handleAddInventory(event: React.MouseEvent<HTMLButtonElement>){
+    /* Agregar dispatch */
+  }
+  
+  function handleReset(){
+    setInvoice(initialState);
+    setItems([]);
   }
 
   return (
@@ -43,8 +37,21 @@ export default function NewPurchase() {
         Menu
       </Link>
       <div className={styles.container}>
-        <Form /* handleSetExpense={handleSetExpense}  *//>
-        <Table rows={rows} />
+        <Form
+          invoice={invoice}
+          setInvoice={setInvoice}
+          items={items}
+          setItems={setItems}
+        />
+        <div className={style.invoice}>
+          <Table items={items} />
+          <div className={style.sumary}>
+            <button className="btn btn-primary" type="button" onClick={handleAddInventory}>Add Invoice</button>
+            <button className="btn btn-primary" type="button" onClick={handleReset}>Reset Invoice</button>
+            <span>{`Total:  $${invoice.total}`}</span>
+          </div>
+        </div>
+        <InvoiceImage />
       </div>
     </div>
   );

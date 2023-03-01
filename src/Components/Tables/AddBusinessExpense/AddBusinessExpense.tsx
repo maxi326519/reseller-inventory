@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Expenses } from "../../../interfaces"; 
 
 import Form from "./Form/Form";
 import Table from "./Table/Table";
@@ -7,15 +8,7 @@ import Table from "./Table/Table";
 import styles from "../Tables.module.css";
 
 export default function AddBusinessExpense() {
-  const [rows, setRows] = useState(
-    Array<{
-      description: string;
-      amount: string;
-      price: string;
-      status: string;
-      id: string;
-    }>
-  );
+  const [expenses, setExpenses] = useState<Expenses[]>([]);
 
   return (
     <div className={styles.background}>
@@ -25,7 +18,7 @@ export default function AddBusinessExpense() {
       </Link>
       <div className={styles.container}>
         <Form />
-        <Table rows={rows} />
+        <Table expenses={expenses} />
       </div>
     </div>
   );

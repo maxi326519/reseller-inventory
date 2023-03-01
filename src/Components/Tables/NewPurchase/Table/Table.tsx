@@ -1,40 +1,25 @@
-import "react-data-grid/lib/styles.css";
-import style from "../NewPurcahse.module.css";
+import { Items } from "../../../../interfaces";
+
+import Rows from "./Rows/Rows";
+
+import styles from "./Table.module.css";
 
 interface Props {
-  rows: Array<{
-    description: string;
-    amount: string;
-    price: string;
-    status: string;
-    id: string;
-  }>;
+  items: Items[];
 }
 
-export default function Table({ rows }: Props) {
+export default function Table({ items }: Props) {
   return (
-    <table className={style.table}>
-      <thead>
-        <tr>
-          <td>description</td>
-          <td>amount</td>
-          <td>price</td>
-          <td>status</td>
-          <td>id</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <label htmlFor="1">label</label>
-            <input id="1" />
-          </td>
-          <td>amount</td>
-          <td>price</td>
-          <td>status</td>
-          <td>id</td>
-        </tr>
-      </tbody>
-    </table>
+    <div className={styles.table}>
+      <div className={`${styles.firstRow} ${styles.rows}`}>
+        <span>Description</span>
+        <span>Cost</span>
+        <span>Item ID</span>
+        <span>Delete</span>
+      </div>
+      <div className={styles.data}>
+        {items.map((item) => <Rows item={item}/>)}
+      </div>
+    </div>
   );
 }
