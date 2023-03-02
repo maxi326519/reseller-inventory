@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Item, Invoice } from "../../../interfaces";
 import { useDispatch } from "react-redux";
-import { postItems, postInvoice } from "../../../redux/actions/";
+import {
+  postItems,
+  postInvoice,
+  loading,
+  closeLoading,
+} from "../../../redux/actions/";
 
 import Form from "./Form/Form";
 import Table from "./Table/Table";
@@ -65,19 +70,22 @@ export default function NewPurchase() {
       dangerMode: true,
     }).then((response) => {
       if (response) {
+        dispatch(loading());
         dispatch<any>(postInvoice(invoice))
           .then(() => {
             dispatch<any>(postItems(items)).then(() => {
+              dispatch(closeLoading());
               swal({
                 title: "Guardado",
                 text: "Se guardo el inventario con exito",
                 icon: "success",
               });
-              setItems([]);
-              setInvoice(initialState);
+                setItems([]);
+                setInvoice(initialState);
             });
           })
           .catch((e: any) => {
+            dispatch(closeLoading());
             swal(
               "Error",
               "Ocurrio un error al guardar la factura o los items",

@@ -47,4 +47,5 @@ export interface RootState {
     invoices: Invoice[];
     sales: Sale[]
     expenses: Expense[];
+    loading: boolean;
 }
