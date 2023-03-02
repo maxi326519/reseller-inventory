@@ -1,0 +1,35 @@
+.chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 700px;
+  height: 400px;
+  margin-left: 50px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: gray;
+}
+
+.chart svg rect{
+  fill: #333;
+}
+
+.chart svg g rect{
+  fill: #666;
+}
+
+.chart svg text{
+  fill: white;
+}
+
+.controls{
+  display: flex;
+  align-items: center;
+  margin: 20px 0px 20px 50px;
+}
+
+.controls select{
+  width: 200px;
+  background-color: #444;
+  color: white;
+}

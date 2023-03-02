@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 
+import Charts from "./Charts/Charts";
+
 import style from "./Menu.module.css";
 
 export default function Menu() {
@@ -25,7 +27,7 @@ export default function Menu() {
             Reports
           </Link>
         </div>
-        <div className={style.chart}></div>
+        <Charts/>
       </div>
     </div>
   );
