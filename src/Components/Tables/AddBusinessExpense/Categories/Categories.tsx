@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import swal from "sweetalert";
 import { RootState } from "../../../../interfaces";
-import { postCategories } from "../../../../redux/actions";
+import {
+  postCategories,
+  loading,
+  closeLoading,
+} from "../../../../redux/actions";
 
 import styles from "./Categories.module.css";
 
@@ -28,17 +33,35 @@ export default function Categories({ handleClose }: Props) {
   function handleAddCategory() {
     if (category !== "" && !categoriesList.some((c) => c === category)) {
       setCategories([...categoriesList, category]);
-      console.log([...categoriesList, category]);
+      setCategory("");
     }
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    dispatch<any>(postCategories(categoriesList));
+    dispatch(loading());
+    dispatch<any>(postCategories(categoriesList))
+      .then(() => {
+        handleClose();
+        dispatch(closeLoading());
+        swal(
+          "Actualizado",
+          "Se actualizaron las categorias con exito",
+          "success"
+        );
+      })
+      .catch(() => {
+        dispatch(closeLoading());
+        swal(
+          "Error",
+          "Ocurrio un error al actualizar las caterogrias",
+          "error"
+        );
+      });
   }
 
   function handleRemove(category: string) {
-    setCategories(categoriesList.filter((c) => c !== category))
+    setCategories(categoriesList.filter((c) => c !== category));
   }
 
   return (

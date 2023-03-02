@@ -37,9 +37,10 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
       };
 
     case POST_CATEGORIES:
+      console.log(action.payload);
       return {
         ...state,
-        user: { categories: action.payload },
+        user: { ...state.user, categories: action.payload },
       };
 
     case LOADING:

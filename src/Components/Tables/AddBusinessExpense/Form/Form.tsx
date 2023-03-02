@@ -1,36 +1,43 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Expense } from "../../../../interfaces";
+import { RootState } from "../../../../interfaces";
 
 import styles from "../../Tables.module.css";
 
-interface Props{
+interface Props {
   expenses: Expense[];
   setExpenses: (expenses: Expense[]) => void;
 }
 
 const initialState: Expense = {
-    date:  new Date().toLocaleDateString(),
-    category: "0",
-    description: "",
-    cost: 0,
-    quantity: 1,
-}
+  date: new Date().toLocaleDateString(),
+  category: "0",
+  description: "",
+  cost: 0,
+  quantity: 1,
+};
 
 export default function Form({ expenses, setExpenses }: Props) {
   const [expense, setExpense] = useState<Expense>(initialState);
+  const categories: string[] = useSelector(
+    (state: RootState) => state.user.categories
+  );
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>): void{
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    setExpenses([ ...expenses, expense ]);
+    setExpenses([...expenses, expense]);
     console.log(expense);
   }
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>): void{
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
     setExpense({ ...expense, [event.target.name]: event.target.value });
   }
 
-  function handleChangeSelect(event: React.ChangeEvent<HTMLSelectElement>): void{
-    if(event.target.value !== '0'){
+  function handleChangeSelect(
+    event: React.ChangeEvent<HTMLSelectElement>
+  ): void {
+    if (event.target.value !== "0") {
       setExpense({ ...expense, [event.target.name]: event.target.value });
     }
   }
@@ -62,7 +69,11 @@ export default function Form({ expenses, setExpenses }: Props) {
         required
       >
         <option value="0">Select category</option>
-        <option value="a">a</option>
+        {categories.map((c, i) => (
+          <option key={i} value={c}>
+            {c}
+          </option>
+        ))}
       </select>
 
       <label className="form-label" htmlFor="description">
@@ -104,7 +115,9 @@ export default function Form({ expenses, setExpenses }: Props) {
         required
       />
 
-      <button className="btn btn-primary" type="submit">Add Expense</button>
+      <button className="btn btn-primary" type="submit">
+        Add Expense
+      </button>
     </form>
   );
 }
