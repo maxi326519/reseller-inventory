@@ -16,10 +16,11 @@ export default function Table({ expenses }: Props) {
         <span>Category</span>
         <span>Description</span>
         <span>Const</span>
+        <span>Qunatity</span>
         <span>Delete</span>
       </div>
       <div className={styles.data}>
-        {expenses.map((expense) => <Rows key={expense.id} expense={expense}/>)}
+        {expenses.map((expense, i) => <Rows key={i} expense={expense}/>)}
       </div>
     </div>
   );

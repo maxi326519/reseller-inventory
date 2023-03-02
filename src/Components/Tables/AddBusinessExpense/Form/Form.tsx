@@ -1,16 +1,28 @@
 import { useState } from "react";
+import { Expense } from "../../../../interfaces";
 
 import styles from "../../Tables.module.css";
 
-/* interface Props{
-  handleSetExpense: () => void;
-} */
+interface Props{
+  expenses: Expense[];
+  setExpenses: (expenses: Expense[]) => void;
+}
 
-export default function Form({ handleSetExpense }: any) {
-  const [expense, setExpense] = useState({});
+const initialState: Expense = {
+    date:  new Date().toLocaleDateString(),
+    category: "0",
+    description: "",
+    cost: 0,
+    quantity: 1,
+}
+
+export default function Form({ expenses, setExpenses }: Props) {
+  const [expense, setExpense] = useState<Expense>(initialState);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void{
-    handleSetExpense();
+    event.preventDefault();
+    setExpenses([ ...expenses, expense ]);
+    console.log(expense);
   }
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>): void{
@@ -18,7 +30,9 @@ export default function Form({ handleSetExpense }: any) {
   }
 
   function handleChangeSelect(event: React.ChangeEvent<HTMLSelectElement>): void{
-    setExpense({ ...expense, [event.target.name]: event.target.value });
+    if(event.target.value !== '0'){
+      setExpense({ ...expense, [event.target.name]: event.target.value });
+    }
   }
 
   return (
@@ -31,54 +45,66 @@ export default function Form({ handleSetExpense }: any) {
         type="date"
         id="date"
         name="date"
+        value={expense.date}
         onChange={handleChange}
+        required
       />
 
-      <label className="form-label" htmlFor="description">
+      <label className="form-label" htmlFor="category">
         Category:
       </label>
       <select
         className="form-select"
-        id="description"
-        name="description"
+        id="category"
+        name="category"
+        value={expense.category}
         onChange={handleChangeSelect}
+        required
       >
-      
+        <option value="0">Select category</option>
+        <option value="a">a</option>
       </select>
 
-      <label className="form-label" htmlFor="amount">
+      <label className="form-label" htmlFor="description">
+        Description:
+      </label>
+      <input
+        className="form-control"
+        type="text"
+        id="description"
+        name="description"
+        value={expense.description}
+        onChange={handleChange}
+        required
+      />
+
+      <label className="form-label" htmlFor="cost">
+        Unit cost:
+      </label>
+      <input
+        className="form-control"
+        type="number"
+        id="cost"
+        name="cost"
+        value={expense.cost}
+        onChange={handleChange}
+        required
+      />
+
+      <label className="form-label" htmlFor="quantity">
         Number of Expenses:
       </label>
       <input
         className="form-control"
         type="number"
-        id="amount"
-        name="amount"
+        id="quantity"
+        name="quantity"
+        value={expense.quantity}
         onChange={handleChange}
+        required
       />
-
-      <label className="form-label" htmlFor="total">
-        Total cost:
-      </label>
-      <input
-        className="form-control"
-        type="number"
-        id="total"
-        name="total"
-        onChange={handleChange}
-      />
-
-      <label className="form-label" htmlFor="from">
-        Form of Purchase:
-      </label>
-
-      <select className="form-select" id="from" onChange={handleChangeSelect}>
-        <option>Cash</option>
-        <option>Debit</option>
-      </select>
 
       <button className="btn btn-primary" type="submit">Add Expense</button>
-      <button className="btn btn-primary">Categories</button>
     </form>
   );
 }

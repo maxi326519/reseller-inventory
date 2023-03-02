@@ -19,7 +19,7 @@
 
 .rows{
     display: grid;
-    grid-template-columns: repeat(3, 1fr) 80px;
+    grid-template-columns: 150px repeat(3, 1fr) 100px 80px;
     text-align: center;
     border-bottom: 1px solid #ccc;
 }
@@ -27,4 +27,8 @@
 .rows span{
     padding: 5px;
     border-right: 1px solid #ccc;
+}
+
+.rows button{
+    border-radius: 0;
 }

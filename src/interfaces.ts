@@ -1,11 +1,6 @@
 export interface User {
     sequencial: number;
-    categories: Categories[];
-}
-
-export interface Categories {
-    value: number;
-    name: string;
+    categories: string[];
 }
 
 export interface Item {
@@ -35,11 +30,11 @@ export interface Sale {
 }
 
 export interface Expense {
-    id: string;
     date: string;
-    category: number;
+    category: string;
     description: string;
-    const: string;
+    cost: number;
+    quantity: number;
 }
 
 export interface RootState {

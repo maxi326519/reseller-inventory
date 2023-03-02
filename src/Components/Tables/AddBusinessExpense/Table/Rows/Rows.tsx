@@ -8,13 +8,14 @@ interface Props {
 
 export default function Rows({ expense }: Props) {
   return (
-    <div key={expense.id} className={styles.rows}>
+    <div className={styles.rows}>
       <span>{expense.date}</span>
       <span>{expense.category}</span>
       <span>{expense.description}</span>
-      <span>{expense.const}</span>
+      <span>{expense.cost}</span>
+      <span>{expense.quantity}</span>
       <button className="btn btn-danger" type="button">
-        -
+        x
       </button>
     </div>
   );

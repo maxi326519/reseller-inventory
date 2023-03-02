@@ -3,6 +3,7 @@ import { AnyAction } from "redux";
 import {
   POST_ITEMS,
   POST_INVOICE,
+  POST_CATEGORIES,
   LOADING,
   CLOSE_LOADING,
   GET_ITEMS,
@@ -33,6 +34,12 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
       return {
         ...state,
         invoices: [...state.invoices, action.payload],
+      };
+
+    case POST_CATEGORIES:
+      return {
+        ...state,
+        user: { categories: action.payload },
       };
 
     case LOADING:

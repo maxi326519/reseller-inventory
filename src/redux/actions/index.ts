@@ -18,6 +18,7 @@ import {
 
 export const POST_ITEMS = "POST_ITEMS";
 export const POST_INVOICE = "POST_INVOICE";
+export const POST_CATEGORIES = "POST_CATEGORIES";
 export const GET_ITEMS = "GET_ITEMS";
 export const GET_INVOICE = "GET_INVOICE";
 
@@ -102,6 +103,25 @@ export function postInvoice(
       dispatch({
         type: POST_INVOICE,
         payload: invoice,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function postExpenses() {}
+
+export function postCategories(
+  categories: string[]
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      await updateDoc(doc(db, "user", "1"), { categories });
+
+      dispatch({
+        type: POST_CATEGORIES,
+        payload: categories,
       });
     } catch (e: any) {
       throw new Error(e);
