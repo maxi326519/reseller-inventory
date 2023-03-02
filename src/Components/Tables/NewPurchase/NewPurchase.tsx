@@ -41,10 +41,11 @@ export default function NewPurchase() {
     return idNumber;
   }
 
+  /* De "/" a "-" */
   function format(date: string) {
     const dateArray: string[] = date.split("/");
-    const dateStr = `${dateArray[2]}-${`0${dateArray[0]}`.slice(
-      -2
+    const dateStr = `${dateArray[2]}-${`0${dateArray[1]}`.slice(
+      -0
     )}-${`0${dateArray[1]}`.slice(-2)}`;
     return dateStr;
   }

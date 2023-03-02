@@ -1,10 +1,15 @@
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import  { RootState } from "../../../interfaces";
 
-import Form from "./Form/Form";
+import Table from "./Table/Table";
 
 import styles from "../Tables.module.css";
 
 export default function LookUpItems() {
+
+  const invoices = useSelector((state: RootState) => state.invoices);
+
   return (
     <div className={styles.background}>
       <h1>Look Up Items</h1>
@@ -12,7 +17,7 @@ export default function LookUpItems() {
         Menu
       </Link>
       <div className={styles.container}>
-        <Form />
+        <Table invoices={invoices}/>
       </div>
     </div>
   );

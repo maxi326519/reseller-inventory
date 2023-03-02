@@ -19,7 +19,7 @@
 
 .rows{
     display: grid;
-    grid-template-columns: repeat(3, 1fr) 80px;
+    grid-template-columns: 110px 120px repeat(4, 1fr) 200px;
     text-align: center;
     border-bottom: 1px solid #ccc;
 }

@@ -27,6 +27,7 @@ export interface Invoice {
 }
 
 export interface Sale {
+    id: number;
     itemId: number;
     price: number;
     cost: number;

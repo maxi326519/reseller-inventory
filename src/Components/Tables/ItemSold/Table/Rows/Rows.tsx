@@ -1,22 +1,20 @@
-import { Expense } from "../../../../../interfaces";
+import { Item } from "../../../../../interfaces";
 
 import styles from "../Table.module.css";
 
 interface Props {
-  expense: Expense;
+  item: Item;
 }
 
-export default function Rows({ expense }: Props) {
+export default function Rows({ item }: Props) {
   return (
-    <div key={expense.id} className={styles.rows}>
-      <div>
-        <label htmlFor="description">Description</label>
-        <input id="description" value={expense.description} />
-      </div>
-      <span>{expense.description}</span>
-      <span>{expense.const}</span>
-      <span>{expense.category}</span>
-      <span>{expense.id}</span>
+    <div key={item.id} className={styles.rows}>
+      <span>{item.description}</span>
+      <span>{item.cost}</span>
+      <span>{item.id}</span>
+      <button className="btn btn-success" type="button">
+        Sale
+      </button>
     </div>
   );
 }

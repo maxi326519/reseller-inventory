@@ -41,6 +41,10 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     }
 
     setItems([...items, ...allItems]);
+    setInvoice({
+      ...invoice,
+      solds: [...invoice.solds, ...allItems.map((i) => i.id)],
+    });
   }
 
   function gererateId(sequential: number, cost: number, date: string) {
@@ -65,8 +69,8 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     }
   }
 
-  function min(number: number, min: number){
-    if(number < min) return min;
+  function min(number: number, min: number) {
+    if (number < min) return min;
     return number;
   }
 

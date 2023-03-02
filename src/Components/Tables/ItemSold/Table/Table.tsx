@@ -1,24 +1,24 @@
-/* import { Expenses } from "../../../../interfaces"; */
+import { Item } from "../../../../interfaces";
 
-/* import Rows from "./Rows/Rows"; */
+import Rows from "./Rows/Rows";
 
 import styles from "./Table.module.css";
 
-export default function Table() {
+interface Props {
+  items: Item[];
+}
+
+export default function Table({ items }: Props) {
   return (
     <div className={styles.table}>
-      <div className="mb-3">
-        <label htmlFor="search" className="form-label">Search</label>
-        <input id="search" className="form-control" type="text"/>
-      </div>
       <div className={`${styles.firstRow} ${styles.rows}`}>
         <span>Description</span>
-        <span>Price</span>
-        <span>Status</span>
-        <span>Invoice ID</span>
+        <span>Unit cost</span>
+        <span>Item ID</span>
+        <span>Sale</span>
       </div>
-      <div>
-{/*         {expenses.map((expense) => <Rows expense={expense}/>)} */}
+      <div className={styles.data}>
+        {items.map((item) => <Rows key={item.id} item={item}/>)}
       </div>
     </div>
   );

@@ -12,12 +12,14 @@ export default function Table({ expenses }: Props) {
   return (
     <div className={styles.table}>
       <div className={`${styles.firstRow} ${styles.rows}`}>
-        <span>Description</span>
-        <span>Cost</span>
+        <span>Date</span>
         <span>Category</span>
+        <span>Description</span>
+        <span>Const</span>
+        <span>Delete</span>
       </div>
-      <div>
-        {expenses.map((expense) => <Rows expense={expense}/>)}
+      <div className={styles.data}>
+        {expenses.map((expense) => <Rows key={expense.id} expense={expense}/>)}
       </div>
     </div>
   );

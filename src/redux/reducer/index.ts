@@ -1,6 +1,13 @@
 import { RootState } from "../../interfaces";
 import { AnyAction } from "redux";
-import { POST_ITEMS, POST_INVOICE, LOADING, CLOSE_LOADING } from "../actions";
+import {
+  POST_ITEMS,
+  POST_INVOICE,
+  LOADING,
+  CLOSE_LOADING,
+  GET_ITEMS,
+  GET_INVOICE,
+} from "../actions";
 
 const initialState: RootState = {
   user: {
@@ -38,6 +45,18 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
       return {
         ...state,
         loading: false,
+      };
+
+    case GET_ITEMS:
+      return {
+        ...state,
+        items: action.payload,
+      };
+
+    case GET_INVOICE:
+      return {
+        ...state,
+        invoices: action.payload,
       };
 
     default:

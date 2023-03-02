@@ -18,6 +18,8 @@ import {
 
 export const POST_ITEMS = "POST_ITEMS";
 export const POST_INVOICE = "POST_INVOICE";
+export const GET_ITEMS = "GET_ITEMS";
+export const GET_INVOICE = "GET_INVOICE";
 
 export const LOADING = "LOADING";
 export const CLOSE_LOADING = "CLOSE_LOADING";
@@ -100,6 +102,58 @@ export function postInvoice(
       dispatch({
         type: POST_INVOICE,
         payload: invoice,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function getItems(): ThunkAction<
+  Promise<void>,
+  RootState,
+  null,
+  AnyAction
+> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      let newItems: Array<any> = [];
+      const query = await getDocs(collection(db, "items"));
+
+      query.forEach((doc) => {
+        newItems.push(doc.data());
+      });
+
+      dispatch({
+        type: GET_ITEMS,
+        payload: newItems,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function getInvoince(
+  date: string
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      let newInvoices: Array<any> = [];
+      const dateArr = date.split("-");
+      const year = dateArr[0];
+      const month = dateArr[1];
+
+      const query = await getDocs(collection(db, "invoices", year, month));
+
+      query.forEach((doc) => {
+        newInvoices.push(doc.data());
+        console.log(doc.id);
+      });
+
+      dispatch({
+        type: GET_INVOICE,
+        payload: newInvoices,
       });
     } catch (e: any) {
       throw new Error(e);
