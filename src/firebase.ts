@@ -2,21 +2,25 @@
 import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, writeBatch } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC7nrIyKS4VQLew6pM1O2jP37zjhtuH6EY",
-  authDomain: "gesto-e26ab.firebaseapp.com",
-  databaseURL: "https://gesto-e26ab-default-rtdb.firebaseio.com",
-  projectId: "gesto-e26ab",
-  storageBucket: "gesto-e26ab.appspot.com",
-  messagingSenderId: "340558224805",
-  appId: "1:340558224805:web:f8bb36140eed40b2c71c4c"
+  apiKey: "AIzaSyCscoOUwVRBYoZyHSUm45PeDKp_4gRedp8",
+  authDomain: "prueba-db24f.firebaseapp.com",
+  databaseURL: "https://prueba-db24f-default-rtdb.firebaseio.com",
+  projectId: "prueba-db24f",
+  storageBucket: "prueba-db24f.appspot.com",
+  messagingSenderId: "519164590847",
+  appId: "1:519164590847:web:e1daafbdf4b209ee482aca",
+  measurementId: "G-0V2ZFKH2RS"
 };
 
 // Initialize Firebase
-const fs = initializeApp(firebaseConfig);
+export const fs = initializeApp(firebaseConfig);
 
 // Initilize FireStore Database
 export const db = getFirestore(fs);
+
+// Initialize FireStore batch
+export const batch = writeBatch(db);

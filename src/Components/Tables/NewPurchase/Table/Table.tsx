@@ -1,11 +1,11 @@
-import { Items } from "../../../../interfaces";
+import { Item } from "../../../../interfaces";
 
 import Rows from "./Rows/Rows";
 
 import styles from "./Table.module.css";
 
 interface Props {
-  items: Items[];
+  items: Item[];
 }
 
 export default function Table({ items }: Props) {
@@ -13,12 +13,12 @@ export default function Table({ items }: Props) {
     <div className={styles.table}>
       <div className={`${styles.firstRow} ${styles.rows}`}>
         <span>Description</span>
-        <span>Cost</span>
+        <span>Unit cost</span>
         <span>Item ID</span>
         <span>Delete</span>
       </div>
       <div className={styles.data}>
-        {items.map((item) => <Rows item={item}/>)}
+        {items.map((item) => <Rows key={item.id} item={item}/>)}
       </div>
     </div>
   );

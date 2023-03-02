@@ -1,9 +1,9 @@
-import { Items } from "../../../../../interfaces";
+import { Item } from "../../../../../interfaces";
 
 import styles from "../Table.module.css";
 
 interface Props {
-  item: Items;
+  item: Item;
 }
 
 export default function Rows({ item }: Props) {

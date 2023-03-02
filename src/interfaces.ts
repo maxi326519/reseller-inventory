@@ -1,13 +1,24 @@
-export interface Items {
+export interface User {
+    sequencial: number;
+    categories: Categories[];
+}
+
+export interface Categories {
+    value: number;
+    name: string;
+}
+
+export interface Item {
     id: number;
+    date: string;
     invoiceId: number;
-    amount: number;
     state: boolean;
     cost: number;
     description: string;
 }
 
 export interface Invoice {
+    id: number;
     date: string;
     solds: Array<number>;
     form: string;
@@ -15,14 +26,14 @@ export interface Invoice {
     total: number;
 }
 
-export interface Sales {
+export interface Sale {
     itemId: number;
     price: number;
     cost: number;
-    shipment: boolean;    
+    shipment: boolean;
 }
 
-export interface Expenses {
+export interface Expense {
     id: string;
     date: string;
     category: number;
@@ -30,7 +41,10 @@ export interface Expenses {
     const: string;
 }
 
-export interface Categories {
-    value: number;
-    name: string;
+export interface RootState {
+    user: User;
+    items: Item[];
+    invoices: Invoice[];
+    sales: Sale[]
+    expenses: Expense[];
 }

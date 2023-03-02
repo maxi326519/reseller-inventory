@@ -1,38 +1,61 @@
-.App {
-  text-align: center;
+.swal-overlay {
+  background-color: #0006;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.swal-modal {
+  background-color: #222;
+  border: 3px solid #444;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.swal-modal img {
+  width: 10px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.swal-icon--success:after,
+.swal-icon--success:before {
+  background-color: #222;
+}
+
+.swal-icon--success__hide-corners {
+  background-color: #222;
+  border: 2px solid #222;
+}
+
+.swal-icon--warning{
+  transform: scale(0.6);
+}
+
+.swal-title {
+  font-size: 125x;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.swal-footer {
+  background-color: #0003;
+  margin-top: 32px;
+  border-top: 1px solid #0008;
+  overflow: hidden;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.swal-button {
+  padding: 7px 19px;
+  border-radius: 2px;
+  background-color: #4962b3;
+  font-size: 12px;
+  border: 1px solid #3e549a;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+}
+
+.swal-button--cancel {
+  color: white;
+  background-color: #4962b366;
+}
+
+.swal-button:hover {
+  color: black;
+}
+
+.swal-text {
+  font-size: 15px;
+  color: #eee;
 }

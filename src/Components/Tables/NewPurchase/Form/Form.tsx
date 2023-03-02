@@ -1,20 +1,21 @@
 import { useState } from "react";
-import { Invoice, Items } from "../../../../interfaces";
+import { Invoice, Item } from "../../../../interfaces";
 
 import styles from "../../Tables.module.css";
 
 interface Props {
   invoice: Invoice;
-  setInvoice: (Invoice: Invoice) => void;
-  items: Items[];
-  setItems: (items: Items[]) => void;
+  setInvoice: (invoice: Invoice) => void;
+  items: Item[];
+  setItems: (items: Item[]) => void;
 }
 
 export default function Form({ invoice, setInvoice, items, setItems }: Props) {
-  const [newItem, setNewItems] = useState<Items>({
+  const [amount, setAmount] = useState<number>(1);
+  const [newItem, setNewItems] = useState<Item>({
     id: 0,
-    invoiceId: 0,
-    amount: 0,
+    date: invoice.date,
+    invoiceId: invoice.id,
     state: true,
     cost: 0,
     description: "",
@@ -30,20 +31,43 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    let allItems: Items[] = [];
+    let allItems: Item[] = [];
 
-    for(let i: number = 0; i <= newItem.amount; i++){
-      if(allItems.length > newItem.amount ) break;
-      allItems.push({ ...newItem, id: 1 });
+    for (let i: number = 1; i <= amount; i++) {
+      allItems.push({
+        ...newItem,
+        id: gererateId(items.length + i, newItem.cost, invoice.date),
+      });
     }
 
-    console.log(allItems);
+    setItems([...items, ...allItems]);
+  }
 
-    setItems([ ...items, ...allItems ]);
+  function gererateId(sequential: number, cost: number, date: string) {
+    const toDay: string[] = date.split("-");
+    const day: string = toDay[0];
+    const month: string = toDay[1];
+    const year: string = toDay[2].toString().slice(-2);
+
+    const idStr: string = `${cost}${day}${month}${year}${sequential}`;
+    const idNumber: number = Number(idStr);
+    return idNumber;
   }
 
   function handleNewItems(event: React.ChangeEvent<HTMLInputElement>) {
-    setNewItems({ ...newItem, [event.target.name]: event.target.value });
+    if (event.target.name === "description") {
+      setNewItems({ ...newItem, [event.target.name]: event.target.value });
+    } else {
+      setNewItems({
+        ...newItem,
+        [event.target.name]: min(Number(event.target.value), 0),
+      });
+    }
+  }
+
+  function min(number: number, min: number){
+    if(number < min) return min;
+    return number;
   }
 
   return (
@@ -90,7 +114,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
           required
         />
       </div>
-      <hr/>
+      <hr />
       <form onSubmit={handleSubmit}>
         <h4>Items</h4>
 
@@ -102,18 +126,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
           type="text"
           id="description"
           name="description"
-          onChange={handleNewItems}
-          required
-        />
-
-        <label className="form-label" htmlFor="amount">
-          Number of Items:
-        </label>
-        <input
-          className="form-control"
-          type="number"
-          id="amount"
-          name="amount"
+          value={newItem.description}
           onChange={handleNewItems}
           required
         />
@@ -126,11 +139,31 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
           type="number"
           id="cost"
           name="cost"
+          min="0"
+          value={newItem.cost}
           onChange={handleNewItems}
           required
         />
 
-        <button className="btn btn-primary" type="submit">Add Item</button>
+        <label className="form-label" htmlFor="amount">
+          Number of Items:
+        </label>
+        <input
+          className="form-control"
+          type="number"
+          id="amount"
+          name="amount"
+          value={amount}
+          min="1"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setAmount(min(Number(e.target.value), 1))
+          }
+          required
+        />
+
+        <button className="btn btn-primary" type="submit">
+          Add Item
+        </button>
       </form>
     </div>
   );

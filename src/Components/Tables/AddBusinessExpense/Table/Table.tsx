@@ -1,11 +1,11 @@
-import { Expenses } from "../../../../interfaces";
+import { Expense } from "../../../../interfaces";
 
 import Rows from "./Rows/Rows";
 
 import styles from "./Table.module.css";
 
 interface Props {
-  expenses: Expenses[];
+  expenses: Expense[];
 }
 
 export default function Table({ expenses }: Props) {
