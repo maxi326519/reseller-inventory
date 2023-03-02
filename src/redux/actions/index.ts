@@ -1,4 +1,4 @@
-import { Item, Invoice, RootState } from "../../interfaces";
+import { Item, Invoice, Expense, RootState } from "../../interfaces";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { db, fs, batch } from "../../firebase";
@@ -19,8 +19,12 @@ import {
 export const POST_ITEMS = "POST_ITEMS";
 export const POST_INVOICE = "POST_INVOICE";
 export const POST_CATEGORIES = "POST_CATEGORIES";
+export const POST_EXPENSES = "POST_EXPENSES";
+
+export const GET_USER_DATA = "GET_USER_DATA";
 export const GET_ITEMS = "GET_ITEMS";
 export const GET_INVOICE = "GET_INVOICE";
+export const GET_EXPENSES = "GET_EXPENSES";
 
 export const LOADING = "LOADING";
 export const CLOSE_LOADING = "CLOSE_LOADING";
@@ -95,10 +99,10 @@ export function postInvoice(
     try {
       const date = invoice.date.split("-");
       const year = date[0];
-      const month = date[2];
+      const month = date[1];
 
       const invoiceRef = collection(db, "invoices", year, month);
-      setDoc(doc(invoiceRef, invoice.id.toString()), invoice);
+      await setDoc(doc(invoiceRef, invoice.id.toString()), invoice);
 
       dispatch({
         type: POST_INVOICE,
@@ -110,7 +114,29 @@ export function postInvoice(
   };
 }
 
-export function postExpenses() {}
+export function postExpenses(
+  expenses: Expense[]
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      for (let i: number = 0; i < expenses.length; i++) {
+        const date = expenses[i].date.split("-");
+        const year = date[0];
+        const month = date[1];
+
+        const invoiceRef = collection(db, "expenses", year, month);
+        await setDoc(doc(invoiceRef, expenses[i].id.toString()), expenses[i]);
+      }
+
+      dispatch({
+        type: POST_EXPENSES,
+        payload: expenses,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
 
 export function postCategories(
   categories: string[]
@@ -122,6 +148,28 @@ export function postCategories(
       dispatch({
         type: POST_CATEGORIES,
         payload: categories,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function getUserData(): ThunkAction<
+  Promise<void>,
+  RootState,
+  null,
+  AnyAction
+> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      const query = await getDoc(doc(db, "user", "1"));
+
+      const userData = query.data();
+
+      dispatch({
+        type: GET_USER_DATA,
+        payload: userData,
       });
     } catch (e: any) {
       throw new Error(e);
@@ -174,6 +222,28 @@ export function getInvoince(
       dispatch({
         type: GET_INVOICE,
         payload: newInvoices,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function getExpenses(): ThunkAction<
+  Promise<void>,
+  RootState,
+  null,
+  AnyAction
+> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      /*       Realizar queries con filtros */
+
+      const expensesData = null;
+
+      dispatch({
+        type: GET_EXPENSES,
+        payload: expensesData,
       });
     } catch (e: any) {
       throw new Error(e);

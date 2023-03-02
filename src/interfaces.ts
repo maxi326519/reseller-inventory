@@ -1,5 +1,4 @@
 export interface User {
-    sequencial: number;
     categories: string[];
 }
 
@@ -30,6 +29,7 @@ export interface Sale {
 }
 
 export interface Expense {
+    id: number;
     date: string;
     category: string;
     description: string;

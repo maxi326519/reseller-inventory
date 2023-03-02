@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { RootState } from "./interfaces";
 import { useDispatch } from "react-redux";
-import { getItems, getInvoince } from "./redux/actions"
+import { getItems, getInvoince, getUserData } from "./redux/actions"
 
 import Menu from "./Components/Menu/Menu";
 import NewPurchase from "./Components/Tables/NewPurchase/NewPurchase";
@@ -23,6 +23,7 @@ function App() {
   useEffect(() => {
 /*     dispatch<any>(getItems());
     dispatch<any>(getInvoince(format(new Date().toLocaleDateString()))); */
+    dispatch<any>(getUserData());
   },[])
 
   function format(date: string) {

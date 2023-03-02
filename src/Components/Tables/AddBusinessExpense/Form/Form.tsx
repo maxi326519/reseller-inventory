@@ -11,7 +11,8 @@ interface Props {
 }
 
 const initialState: Expense = {
-  date: new Date().toLocaleDateString(),
+  id: 0,
+  date: new Date().toLocaleString(),
   category: "0",
   description: "",
   cost: 0,
@@ -24,10 +25,27 @@ export default function Form({ expenses, setExpenses }: Props) {
     (state: RootState) => state.user.categories
   );
 
+  function gererateId(sequential: number, date: string) {
+    const toDay: string[] = date.split("-");
+    const day: string = toDay[2];
+    const month: string = toDay[1];
+    const year: string = toDay[0].toString().slice(-2);
+
+    const idStr: string = `${year}${month}${day}${`0${sequential}`.slice(-2)}`;
+    const idNumber: number = Number(idStr);
+    return idNumber;
+  }
+
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    setExpenses([...expenses, expense]);
-    console.log(expense);
+    const sequential: number = expenses.length + 1;
+    const newExpense: Expense = {
+      ...expense,
+      id: gererateId(sequential, expense.date)
+    }
+    setExpenses([...expenses, newExpense]);
+
+    console.log(newExpense);
   }
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>): void {

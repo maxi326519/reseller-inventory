@@ -63,7 +63,7 @@ export default function NewPurchase() {
   function handleAddInventory(e: React.MouseEvent<HTMLButtonElement>): void {
     swal({
       text: "¿Quiere guardar la factura?",
-      icon: "warning",
+      icon: "info",
       buttons: {
         confirm: true,
         cancel: true,
@@ -101,12 +101,11 @@ export default function NewPurchase() {
   function handleReset(): void {
     swal({
       text: "¿Seguro quiere eliminar la factura actual?",
-      icon: "warning",
+      icon: "info",
       buttons: {
         confirm: true,
         cancel: true,
       },
-      dangerMode: true,
     }).then((response) => {
       if (response) {
         setInvoice(initialState);

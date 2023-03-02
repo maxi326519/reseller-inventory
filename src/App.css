@@ -21,7 +21,7 @@
   border: 2px solid #222;
 }
 
-.swal-icon--warning{
+.swal-icon--warning, .swal-icon--info{
   transform: scale(0.6);
 }
 

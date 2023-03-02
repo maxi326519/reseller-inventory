@@ -6,13 +6,14 @@ import {
   POST_CATEGORIES,
   LOADING,
   CLOSE_LOADING,
+  GET_USER_DATA,
   GET_ITEMS,
   GET_INVOICE,
+  GET_EXPENSES,
 } from "../actions";
 
 const initialState: RootState = {
   user: {
-    sequencial: 0,
     categories: [],
   },
   items: [],
@@ -55,6 +56,12 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
         loading: false,
       };
 
+    case GET_USER_DATA:
+      return {
+        ...state,
+        user: action.payload,
+      };
+
     case GET_ITEMS:
       return {
         ...state,
@@ -65,6 +72,12 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
       return {
         ...state,
         invoices: action.payload,
+      };
+
+    case GET_EXPENSES:
+      return {
+        ...state,
+        expenses: action.payload,
       };
 
     default:
