@@ -14,7 +14,7 @@ export interface Item {
 export interface Invoice {
     id: number;
     date: string;
-    solds: Array<number>;
+    items: number[];
     form: string;
     source: string;
     total: number;

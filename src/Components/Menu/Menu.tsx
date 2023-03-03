@@ -11,23 +11,23 @@ export default function Menu() {
       <h3>Main Menu</h3>
       <div className={style.dataContainer}>
         <div className={style.btnContainer}>
+          <Link className="btn btn-primary" to="items">
+            Items
+          </Link>
+          <Link className="btn btn-primary" to="invoices">
+            Invoices
+          </Link>
           <Link className="btn btn-primary" to="newPurchase">
             Add New Purchase
           </Link>
           <Link className="btn btn-primary" to="addExpense">
             Add Business Expense
           </Link>
-          <Link className="btn btn-primary" to="itemSold">
-            Item Sold
-          </Link>
-          <Link className="btn btn-primary" to="lookUpItems">
-            Look Up Items
-          </Link>
           <Link className="btn btn-primary" to="reports">
             Reports
           </Link>
         </div>
-        <Charts/>
+        <Charts />
       </div>
     </div>
   );

@@ -6,9 +6,10 @@ import styles from "./Table.module.css";
 
 interface Props {
   invoices: Invoice[];
+  handleDetails: (invoiceID: number) => void;
 }
 
-export default function Table({ invoices }: Props) {
+export default function Table({ invoices, handleDetails }: Props) {
   return (
     <div className={styles.table}>
       <div className={`${styles.firstRow} ${styles.rows}`}>
@@ -22,7 +23,7 @@ export default function Table({ invoices }: Props) {
       </div>
       <div className={styles.data}>
         {invoices.map((invoice) => (
-          <Rows invoices={invoice} />
+          <Rows invoice={invoice} handleDetails={handleDetails}/>
         ))}
       </div>
     </div>

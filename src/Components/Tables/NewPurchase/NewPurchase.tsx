@@ -21,7 +21,7 @@ export default function NewPurchase() {
   const initialState: Invoice = {
     id: generateInvoiceId(new Date().toLocaleDateString()),
     date: format(new Date().toLocaleDateString()),
-    solds: [],
+    items: [],
     form: "Cash",
     source: "",
     total: 0,

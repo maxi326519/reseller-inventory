@@ -4,9 +4,9 @@ import { useDispatch } from "react-redux";
 import { getItems, getInvoince, getUserData } from "./redux/actions"
 
 import Menu from "./Components/Menu/Menu";
+import Items from "./Components/Tables/Items/Items";
+import Invoices from "./Components/Tables/Invoices/Invoices";
 import NewPurchase from "./Components/Tables/NewPurchase/NewPurchase";
-import LookUpItems from "./Components/Tables/LookUpItems/LookUpItems";
-import ItemSold from "./Components/Tables/ItemSold/ItemSold";
 import AddExpense from "./Components/Tables/AddBusinessExpense/AddBusinessExpense";
 import Reports from "./Components/Tables/Reports/Reports";
 import Loading from "./Components/Loading/Loading";
@@ -39,10 +39,10 @@ function App() {
       {loading ? <Loading /> : null}
       <Routes>
         <Route path="/" element={<Menu />} />
+        <Route path="/items" element={<Items />} />
+        <Route path="/invoices" element={<Invoices />} />
         <Route path="/newPurchase" element={<NewPurchase />} />
         <Route path="/addExpense" element={<AddExpense />} />
-        <Route path="/itemSold" element={<ItemSold />} />
-        <Route path="/lookUpItems" element={<LookUpItems />} />
         <Route path="/reports" element={<Reports />} />
       </Routes>
     </div>

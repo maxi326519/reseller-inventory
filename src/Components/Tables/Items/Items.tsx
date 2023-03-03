@@ -6,17 +6,17 @@ import {
   postInvoice,
   loading,
   closeLoading,
-} from "../../../redux/actions/";
+} from "../../../redux/actions";
 import { RootState, Item, Invoice, Sale } from "../../../interfaces";
 
 import Table from "./Table/Table";
 import AddSale from "./AddSale/AddSale";
 
 import styles from "../Tables.module.css";
-import style from "./ItemSold.module.css";
+import style from "./Items.module.css";
 import swal from "sweetalert";
 
-export default function ItemSold() {
+export default function Items() {
   const items = useSelector((state: RootState) => state.items);
   const [rows, setRows] = useState<Item[]>([]);
   const [itemSelected, setSale] = useState<number[]>([]);

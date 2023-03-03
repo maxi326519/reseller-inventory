@@ -43,7 +43,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     setItems([...items, ...allItems]);
     setInvoice({
       ...invoice,
-      solds: [...invoice.solds, ...allItems.map((i) => i.id)],
+      items: [...invoice.items, ...allItems.map((i) => i.id)],
     });
   }
 
