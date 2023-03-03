@@ -1,8 +1,8 @@
 .table{
-    flex-grow: 1;
     display: flex;
     flex-direction: column;
     border-radius: 10px;
+    height: 100%;
     overflow: hidden;
     background-color: #fff2;
 }
@@ -19,12 +19,20 @@
 
 .rows{
     display: grid;
-    grid-template-columns: repeat(3, 1fr) 80px;
+    grid-template-columns: 40px repeat(3, 1fr) 80px;
     text-align: center;
     border-bottom: 1px solid #ccc;
 }
 
-.rows span{
+.rows label{
+    display: none;
+}
+
+.rows input[type="checkbox"]{
+    width: 20px;
+}
+
+.rows span, .rows div{
     padding: 5px;
     border-right: 1px solid #ccc;
 }

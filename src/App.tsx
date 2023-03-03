@@ -21,8 +21,8 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-/*     dispatch<any>(getItems());
-    dispatch<any>(getInvoince(format(new Date().toLocaleDateString()))); */
+    dispatch<any>(getItems());
+    dispatch<any>(getInvoince(format(new Date().toLocaleDateString())));
     dispatch<any>(getUserData());
   },[])
 

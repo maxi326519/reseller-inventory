@@ -1,26 +1,25 @@
-.invoice{
-    flex-grow: 1;
-    margin: 0 30px;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .invoice .sumary{
-    display: flex;
-    align-items: center;
-    margin-top: 30px;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #fff2;
-  }
-  
-  .invoice .sumary span{
-    flex-grow: 1;
-    text-align: right;
-    font-size: 15px;
-    font-weight: bold;
-  }
+.sale {
+  displaY: flex;
+  flex-direction: column;
+  padding: 20px;
+}
 
-  .invoice .sumary button:nth-child(2){
-    margin-left: 20px;
-  }
+.sale .sumary {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff2;
+}
+
+.sale .sumary span {
+  flex-grow: 1;
+  text-align: right;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.sale .sumary button:nth-child(2) {
+  margin-left: 20px;
+}
