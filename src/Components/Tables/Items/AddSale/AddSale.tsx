@@ -17,12 +17,11 @@ interface Props {
 }
 
 interface Check {
-  feesEbay: boolean;
   other: boolean;
 }
 
 const initialSale: Sale = {
-  date: new Date().toLocaleDateString(),
+  date: format(new Date().toLocaleDateString()),
   sold: [],
   total: 0,
   shipment: {
@@ -31,6 +30,14 @@ const initialSale: Sale = {
   },
   expenses: [],
 };
+
+function format(date: string) {
+  const dateSplit = date.split("/");
+  const format = `${dateSplit[2]}-${("0" + dateSplit[1]).slice(-2)}-${
+    "0" + dateSplit[0].slice(-2)
+  }`;
+  return format;
+}
 
 export default function AddSale({
   handleClose,
@@ -41,12 +48,12 @@ export default function AddSale({
   const items = useSelector((state: RootState) => state.items);
   const [rows, setRows] = useState<Item[]>([]);
   const [check, setCheck] = useState<Check>({
-    feesEbay: false,
     other: false,
   });
 
   const [sale, setSale] = useState<Sale>(initialSale);
   const [solds, setSolds] = useState<Sold[]>([]);
+  const [feesEbay, setFeesEbay] = useState<number>(0);
   const [other, setOther] = useState({
     description: "",
     amount: 0,
@@ -91,16 +98,33 @@ export default function AddSale({
     }
   }, [solds, sale]);
 
+  function handleChangeSold(id: number, price: number) {
+    setSolds(
+      solds.map((s) => {
+        if (s.itemID === id) {
+          return {
+            itemID: id,
+            price: price,
+          };
+        }
+        return s;
+      })
+    );
+  }
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setSale({ ...sale, [event.target.value]: event.target.value });
+  }
+
   function handleCheck(event: React.ChangeEvent<HTMLInputElement>) {
     const name: string = event.target.name;
-    if (name === "feesEbay")
-      setCheck({ ...check, feesEbay: !check["feesEbay"] });
-    if (name === "other") setCheck({ ...check, other: !check["other"] });
+    setCheck({ ...check, other: !check["other"] });
   }
 
   function handleShipment(event: React.ChangeEvent<HTMLInputElement>) {
     const name = event.target.name;
     const value = event.target.value;
+    console.log(name, value);
     if (name === "value") {
       setSale({
         ...sale,
@@ -135,6 +159,7 @@ export default function AddSale({
       ],
     };
 
+    console.log(feesEbay);
     console.log(newSale);
 
     /*
@@ -178,7 +203,13 @@ export default function AddSale({
               <div key={index} className={styles.row}>
                 <span>{item.id}</span>
                 <span>{item.description}</span>
-                <input placeholder="Price" />
+                <input
+                  placeholder="Price"
+                  type="number"
+                  onChange={(e) =>
+                    handleChangeSold(item.id, Number(e.target.value))
+                  }
+                />
                 <button
                   className="btn btn-danger"
                   type="button"
@@ -193,48 +224,53 @@ export default function AddSale({
           )}
         </div>
         <div className="mb-3 form-floating">
-          <input className="form-control" id="date" type="date" />
+          <input
+            className="form-control"
+            id="date"
+            type="date"
+            name="date"
+            value={sale.date}
+            onChange={handleChange}
+          />
           <label className="form-label" htmlFor="date">
             Date:
           </label>
         </div>
+
+        {/* Shipment */}
         <div className={styles.shipment}>
           <div>
             <input
               id="shipment"
-              name="shipment"
+              name="value"
               checked={sale.shipment.value}
               type="checkbox"
-              onChange={handleCheck}
+              onChange={handleShipment}
             />
             <label htmlFor="shipment">Envio</label>
             <input
               className="form-control"
               placeholder="$ 0.00"
               type="number"
-              name="value"
+              name="amount"
               disabled={!sale.shipment.value}
               onChange={handleShipment}
             />
           </div>
           <div>
-            <input
-              id="feesEbay"
-              name="feesEbay"
-              checked={check.feesEbay}
-              type="checkbox"
-              onChange={handleCheck}
-            />
             <label htmlFor="feesEbay">FeesEbay</label>
             <input
               className="form-control"
               placeholder="$ 0.00"
               type="number"
-              disabled={!check.feesEbay}
-              onChange={handleShipment}
+              value={feesEbay}
+              disabled={!sale.shipment.value}
+              onChange={(e) => setFeesEbay(Number(e.target.value))}
             />
           </div>
         </div>
+
+        {/* Expenses */}
         <div className={styles.expenses}>
           <div>
             <input
