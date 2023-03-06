@@ -39,7 +39,7 @@ export interface Expense {
 }
 
 export interface Reports {
-  
+
 }
 
 export interface RootState {

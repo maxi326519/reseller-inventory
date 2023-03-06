@@ -6,29 +6,31 @@ import styles from "./Charts.module.css";
 const headData: Array<string> = ["Year", "Sales", "Expenses"];
 
 const initialData: Array<Array<any>> = [
-  headData,
+  ["Year", "Sales", "Expenses"],
   ["Enero", 1000, 400],
   ["Febrero", 1170, 460],
   ["Marzo", 660, 1120],
   ["Abril", 1030, 540],
-];
-
-export const datas = [
-  ["Year", "Sales", "Expenses"],
-  ["2013", 1000, 400],
-  ["2014", 1170, 460],
-  ["2015", 660, 1120],
-  ["2016", 1030, 540],
-];
+  ["Mayo", 1000, 400],
+  ["Junio", 1170, 460],
+  ["Julio", 660, 1120],
+  ["Agosto", 1030, 540],
+  ["Septiembre", 1030, 540],
+  ["Octubre", 1030, 540],
+  ["Noviembre", 1030, 540],
+  ["Diciembre", 1030, 540],
+]
 
 const years: any = {
   2023: [
+    ["Year", "Sales", "Expenses"],
     ["Enero", 1000, 400],
     ["Febrero", 1170, 460],
     ["Marzo", 660, 1120],
     ["Abril", 1030, 540],
   ],
   2022: [
+    ["Year", "Sales", "Expenses"],
     ["Enero", 800, 500],
     ["Febrero", 2300, 1500],
     ["Marzo", 1400, 300],
@@ -38,13 +40,26 @@ const years: any = {
 
 const options = {
   title: "Company Performance",
-  hAxis: { title: "Year", titleTextStyle: { color: "#333" } },
-  vAxis: { minValue: 0 },
-  chartArea: { width: "65%", height: "500px" },
+  titleTextStyle: { color: "white" },
+  hAxis: {
+    title: "Year",
+    titleTextStyle: { color: "white" },
+    textStyle: { color: "white" },
+  },
+  vAxis: {
+    title: "Sales / Expensas",
+    titleTextStyle: { color: "white" },
+    textStyle: { color: "white" },
+    minValue: 0,
+  },
+  leyend: { color: "white" },
+  backgroundColor: "#333",
+  chartArea: { width: "70%", height: "500px", backgroundColor: "#444" },
+  animation: { startup: true, duration: 300, easing: "ease-in" },
 };
 
 export default function Charts() {
-  const [data, setData] = useState<Array<Array<any>>>(datas);
+  const [data, setData] = useState<Array<Array<any>>>(initialData);
 
   function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const selected: string = event.target.value;
@@ -56,12 +71,12 @@ export default function Charts() {
     <div className={styles.container}>
       <div className={styles.chart}>
         <Chart
-          chartType="AreaChart"
+          chartType="ColumnChart"
           width="100%"
           height="400px"
           data={data}
           options={options}
-          />
+        />
       </div>
       <div className={`form-floating ${styles.controls}`}>
         <select

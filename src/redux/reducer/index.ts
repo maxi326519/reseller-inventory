@@ -20,6 +20,7 @@ const initialState: RootState = {
   invoices: [],
   sales: [],
   expenses: [],
+  reports: [],
   loading: false,
 };
 
