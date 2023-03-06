@@ -1,3 +1,7 @@
+.form-floating label{
+  color: gray !important;
+}
+
 .swal-overlay {
   background-color: #0006;
 }

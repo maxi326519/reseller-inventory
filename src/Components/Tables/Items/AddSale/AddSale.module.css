@@ -32,7 +32,7 @@
 .list {
   display: flex;
   flex-direction: column;
-  height: 400px;
+  height: 300px;
   margin: 10px 0;
   padding: 5px;
   border-radius: 10px;
@@ -114,3 +114,29 @@
   width: 100%;
   margin-top: 20px;
 }
+
+/* SHIPMENT */
+.shipment{
+  display: flex;
+}
+
+.shipment div{
+  padding: 10px 0;
+  flex-grow: 1;
+}
+
+.shipment div:first-child{
+  margin-right: 10px;
+}
+/* SHIPMENT */
+
+/* EXPENSES */
+.expenses .inputs{
+  display: flex;
+}
+
+.expenses .inputs input:first-child{
+  margin-right: 10px;
+}
+/* EXPENSES */
+
