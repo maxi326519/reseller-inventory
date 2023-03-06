@@ -38,11 +38,16 @@ export interface Expense {
     quantity: number;
 }
 
+export interface Reports {
+  
+}
+
 export interface RootState {
     user: User;
     items: Item[];
     invoices: Invoice[];
     sales: Sale[]
     expenses: Expense[];
+    reports: Reports[];
     loading: boolean;
 }

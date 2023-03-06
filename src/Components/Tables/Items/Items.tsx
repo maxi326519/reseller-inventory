@@ -41,9 +41,9 @@ export default function Items() {
 
   function handleSelected(id: number) {
     console.log("sdas");
-    if(itemSelected.some((s) => s === id)){
+    if (itemSelected.some((s) => s === id)) {
       setSale(itemSelected.filter((s) => s !== id));
-    }else{
+    } else {
       setSale([...itemSelected, id]);
     }
   }
@@ -51,12 +51,18 @@ export default function Items() {
   return (
     <div className={styles.background}>
       {close ? (
-        <AddSale handleClose={handleClose} itemSelected={itemSelected} handleSelected={handleSelected}/>
+        <AddSale
+          handleClose={handleClose}
+          itemSelected={itemSelected}
+          handleSelected={handleSelected}
+        />
       ) : null}
-      <h1>Item Sold</h1>
-      <Link className="btn btn-primary" to="/">
-        Menu
-      </Link>
+      <div className={styles.head}>
+        <Link className="btn btn-primary" to="/">
+          Menu
+        </Link>
+        <h1>Item Sold</h1>
+      </div>
       <div>
         <div>
           <input

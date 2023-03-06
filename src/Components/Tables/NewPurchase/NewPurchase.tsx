@@ -81,8 +81,8 @@ export default function NewPurchase() {
                 text: "Se guardo el inventario con exito",
                 icon: "success",
               });
-                setItems([]);
-                setInvoice(initialState);
+              setItems([]);
+              setInvoice(initialState);
             });
           })
           .catch((e: any) => {
@@ -116,10 +116,12 @@ export default function NewPurchase() {
 
   return (
     <div className={styles.background}>
-      <h1>New purchase</h1>
-      <Link className="btn btn-primary" to="/">
-        Menu
-      </Link>
+      <div className={styles.head}>
+        <Link className="btn btn-primary" to="/">
+          Menu
+        </Link>
+        <h1>New purchase</h1>
+      </div>
       <div className={styles.container}>
         <Form
           invoice={invoice}

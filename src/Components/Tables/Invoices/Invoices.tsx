@@ -16,24 +16,30 @@ export default function Invoices() {
 
   function handleDetails(invoiceID: number) {
     const showInvoice = invoices.find((i) => i.id === invoiceID);
-    if(showInvoice){
-      setItemsList(items.filter((item) => showInvoice.items.some((id) => id === item.id)));
+    if (showInvoice) {
+      setItemsList(
+        items.filter((item) => showInvoice.items.some((id) => id === item.id))
+      );
       setClose(!close);
     }
   }
 
-  function handleClose(){
+  function handleClose() {
     setClose(!close);
     setItemsList([]);
   }
 
   return (
     <div className={styles.background}>
-      { close ? <Details handleClose={handleClose} itemsList={itemsList} /> : null }
-      <h1>Look Up Items</h1>
-      <Link className="btn btn-primary" to="/">
-        Menu
-      </Link>
+      {close ? (
+        <Details handleClose={handleClose} itemsList={itemsList} />
+      ) : null}
+      <div className={styles.head}>
+        <Link className="btn btn-primary" to="/">
+          Menu
+        </Link>
+        <h1>Look Up Items</h1>
+      </div>
       <div className={styles.container}>
         <Table invoices={invoices} handleDetails={handleDetails} />
       </div>

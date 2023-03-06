@@ -21,6 +21,22 @@
   padding: 30px;
 }
 
+.head{
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.head a{
+  width: max-content;
+  height: 40px;
+}
+
+.head h1{
+  flex-grow: 1;
+  text-align: center;
+}
+
 .form{
   display: flex;
   flex-direction: column;

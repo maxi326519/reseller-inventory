@@ -1,0 +1,31 @@
+.head{
+  background-color: red;
+}
+
+.head span{
+  padding: 20px;
+  outline: 1px solid var(--border);
+}
+
+.scroll{
+  flex-grow: 1;
+  overflow: hidden;
+  background-color: lightblue;
+}
+
+.row{
+  display: flex;
+  background-color: yellow;
+}
+
+.sales{
+  flex-grow: 1; 
+  padding: 20px;
+  background-color: green;
+}
+
+.expenses{
+  flex-grow: 1; 
+  padding: 20px;
+  background-color: blue;
+}

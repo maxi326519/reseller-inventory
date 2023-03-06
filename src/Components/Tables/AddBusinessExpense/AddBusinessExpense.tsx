@@ -74,10 +74,12 @@ export default function AddBusinessExpense() {
   return (
     <div className={styles.background}>
       {close ? <Categories handleClose={handleClose} /> : null}
-      <h1>Add Business Expense</h1>
-      <Link className="btn btn-primary" to="/">
-        Menu
-      </Link>
+      <div className={styles.head}>
+        <Link className="btn btn-primary" to="/">
+          Menu
+        </Link>
+        <h1>Add Business Expense</h1>
+      </div>
       <div className={styles.container}>
         <Form expenses={expenses} setExpenses={setExpenses} />
         <div className={style.expense}>
