@@ -16,7 +16,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     id: 0,
     date: invoice.date,
     invoiceId: invoice.id,
-    state: true,
+    state: "In Stock",
     cost: 0,
     description: "",
   });

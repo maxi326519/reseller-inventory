@@ -6,7 +6,7 @@ export interface Item {
   id: number;
   date: string;
   invoiceId: number;
-  state: boolean;
+  state: string;
   cost: number;
   description: string;
 }

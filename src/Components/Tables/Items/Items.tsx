@@ -32,7 +32,7 @@ export default function Items() {
   }
 
   useEffect(() => {
-    setRows(items);
+    setRows(items.filter((item) => item.state === "sold" ? null : item));
   }, [items]);
 
   function handleClose() {

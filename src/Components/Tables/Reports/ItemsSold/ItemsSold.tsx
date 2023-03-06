@@ -1,11 +1,19 @@
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Item, RootState } from "../../../../interfaces";
-/* 
-import Table from "./Table/Table"; */
+
+import Table from "./Table/Table";
+import Excel from "./Excel/Excel.jsx";
 
 import styles from "./ItemsSold.module.css";
 
 export default function ItemsSold() {
+  const items: Item[] = useSelector((state: RootState) => state.items);
+  const [itemsSold, setItemSold] = useState<Item[]>([]);
+
+  useEffect(() => {
+    setItemSold(items.filter((i) => i.state === "sold"));
+  }, [items]);
 
   return (
     <div className={styles.itemsSold}>
@@ -22,8 +30,9 @@ export default function ItemsSold() {
             From:
           </label>
         </div>
+        <Excel sales={itemsSold}/>
       </div>
-{/*       <Table items={items} /> */}
+      <Table items={itemsSold} />
     </div>
   );
 }

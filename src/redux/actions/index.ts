@@ -1,4 +1,4 @@
-import { Item, Invoice, Expense, RootState } from "../../interfaces";
+import { Item, Invoice, Expense, Sale, RootState } from "../../interfaces";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { db, fs, batch } from "../../firebase";
@@ -20,6 +20,9 @@ export const POST_ITEMS = "POST_ITEMS";
 export const POST_INVOICE = "POST_INVOICE";
 export const POST_CATEGORIES = "POST_CATEGORIES";
 export const POST_EXPENSES = "POST_EXPENSES";
+export const POST_SALE = "POST_SALE";
+
+export const SELL_ITEMS = "SELL_ITEMS";
 
 export const GET_USER_DATA = "GET_USER_DATA";
 export const GET_ITEMS = "GET_ITEMS";
@@ -155,6 +158,27 @@ export function postCategories(
   };
 }
 
+export function postSale(
+  sale: Sale
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      const date = sale.date.split("-");
+      const year = date[0];
+      const month = date[1];
+
+      const saleRef = collection(db, "Sales", year, month);
+      await addDoc(saleRef, sale);
+      
+      dispatch({
+        type: POST_SALE,
+        payload: sale,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
 export function getUserData(): ThunkAction<
   Promise<void>,
   RootState,
@@ -244,6 +268,25 @@ export function getExpenses(): ThunkAction<
       dispatch({
         type: GET_EXPENSES,
         payload: expensesData,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function sellItems(
+  itemsID: number[]
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      for(let i: number = 0; i < itemsID.length; i++ ){
+        await updateDoc(doc(db, "items", `${itemsID[0]}`), { state: "sold" });
+      }
+
+      dispatch({
+        type: SELL_ITEMS,
+        payload: itemsID,
       });
     } catch (e: any) {
       throw new Error(e);

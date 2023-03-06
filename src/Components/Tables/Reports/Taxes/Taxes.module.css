@@ -2,7 +2,18 @@
   background-color: red;
 }
 
+.controls{
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.controls div{
+  margin-bottom: 0px !important;
+  margin-right: 10px;
+}
+
 .head span{
+  display: flex;
   padding: 20px;
   outline: 1px solid var(--border);
 }

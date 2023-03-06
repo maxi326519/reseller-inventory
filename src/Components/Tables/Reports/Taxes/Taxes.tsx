@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Reports } from "../../../../interfaces";
 
+import Excel from "./Excel/Excel.jsx";
+
 import styles from "./Taxes.module.css";
 
 export default function Taxes() {
@@ -8,11 +10,14 @@ export default function Taxes() {
 
   return (
     <div className={styles.container}>
-      <div className="form-flaoting">
-        <input id="year" className="form-control" type="date" />
-        <label htmlFor="year" className="form-label">
-          Year
-        </label>
+      <div className={styles.controls}>
+        <div className="mb-3 form-floting">
+          <input id="year" className="form-control" type="date" />
+          <label htmlFor="year" className="form-label">
+            Year
+          </label>
+        </div>
+        <Excel taxes={taxes}/>
       </div>
       <div className={styles.head}>
         <span>

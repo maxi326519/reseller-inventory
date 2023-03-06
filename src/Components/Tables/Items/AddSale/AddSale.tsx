@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Item, Sale, Sold, Shipment, RootState } from "../../../../interfaces";
+import { Item, Sale, Sold, RootState } from "../../../../interfaces";
 import swal from "sweetalert";
 import {
-  postCategories,
+  postSale,
+  sellItems,
   loading,
   closeLoading,
 } from "../../../../redux/actions";
@@ -154,25 +155,24 @@ export default function AddSale({
       ...sale,
       sold: solds,
       expenses: [
+        { description: "Fees Ebay", amount: feesEbay },
         { description: other.description, amount: other.amount },
         { description: other.description2, amount: other.amount2 },
       ],
     };
 
-    console.log(feesEbay);
-    console.log(newSale);
-
-    /*
-      dispatch(loading());
-      dispatch<any>(postCategories(categoriesList))
+    dispatch(loading());
+    dispatch<any>(postSale(newSale))
       .then(() => {
-        handleClose();
-        dispatch(closeLoading());
-        swal(
-          "Actualizado",
-          "Se actualizaron las categorias con exito",
-          "success"
-        );
+        dispatch<any>(sellItems(newSale.sold.map((s) => s.itemID))).then(() => {
+          handleClose();
+          dispatch(closeLoading());
+          swal(
+            "Actualizado",
+            "Se actualizaron las categorias con exito",
+            "success"
+          );
+        });
       })
       .catch(() => {
         dispatch(closeLoading());
@@ -181,7 +181,7 @@ export default function AddSale({
           "Ocurrio un error al actualizar las caterogrias",
           "error"
         );
-      }); */
+      });
   }
 
   return (
