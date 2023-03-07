@@ -1,5 +1,13 @@
+.container{
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .head{
-  background-color: red;
+  display: flex;
+  margin-bottom: 20px;
+  background-color: gray;
 }
 
 .controls{
@@ -13,30 +21,39 @@
 }
 
 .head span{
-  display: flex;
+  flex-grow: 1;
   padding: 20px;
-  outline: 1px solid var(--border);
+  outline: 1px solid #ccc;
 }
 
 .scroll{
   flex-grow: 1;
-  overflow: hidden;
-  background-color: lightblue;
+  overflow-y: scroll;
+  background-color: #fff2;
+  outline: 1px solid #ccc;
 }
 
 .row{
   display: flex;
-  background-color: yellow;
+}
+
+.row, .col-mdmonth, .sales, .expenses{
+  outline: 1px solid #ccc;
+}
+
+.month{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
 }
 
 .sales{
   flex-grow: 1; 
   padding: 20px;
-  background-color: green;
 }
 
 .expenses{
   flex-grow: 1; 
   padding: 20px;
-  background-color: blue;
 }

@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Reports } from "../../../../interfaces";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Reports, RootState } from "../../../../interfaces";
 
 import Excel from "./Excel/Excel.jsx";
 
@@ -7,17 +8,21 @@ import styles from "./Taxes.module.css";
 
 export default function Taxes() {
   const [taxes, setTaxes] = useState<Reports[]>([]);
+  const sales = useSelector((state: RootState) => state.sales);
+  const [expenses, setExpenses] = useState([]);
 
   return (
     <div className={styles.container}>
       <div className={styles.controls}>
-        <div className="mb-3 form-floting">
-          <input id="year" className="form-control" type="date" />
+        <div className="mb-3 form-floating">
+          <select id="year" className="form-select">
+            <option value="2023">2023</option>
+          </select>
           <label htmlFor="year" className="form-label">
             Year
           </label>
         </div>
-        <Excel taxes={taxes}/>
+        <Excel taxes={taxes} />
       </div>
       <div className={styles.head}>
         <span>
@@ -28,7 +33,28 @@ export default function Taxes() {
       </div>
       <div className={styles.scroll}>
         <div className={styles.row}>
-          <span> 1{/* Month */}</span>
+          <div className={styles.month}>
+            <span>Enero{/* Month */}</span>
+          </div>
+          <div className={styles.sales}>
+            <span>Sales: {/* Sales variables */}</span>
+            <span>Shipping: {/* Shipping variables */}</span>
+          </div>
+          <div className={styles.expenses}>
+            <div>
+              <span>Shipping {/* Shippiing expenses variables */}</span>
+              <span>Ebya Fees: {/* Evay fees variables */}</span>
+            </div>
+            <div>
+              <span>Other Expenses 1: {/* Other Expenses 1 variables */}</span>
+              <span>Other Expenses 2: {/* Other Expenses 2 variables */}</span>
+            </div>
+          </div>
+        </div>
+        <div className={styles.row}>
+          <div className={styles.month}>
+            <span>Febrero{/* Month */}</span>
+          </div>
           <div className={styles.sales}>
             <span>Sales: {/* Sales variables */}</span>
             <span>Shipping: {/* Shipping variables */}</span>
