@@ -1,8 +1,8 @@
 import { Item, Invoice, Expense, Sale, RootState } from "../../interfaces";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import { db, fs, batch } from "../../firebase";
-import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { db, /* fs, batch */ } from "../../firebase";
+/* import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth"; */
 import {
   collection,
   doc,
@@ -11,9 +11,6 @@ import {
   getDoc,
   getDocs,
   updateDoc,
-  deleteDoc,
-  query,
-  where,
 } from "firebase/firestore";
 
 export const POST_ITEMS = "POST_ITEMS";
