@@ -20,14 +20,17 @@ import swal from "sweetalert";
 export default function NewPurchase() {
   const initialState: Invoice = {
     id: generateInvoiceId(new Date().toLocaleDateString()),
-    date: format(new Date().toLocaleDateString()),
+    date: new Date().toISOString().split('T')[0],
     items: [],
     form: "Cash",
     source: "",
     total: 0,
+    image: "",
+    imageRef: "",
   };
   const [items, setItems] = useState<Item[]>([]);
   const [invoice, setInvoice] = useState<Invoice>(initialState);
+  const [file, setFile] = useState<File | null>(null);
   const dispatch = useDispatch();
 
   function generateInvoiceId(date: string) {
@@ -41,15 +44,6 @@ export default function NewPurchase() {
     return idNumber;
   }
 
-  /* De "/" a "-" */
-  function format(date: string) {
-    const dateArray: string[] = date.split("/");
-    const dateStr = `${dateArray[2]}-${`0${dateArray[1]}`.slice(
-      -0
-    )}-${`0${dateArray[1]}`.slice(-2)}`;
-    return dateStr;
-  }
-
   useEffect((): void => {
     let total: number = 0;
     items.forEach((i) => (total += Number(i.cost)));
@@ -59,6 +53,10 @@ export default function NewPurchase() {
       total: total,
     });
   }, [items, setInvoice]);
+
+  function handleRemove(id: number) {
+    setItems(items.filter((item) => item.id !== id));
+  }
 
   function handleAddInventory(e: React.MouseEvent<HTMLButtonElement>): void {
     swal({
@@ -72,7 +70,7 @@ export default function NewPurchase() {
     }).then((response) => {
       if (response) {
         dispatch(loading());
-        dispatch<any>(postInvoice(invoice))
+        dispatch<any>(postInvoice(invoice, file))
           .then(() => {
             dispatch<any>(postItems(items)).then(() => {
               dispatch(closeLoading());
@@ -110,6 +108,7 @@ export default function NewPurchase() {
       if (response) {
         setInvoice(initialState);
         setItems([]);
+        setFile(null);
       }
     });
   }
@@ -118,7 +117,7 @@ export default function NewPurchase() {
     <div className={styles.background}>
       <div className={styles.head}>
         <Link className="btn btn-primary" to="/">
-          Menu
+          {"< Menu"}
         </Link>
         <h1>New purchase</h1>
       </div>
@@ -130,7 +129,7 @@ export default function NewPurchase() {
           setItems={setItems}
         />
         <div className={style.invoice}>
-          <Table items={items} />
+          <Table items={items} handleRemove={handleRemove} />
           <div className={style.sumary}>
             <button
               className="btn btn-primary"
@@ -149,7 +148,7 @@ export default function NewPurchase() {
             <span>{`Total:  $${invoice.total}`}</span>
           </div>
         </div>
-        <InvoiceImage />
+        <InvoiceImage setFile={setFile} />
       </div>
     </div>
   );

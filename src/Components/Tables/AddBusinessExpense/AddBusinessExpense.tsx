@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { closeLoading, loading, postExpenses } from "../../../redux/actions";
-import { Expense } from "../../../interfaces";
+import { Expense, RootState } from "../../../interfaces";
 
 import Form from "./Form/Form";
 import Table from "./Table/Table";
@@ -13,16 +13,22 @@ import styles from "../Tables.module.css";
 import swal from "sweetalert";
 
 export default function AddBusinessExpense() {
+  const reports = useSelector((state: RootState) => state.reports);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [close, setClose] = useState<boolean>(false);
+  const [amount, setAmount] = useState(0);
   const dispatch = useDispatch();
 
   useEffect(() => {
     let total: number = 0;
-    expenses.forEach((expense) => (total += expense.cost * expense.quantity));
+    expenses.forEach((expense) => (total += expense.price * amount));
     setTotal(total);
   }, [expenses]);
+
+  function handleRemove(id: number) {
+    setExpenses(expenses.filter((expense) => expense.id !== id));
+  }
 
   function handleAddExpese() {
     swal({
@@ -35,7 +41,7 @@ export default function AddBusinessExpense() {
     }).then((r) => {
       if (r) {
         dispatch<any>(loading());
-        dispatch<any>(postExpenses(expenses))
+        dispatch<any>(postExpenses(expenses, reports))
           .then(() => {
             setExpenses([]);
             setTotal(0);
@@ -76,14 +82,19 @@ export default function AddBusinessExpense() {
       {close ? <Categories handleClose={handleClose} /> : null}
       <div className={styles.head}>
         <Link className="btn btn-primary" to="/">
-          Menu
+          {"< Menu"}
         </Link>
         <h1>Add Business Expense</h1>
       </div>
       <div className={styles.container}>
-        <Form expenses={expenses} setExpenses={setExpenses} />
+        <Form
+          expenses={expenses}
+          setExpenses={setExpenses}
+          amount={amount}
+          setAmount={setAmount}
+        />
         <div className={style.expense}>
-          <Table expenses={expenses} />
+          <Table expenses={expenses} handleRemove={handleRemove}/>
           <div className={style.sumary}>
             <button
               className="btn btn-primary"

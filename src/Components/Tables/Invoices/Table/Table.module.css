@@ -1,30 +1,31 @@
-.table{
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: #fff2;
+.table {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  height: calc(100vh - 230px);
+  overflow: hidden;
+  background-color: #fff2;
 }
 
-.data{
-    flex-grow: 1;
-    overflow-y: scroll;
+.data {
+  flex-grow: 1;
+  overflow-y: scroll;
 }
 
-.firstRow{
-    background: gray;
-    padding-right: 17px;
+.firstRow {
+  background: gray;
+  padding-right: 17px;
 }
 
-.rows{
-    display: grid;
-    grid-template-columns: 110px 120px repeat(4, 1fr) 200px;
-    text-align: center;
-    border-bottom: 1px solid #ccc;
+.rows {
+  display: grid;
+  grid-template-columns: 110px 120px repeat(4, 1fr) 200px;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
 }
 
-.rows span{
-    padding: 5px;
-    border-right: 1px solid #ccc;
+.rows span {
+  padding: 5px;
+  border-right: 1px solid #ccc;
 }

@@ -12,7 +12,6 @@ import { RootState, Item, Invoice, Sale } from "../../../interfaces";
 import Table from "./Table/Table";
 import AddSale from "./AddSale/AddSale";
 
-import styles from "../Tables.module.css";
 import style from "./Items.module.css";
 import swal from "sweetalert";
 
@@ -22,17 +21,8 @@ export default function Items() {
   const [itemSelected, setSale] = useState<number[]>([]);
   const [close, setClose] = useState<boolean>(false);
 
-  /* De "/" a "-" */
-  function format(date: string) {
-    const dateArray: string[] = date.split("/");
-    const dateStr = `${dateArray[2]}-${`0${dateArray[1]}`.slice(
-      -0
-    )}-${`0${dateArray[1]}`.slice(-2)}`;
-    return dateStr;
-  }
-
   useEffect(() => {
-    setRows(items.filter((item) => item.state === "sold" ? null : item));
+    setRows(items.filter((item) => (item.state === "sold" ? null : item)));
   }, [items]);
 
   function handleClose() {
@@ -49,7 +39,7 @@ export default function Items() {
   }
 
   return (
-    <div className={styles.background}>
+    <div className={style.background}>
       {close ? (
         <AddSale
           handleClose={handleClose}
@@ -57,14 +47,14 @@ export default function Items() {
           handleSelected={handleSelected}
         />
       ) : null}
-      <div className={styles.head}>
+      <div className={style.head}>
         <Link className="btn btn-primary" to="/">
-          Menu
+          {"< Menu"}
         </Link>
-        <h1>Item Sold</h1>
+        <h1>Items</h1>
       </div>
-      <div>
-        <div>
+      <div className={style.table}>
+        <div className={style.searchBar}>
           <input
             className="form-control"
             id="search"
@@ -79,13 +69,11 @@ export default function Items() {
             Sale
           </button>
         </div>
-        <div className={style.sale}>
-          <Table
-            items={rows}
-            itemSelected={itemSelected}
-            handleSelected={handleSelected}
-          />
-        </div>
+        <Table
+          items={rows}
+          itemSelected={itemSelected}
+          handleSelected={handleSelected}
+        />
       </div>
     </div>
   );

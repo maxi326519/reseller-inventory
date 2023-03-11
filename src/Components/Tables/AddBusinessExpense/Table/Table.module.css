@@ -14,12 +14,12 @@
 
 .firstRow{
     background: gray;
-    padding-right: 17px;
+    padding-right: 15px;
 }
 
 .rows{
     display: grid;
-    grid-template-columns: 150px repeat(3, 1fr) 100px 80px;
+    grid-template-columns: 150px repeat(2, 1fr) 100px 80px;
     text-align: center;
     border-bottom: 1px solid #ccc;
 }

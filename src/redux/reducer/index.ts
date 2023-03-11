@@ -81,9 +81,10 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
       };
 
     case GET_USER_DATA:
+      console.log("payload", action.payload);
       return {
         ...state,
-        user: action.payload,
+        user: { ...state.user, ...action.payload },
       };
 
     case GET_ITEMS:

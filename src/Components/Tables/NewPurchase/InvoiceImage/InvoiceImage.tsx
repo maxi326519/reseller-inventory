@@ -2,25 +2,35 @@ import { useState } from "react";
 
 import style from "./InvoiceImage.module.css";
 
-export default function InvoiceImage() {
-  /*     const [file, setFile] = useState<File || null>();
-    const [image, setImage] = useState<File || null>(null); */
+interface Props {
+  setFile: (image: File) => void;
+}
 
-  /*     function handleFile(event: React.ChangeEvent<HTMLInputElement>){
-        const file = event.target.files[0];
-        if(!file) return false;
-        setFile(file);
-        setImage();
-    } */
+export default function InvoiceImage({ setFile }: Props) {
+  const [image, setImage] = useState<string>("");
+
+  function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFile(file);
+      console.log(URL.createObjectURL(file));
+      setImage(URL.createObjectURL(file));
+    }
+  }
 
   return (
     <div className={style.container}>
-      <div className={style.imageContainer}>{/*                 <img src={null}/> */}</div>
+      <div className={style.imageContainer}>
+        <img src={image} alt="invoice" />
+      </div>
       <div className="mb-3">
-        <label className="form-label" htmlFor="image">
-          Add invoice image
-        </label>
-        <input className="form-control" id="image" type="file" />
+        <input
+          className="form-control"
+          id="image"
+          type="file"
+          onChange={handleFile}
+          placeholder="Elegir archivo"
+        />
       </div>
     </div>
   );

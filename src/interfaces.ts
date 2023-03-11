@@ -18,27 +18,24 @@ export interface Invoice {
   form: string;
   source: string;
   total: number;
+  image: string;
+  imageRef: string;
 }
 export interface Expense {
   id: number;
   date: string;
+  price: number;
   category: string;
   description: string;
-  cost: number;
-  quantity: number;
 }
 
 export interface Sale {
+  id: number;
   date: string;
-  sold: Sold[];
-  total: number;
+  price: number;
+  productId: number;
   shipment: Shipment;
   expenses: ExpenesesSold[];
-}
-
-export interface Sold {
-  itemID: number;
-  price: number;
 }
 
 export interface Shipment {
@@ -50,7 +47,24 @@ export interface ExpenesesSold {
   amount: number;
 }
 
-export interface Reports {}
+/* REPORTS */
+export interface YearReport{
+  year: string;
+  month: MonthReport[];
+}
+
+export interface MonthReport {
+  month: string;
+  expenses: ReportItem[];
+  sales: ReportItem[];
+  totalExpenses: number;
+  totalSales: number;
+}
+
+export interface ReportItem {
+  id: number;
+  amount: number;
+}
 
 export interface RootState {
   user: User;
@@ -58,6 +72,6 @@ export interface RootState {
   invoices: Invoice[];
   sales: Sale[];
   expenses: Expense[];
-  reports: Reports[];
+  reports: YearReport[];
   loading: boolean;
 }

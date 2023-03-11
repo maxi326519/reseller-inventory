@@ -4,17 +4,17 @@ import styles from "../Table.module.css";
 
 interface Props {
   expense: Expense;
+  handleRemove: (id: number) => void;
 }
 
-export default function Rows({ expense }: Props) {
+export default function Rows({ expense, handleRemove }: Props) {
   return (
     <div className={styles.rows}>
       <span>{expense.date}</span>
       <span>{expense.category}</span>
       <span>{expense.description}</span>
-      <span>{expense.cost}</span>
-      <span>{expense.quantity}</span>
-      <button className="btn btn-danger" type="button">
+      <span>{expense.price}</span>
+      <button className="btn btn-danger" type="button" onClick={() => handleRemove(expense.id)}>
         x
       </button>
     </div>

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Reports, RootState } from "../../../../interfaces";
+import { RootState } from "../../../../interfaces";
 
 import Excel from "./Excel/Excel.jsx";
 
 import styles from "./Taxes.module.css";
 
 export default function Taxes() {
-  const [taxes, setTaxes] = useState<Reports[]>([]);
+/*   const [taxes, setTaxes] = useState<Reports[]>([]); */
   const sales = useSelector((state: RootState) => state.sales);
   const [expenses, setExpenses] = useState([]);
 
@@ -22,7 +22,7 @@ export default function Taxes() {
             Year
           </label>
         </div>
-        <Excel taxes={taxes} />
+{/*         <Excel taxes={taxes} /> */}
       </div>
       <div className={styles.head}>
         <span>

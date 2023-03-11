@@ -50,13 +50,14 @@ export default function Categories({ handleClose }: Props) {
           "success"
         );
       })
-      .catch(() => {
+      .catch((e: any) => {
         dispatch(closeLoading());
         swal(
           "Error",
           "Ocurrio un error al actualizar las caterogrias",
           "error"
         );
+        console.log(e);
       });
   }
 

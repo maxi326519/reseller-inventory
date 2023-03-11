@@ -1,0 +1,14 @@
+.container{
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+}
+
+.searchBar{
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.searchBar input{
+  width: 400px;
+}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Item, Sale, Sold, RootState } from "../../../../interfaces";
+import { Item, Sale, RootState } from "../../../../interfaces";
 import swal from "sweetalert";
 import {
   postSale,
@@ -22,9 +22,10 @@ interface Check {
 }
 
 const initialSale: Sale = {
+  id: 0,
   date: format(new Date().toLocaleDateString()),
-  sold: [],
-  total: 0,
+  price: 0,
+  productId: 0,
   shipment: {
     value: false,
     amount: 0,
@@ -53,7 +54,7 @@ export default function AddSale({
   });
 
   const [sale, setSale] = useState<Sale>(initialSale);
-  const [solds, setSolds] = useState<Sold[]>([]);
+  const [solds, setSolds] = useState<Sale[]>([]);
   const [feesEbay, setFeesEbay] = useState<number>(0);
   const [other, setOther] = useState({
     description: "",
@@ -72,7 +73,7 @@ export default function AddSale({
   }, [itemSelected, items]);
 
   /* Seteamos las nuevas ventas con los items seleccioandos */
-  useEffect(() => {
+  /*   useEffect(() => {
     setSolds(
       rows.map((i) => {
         return {
@@ -81,10 +82,10 @@ export default function AddSale({
         };
       })
     );
-  }, [rows]);
+  }, [rows]); */
 
   /* Calculamos el nuevo total */
-  useEffect(() => {
+  /*   useEffect(() => {
     let total: number = 0;
 
     solds.forEach((s) => {
@@ -97,9 +98,9 @@ export default function AddSale({
         total: total,
       });
     }
-  }, [solds, sale]);
+  }, [solds, sale]); */
 
-  function handleChangeSold(id: number, price: number) {
+  /*   function handleChangeSold(id: number, price: number) {
     setSolds(
       solds.map((s) => {
         if (s.itemID === id) {
@@ -111,7 +112,7 @@ export default function AddSale({
         return s;
       })
     );
-  }
+  } */
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSale({ ...sale, [event.target.value]: event.target.value });
@@ -148,9 +149,9 @@ export default function AddSale({
   function handleOther(event: React.ChangeEvent<HTMLInputElement>) {
     setOther({ ...other, [event.target.name]: event.target.value });
   }
-
+ 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+/*     event.preventDefault();
     const newSale = {
       ...sale,
       sold: solds,
@@ -181,7 +182,7 @@ export default function AddSale({
           "Ocurrio un error al actualizar las caterogrias",
           "error"
         );
-      });
+      }); */
   }
 
   return (
@@ -206,9 +207,9 @@ export default function AddSale({
                 <input
                   placeholder="Price"
                   type="number"
-                  onChange={(e) =>
+                  /*                   onChange={(e) =>
                     handleChangeSold(item.id, Number(e.target.value))
-                  }
+                  } */
                 />
                 <button
                   className="btn btn-danger"
@@ -330,7 +331,7 @@ export default function AddSale({
         <hr></hr>
         <div>
           <span>Items: {rows.length}</span>
-          <span>Total: {sale.total}</span>
+          {/*           <span>Total: {sale.total}</span> */}
         </div>
         <button className="btn btn-primary" type="submit">
           Add Solds
