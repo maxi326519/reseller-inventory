@@ -48,9 +48,9 @@ export default function Signin() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    redirect("/");
-
-/*     if ((user.email === "") || (user.password === "")) {
+/*     redirect("/");
+ */
+    if ((user.email === "") || (user.password === "")) {
       let err: Error = {
         email: null,
         password: null,
@@ -79,7 +79,7 @@ export default function Signin() {
           }
           console.log(e);
         });
-    } */
+    }
   }
 
   function format(date: string) {

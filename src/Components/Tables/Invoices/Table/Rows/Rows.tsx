@@ -1,4 +1,5 @@
 import { Invoice } from "../../../../../interfaces";
+import changeDateFormat from "../../../../../functions/changeDateFormat";
 
 import styles from "../Table.module.css";
 
@@ -11,7 +12,7 @@ export default function Rows({ invoice, handleDetails }: Props) {
   return (
     <div key={invoice.id} className={styles.rows}>
       <span>{invoice.id}</span>
-      <span>{invoice.date}</span>
+      <span>{changeDateFormat(invoice.date)}</span>
       <span>{invoice.items.length}</span>
       <span>{invoice.total}</span>
       <span>{invoice.form}</span>

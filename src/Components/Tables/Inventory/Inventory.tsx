@@ -27,8 +27,8 @@ export default function Inventory() {
     let total = 0;
     setRows(items.filter((i) => {
       if (search === "") return true;
-      if (i.state === "sold") return false;
-      if (i.state === "expired") return false;
+/*       if (i.state === "sold") return false;
+      if (i.state === "expired") return false; */
       if (i.id.toString().toLowerCase().includes(search)) return true
       if (i.date.toLowerCase().includes(search)) return true
       if (i.description.toLowerCase().includes(search)) return true
@@ -37,7 +37,7 @@ export default function Inventory() {
     items.forEach((i) => total += Number(i.cost));
     console.log(total);
     if(items.length > 0) setTotal(Number(total).toFixed(3));
-  }, [items]);
+  }, [items, search]);
 
   function handleClose() {
     setClose(!close);

@@ -15,9 +15,9 @@ export default function Table({ invoices, handleDetails }: Props) {
       <div className={`${styles.firstRow} ${styles.rows}`}>
         <span>ID</span>
         <span>Date</span>
-        <span>Solds</span>
-        <span>Total</span>
-        <span>Form</span>
+        <span>Total items</span>
+        <span>Total cost</span>
+        <span>Form of payment</span>
         <span>Source</span>
         <span>View</span>
       </div>
