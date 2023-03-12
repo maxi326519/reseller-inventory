@@ -1,3 +1,5 @@
+import changeDateFormat from "../../../../../functions/changeDateFormat";
+
 import { Item } from "../../../../../interfaces";
 
 import styles from "../Table.module.css";
@@ -25,9 +27,10 @@ export default function Rows({ item, itemSelected, handleSelected }: Props) {
           onChange={() => handleCheck(item.id)}
         />
       </div>
+      <span>{changeDateFormat(item.date)}</span>
+      <span>{item.id}</span>
       <span>{item.description}</span>
       <span>{item.cost}</span>
-      <span>{item.id}</span>
     </div>
   );
 }

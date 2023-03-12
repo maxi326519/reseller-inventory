@@ -15,9 +15,10 @@ export default function Table({ items, itemSelected, handleSelected }: Props) {
     <div className={styles.table}>
       <div className={`${styles.firstRow} ${styles.rows}`}>
         <span></span>
+        <span>Date</span>
+        <span>Item ID</span>
         <span>Description</span>
         <span>Unit cost</span>
-        <span>Item ID</span>
       </div>
       <div className={styles.data}>
         {items.map((item) => (

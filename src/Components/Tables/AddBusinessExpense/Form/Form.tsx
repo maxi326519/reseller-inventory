@@ -62,7 +62,7 @@ export default function Form({
       for (let i: number = 1; i <= amount; i++) {
         allExpenses.push({
           ...expense,
-          id: createUniqueId(expense.date, expense.price, null),
+          id: createUniqueId(expense.date, Math.floor(expense.price), null),
         });
       }
       setExpenses([...expenses, ...allExpenses]);

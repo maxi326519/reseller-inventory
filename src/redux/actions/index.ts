@@ -29,9 +29,12 @@ export const LOGOUT = "LOGOUT";
 export const POST_ITEMS = "POST_ITEMS";
 export const POST_INVOICE = "POST_INVOICE";
 export const POST_CATEGORIES = "POST_CATEGORIES";
+export const GET_REPORTS = "GET_REPORTS";
 export const POST_EXPENSES = "POST_EXPENSES";
 export const POST_SALE = "POST_SALE";
 export const POST_IMAGE = "POST_IMAGE";
+
+export const UPDATE_REPORTS = "UPDATE_REPORTS";
 
 export const SELL_ITEMS = "SELL_ITEMS";
 
@@ -155,126 +158,9 @@ export function postInvoice(
     }
   };
 }
-/*
-function updateYearReports(
-  YearReports_: YearReport[],
-  expensesOrSales: (Expense | Sale)[]
-): { YearReports: YearReport[]; createdYears: string[] } {
-  let YearReports = [...YearReports_];
-  let createdYears: string[] = [];
-
-  expensesOrSales.forEach((item) => {
-    const date: string[] = item.date.split("-");
-    const year: string = date[0];
-    const month: string = date[1];
-    const yearIndex = YearReports.findIndex((report) => report.year === year);
-
-    if (yearIndex === -1) {
-      const newReport = reportGenerator(year);
-      YearReports.push(newReport);
-      createdYears.push(year);
-    }
-
-    const monthIndex = YearReports[yearIndex].month.findIndex(
-      (monthReport) => monthReport.month === month
-    );
-    const newMonthReport = updateMonthReport(
-      YearReports[yearIndex].month[monthIndex],
-      item, true
-    );
-    YearReports[yearIndex].month[monthIndex] = newMonthReport;
-  });
-
-  return { YearReports, createdYears };
-}
-
-function updateMonthReport(
-  report: MonthReport,
-  item: Expense | Sale,
-  isExpense: boolean
-): MonthReport {
-  const newItem: ReportItem = {
-    id: item.id,
-    amount: isExpense ? item.cost : item.amount
-  };
-
-  const itemIndex: number = report[isExpense ? 'expenses' : 'sales']
-    .findIndex((i: ReportItem) => i.id === item.id);
-
-  if (itemIndex === -1) {
-    report[isExpense ? 'expenses' : 'sales'].push(newItem);
-  } else {
-    report[isExpense ? 'expenses' : 'sales'][itemIndex] = newItem;
-  }
-
-  const reportItems: ReportItem[] = report[isExpense ? 'expenses' : 'sales'];
-  const totalAmount: number = reportItems.reduce((total: number, i: ReportItem) => total + i.amount, 0);
-  report[isExpense ? 'totalExpenses' : 'totalSales'] = totalAmount;
-
-  return report;
-} */
-
-function updateReports(reports: YearReport[], data: Expense[]) {
-  console.log(reports);
-  console.log("1");
-  const years: string[] = [];
-  let newReports: YearReport[] = [];
-
-  /* Search date match */
-  data.forEach((d) =>
-    reports.forEach((r) => {
-      if (r.year === d.date.split("-")[0]) years.push(r.year);
-    })
-  );
-
-  /* If not found matches, create a new report */
-  if (years.length > 0) {
-    newReports = [...reports, ...years.map((y) => reportGenerator(y))];
-  }
-
-  /* Update reports data */
-  newReports.map((r) => {
-    return {
-      ...r,
-      month: r.month.map((month) => {
-        let match = data.filter((d: Expense) => ((d.date.split("-")[0] === r.year.toString()) && (d.date.split("-")[1] === month.toString())) )
-        if(match){
-          return {
-            ...month,
-            expenses: [ ...month.expenses, ...match ],
-            totalExpenses: month.totalExpenses + Number(data.reduce((a: any, b) => a + b.price ))
-          }
-        }
-        return month;
-      })
-    }
-  });
-
-  return newReports;
-}
-
-function reportGenerator(year: string): YearReport {
-  let reportData: YearReport = {
-    year: year,
-    month: [],
-  };
-
-  for (let i = 1; i <= 12; i++) {
-    const monthReport: MonthReport = {
-      month: i.toString(),
-      expenses: [],
-      sales: [],
-      totalExpenses: 0,
-      totalSales: 0,
-    };
-    reportData.month.push(monthReport);
-  }
-  return reportData;
-}
 
 export function postExpenses(
-  expenses: Expense[],
-  reports: YearReport[]
+  expenses: Expense[]
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
@@ -284,16 +170,9 @@ export function postExpenses(
         const date: string[] = expenses[0].date.split("-");
         const year: string = date[0];
         const month: string = date[1];
-        const invoiceRef = collection(db, "expenses", year, month);
+        const invoiceRef = collection(db, "Expenses", year, month);
         await setDoc(doc(invoiceRef, expenses[i].id.toString()), expenses[i]);
       }
-
-/*       updateReports(reports, expenses);
-
-      const reportsRef = doc(db, "Reports");
-      await updateDoc(reportsRef, { newReport }); */
-
-      // calcular reporte
 
       dispatch({
         type: POST_EXPENSES,
@@ -332,7 +211,7 @@ export function postCategories(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-      await updateDoc(doc(db, "user", "RPEAI31RVWZN5AL2v8b9tkPqoDp2"), {
+      await updateDoc(doc(db, "user", `${auth.currentUser?.uid}`), {
         categories,
       });
 
@@ -442,6 +321,35 @@ export function getExpenses(): ThunkAction<
   };
 }
 
+export function getReports(): ThunkAction<
+  Promise<void>,
+  RootState,
+  null,
+  AnyAction
+> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+
+      const reportRef = collection(db, "Reports");
+      const query = await getDocs(reportRef);
+      const reports: any[] = [];
+
+      query.forEach((doc) => {
+        reports.push(doc.data());
+      });
+
+      console.log(reports)
+
+      dispatch({
+        type: GET_REPORTS,
+        payload: reports,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
 export function sellItems(
   itemsID: number[]
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
@@ -461,32 +369,151 @@ export function sellItems(
   };
 }
 
-/* export function updateReports(epxense: Expense[], ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+export function updateReports(
+  expenses: Expense[],
+  reports: YearReport[]
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
-    const dateArr = epxense.date.split("-");
-    const year = dateArr[0];
-    const month = dateArr[1];
+    try {
+      console.log("update reports");
+      const resposne = calculeReports(reports, expenses);
+      const newReports = resposne.reports;
+      const years = resposne.years;
 
-    epxense
-      const report = {
-        month: string;
-        expeneses: Array<{
-          id: number;
-          amount: number
-        }>;
-        sales: Array<{
-          id: number;
-          amount: number
-        }>;
-        totalExpeneses: number;
-        totalSales: number;
+      for(let i=0; i<newReports.length; i++){
+        const year = years.find((y) => y.toString() === newReports[i].year.toString())
+        if(year){
+          console.log("upload report: ", newReports[i] );
+          const yearReportRef = doc(db, "Reports", year);
+          setDoc(yearReportRef, { ...newReports[i] });
+        }
       }
+
+      console.log(newReports);
+
       dispatch({
-        type: SELL_ITEMS,
-        payload: itemsID,
+        type: UPDATE_REPORTS,
+        payload: newReports,
       });
     } catch (e: any) {
       throw new Error(e);
     }
   };
-} */
+}
+
+function calculeReports(reports: YearReport[], data: Expense[]) {
+  let years: string[] = []; // Save years of matching expenses
+  let missingYears: string[] = []; // Save years of missing expenses
+  let newReports: YearReport[] = []; // Save all reports
+
+  if (reports.length <= 0)
+    reports.push(reportGenerator(new Date().getFullYear().toString()));
+
+  /* Matching and missing date search */
+  data.forEach((d) => {
+    let dataDate = d.date.split("-")[0];
+    /* If exist any report with the date of the data */
+    if (reports.some((r) => r.year.toString() === dataDate))
+      years.push(dataDate);
+    else missingYears.push(dataDate);
+  });
+
+  // Delete repeat elements
+  missingYears = missingYears.filter((element, index, arr) => {
+    return arr.indexOf(element) === index && !(element in arr.slice(index + 1));
+  });
+
+  /* Create missing reports  */
+  newReports = [...reports, ...missingYears.map((y) => reportGenerator(y))];
+
+  /* Update reports */
+  newReports = newReports.map((r) => {
+    /* If matching with expeneses year */
+    if (years.includes(r.year) || missingYears.includes(r.year)) {
+      const newYear = {
+        year: r.year,
+        month: r.month.map((month) => {
+          /* Search maching date */
+          let match = data.filter((d: Expense) => {
+            if (
+              d.date.split("-")[0] === r.year.toString() &&
+              d.date.split("-")[1] === `0${month.month.toString()}`.slice(-2)
+            ) {
+              return true;
+            }
+            return false;
+          });
+
+          /* If exist, update */
+          if (match.length > 0) {
+            const newMonth = {
+              ...month,
+              expenses: [
+                ...month.expenses,
+                ...match.map((m) => {
+                  return {
+                    id: m.id,
+                    amount: m.price,
+                  };
+                }),
+              ],
+              totalExpenses:
+                month.totalExpenses +
+                total(
+                  data.filter(
+                    (d) =>
+                      d.date.split("-")[0] === r.year.toString() &&
+                      d.date.split("-")[1] ===
+                        `0${month.month.toString()}`.slice(-2)
+                  )
+                ),
+            };
+            return newMonth;
+          } else {
+            return month;
+          }
+        }),
+      };
+      return newYear;
+    } else {
+      return r;
+    }
+  });
+
+  const updateYears = [...missingYears, ...years].filter((element, index, arr) => {
+    return arr.indexOf(element) === index && !(element in arr.slice(index + 1));
+  });
+
+  return {
+    reports: newReports,
+    years: updateYears,
+  };
+}
+
+function total(array: Array<any>) {
+  console.log("suma", array);
+  let total: number = 0;
+  array.forEach((a) => {
+    total += Number(a.price);
+  });
+  return total;
+}
+
+function reportGenerator(year: string): YearReport {
+  let reportData: YearReport = {
+    year: year,
+    month: [],
+  };
+
+  for (let i = 1; i <= 12; i++) {
+    const monthReport: MonthReport = {
+      month: i.toString(),
+      expenses: [],
+      sales: [],
+      totalExpenses: 0,
+      totalSales: 0,
+    };
+    reportData.month.push(monthReport);
+  }
+  return reportData;
+}

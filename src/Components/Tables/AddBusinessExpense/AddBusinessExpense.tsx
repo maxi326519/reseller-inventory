@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { closeLoading, loading, postExpenses } from "../../../redux/actions";
+import {
+  closeLoading,
+  loading,
+  postExpenses,
+  updateReports,
+} from "../../../redux/actions";
 import { Expense, RootState } from "../../../interfaces";
 
 import Form from "./Form/Form";
@@ -41,8 +46,10 @@ export default function AddBusinessExpense() {
     }).then((r) => {
       if (r) {
         dispatch<any>(loading());
-        dispatch<any>(postExpenses(expenses, reports))
+        dispatch<any>(postExpenses(expenses))
           .then(() => {
+            dispatch<any>(updateReports(expenses, reports));
+            console.log("dispatch update reports");
             setExpenses([]);
             setTotal(0);
             dispatch<any>(closeLoading());
@@ -94,7 +101,7 @@ export default function AddBusinessExpense() {
           setAmount={setAmount}
         />
         <div className={style.expense}>
-          <Table expenses={expenses} handleRemove={handleRemove}/>
+          <Table expenses={expenses} handleRemove={handleRemove} />
           <div className={style.sumary}>
             <button
               className="btn btn-primary"

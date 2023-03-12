@@ -1,21 +1,21 @@
 import { Link } from "react-router-dom";
 
 import Charts from "./Charts/Charts";
+import img from "../../assets/img/logo.png";
 
 import style from "./Menu.module.css";
 
 export default function Menu() {
   return (
     <div className={style.container}>
-      <h1>RESELLER PRO</h1>
-      <h3>Main Menu</h3>
+      <img className={style.image} src={img} alt="logo"/>
       <div className={style.dataContainer}>
         <div className={style.btnContainer}>
           <Link className="btn btn-primary" to="newPurchase">
             Add New Purchase
           </Link>
-          <Link className="btn btn-primary" to="items">
-            Items
+          <Link className="btn btn-primary" to="inventory">
+            Inventory
           </Link>
           <Link className="btn btn-primary" to="invoices">
             Invoices

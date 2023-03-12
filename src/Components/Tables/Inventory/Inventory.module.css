@@ -28,7 +28,12 @@
 
 .searchBar{
   display: flex;
+  align-items: center;
   margin-bottom: 20px;
+}
+
+.searchBar .totalStock{
+  margin-left: 20px;
 }
 
 .searchBar input{

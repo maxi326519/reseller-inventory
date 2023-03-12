@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Chart } from "react-google-charts";
+import { useSelector } from "react-redux";
+import swal from "sweetalert";
+import { RootState } from "../../../interfaces";
 
 import styles from "./Charts.module.css";
 
@@ -7,36 +10,19 @@ const headData: Array<string> = ["Year", "Sales", "Expenses"];
 
 const initialData: Array<Array<any>> = [
   ["Year", "Sales", "Expenses"],
-  ["Enero", 1000, 400],
-  ["Febrero", 1170, 460],
-  ["Marzo", 660, 1120],
-  ["Abril", 1030, 540],
-  ["Mayo", 1000, 400],
-  ["Junio", 1170, 460],
-  ["Julio", 660, 1120],
-  ["Agosto", 1030, 540],
-  ["Septiembre", 1030, 540],
-  ["Octubre", 1030, 540],
-  ["Noviembre", 1030, 540],
-  ["Diciembre", 1030, 540],
-]
-
-const years: any = {
-  2023: [
-    ["Year", "Sales", "Expenses"],
-    ["Enero", 1000, 400],
-    ["Febrero", 1170, 460],
-    ["Marzo", 660, 1120],
-    ["Abril", 1030, 540],
-  ],
-  2022: [
-    ["Year", "Sales", "Expenses"],
-    ["Enero", 800, 500],
-    ["Febrero", 2300, 1500],
-    ["Marzo", 1400, 300],
-    ["Abril", 1800, 500],
-  ],
-};
+  ["Enero", 0, 0],
+  ["Febrero", 0, 0],
+  ["Marzo", 0, 0],
+  ["Abril", 0, 0],
+  ["Mayo", 0, 0],
+  ["Junio", 0, 0],
+  ["Julio", 0, 0],
+  ["Agosto", 0, 0],
+  ["Septiembre", 0, 0],
+  ["Octubre", 0, 0],
+  ["Noviembre", 0, 0],
+  ["Diciembre", 0, 0],
+];
 
 const options = {
   title: "Company Performance",
@@ -59,17 +45,50 @@ const options = {
 };
 
 export default function Charts() {
-  const [data, setData] = useState<Array<Array<any>>>(initialData);
+  const reports = useSelector((state: RootState) => state.reports);
+  const [yearsData, setYearData] = useState<any>([]);
+  const [data, setData] = useState(initialData);
+  const [year, setYear] = useState("");
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const newData = reports.map((r) => {
+      return {
+        year: r.year,
+        data: [
+          ["Year", "Sales", "Expenses"],
+          ...r.month.map((m) => [m.month, m.totalSales, m.totalExpenses]),
+        ],
+      };
+    });
+    const currentYear = newData.find(
+      (y: any) => y.year.toString() === new Date().getFullYear().toString()
+    );
+    if (currentYear) {
+      setData(currentYear.data);
+      setYear(currentYear.year);
+      setError(false);
+    }
+    setYearData(newData);
+  }, [reports]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (yearsData.length === 0) {
+        setError(true);
+      }
+    }, 5000);
+  }, []);
 
   function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const selected: string = event.target.value;
-    setData([headData, ...years[selected]]);
-    console.log(years[selected]);
+    setData(yearsData.find((y: any) => y.year.toString() === selected).data);
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.chart}>
+        {error ? <div className={styles.notFound}><span>Empty</span></div> : null}
         <Chart
           chartType="ColumnChart"
           width="100%"
@@ -83,10 +102,18 @@ export default function Charts() {
           className="form-select"
           id="year"
           name="year"
+          value={year}
           onChange={handleChange}
         >
-          <option value="2023">2023</option>
-          <option value="2022">2022</option>
+          {year.length <= 0 ? (
+            <option value="loading">{error ? "Empty" : "Loading..."}</option>
+          ) : (
+            yearsData.map((y: any) => (
+              <option key={y.year} value={y.year}>
+                {y.year}
+              </option>
+            ))
+          )}
         </select>
         <label className="form-label" htmlFor="year">
           Year:

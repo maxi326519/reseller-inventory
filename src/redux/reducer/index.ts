@@ -11,7 +11,9 @@ import {
   GET_USER_DATA,
   GET_ITEMS,
   GET_INVOICE,
+  GET_REPORTS,
   GET_EXPENSES,
+  UPDATE_REPORTS,
 } from "../actions";
 
 const initialState: RootState = {
@@ -99,11 +101,23 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
         invoices: action.payload,
       };
 
+    case GET_REPORTS: 
+      return{
+        ...state,
+        reports: action.payload,
+      }
+      
     case GET_EXPENSES:
       return {
         ...state,
         expenses: action.payload,
       };
+
+      case UPDATE_REPORTS:
+        return{
+          ...state,
+          reports: action.payload,
+        }
 
     default:
       return state;

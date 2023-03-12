@@ -87,6 +87,7 @@ export default function Categories({ handleClose }: Props) {
                   className="btn btn-danger"
                   type="button"
                   onClick={() => handleRemove(category)}
+                  disabled={category === "General" || category === "Shipping"}
                 >
                   -
                 </button>

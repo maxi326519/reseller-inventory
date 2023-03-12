@@ -56,7 +56,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
       for (let i: number = 1; i <= amount; i++) {
         allItems.push({
           ...newItem,
-          id: createUniqueId(invoice.date, newItem.cost, items.map((i) => i.id )),
+          id: createUniqueId(invoice.date, Math.floor(newItem.cost), items.map((i) => i.id )),
         });
       }
 
@@ -86,7 +86,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     } else {
       setNewItems({
         ...newItem,
-        [event.target.name]: parseFloat(event.target.value),
+        [event.target.name]: event.target.value,
       });
     }
   }
