@@ -33,11 +33,11 @@ function App() {
     dispatch(loading());
     setTimeout(() => {
       const auth = getAuth();
-      if (/* auth.currentUser */ true) {
-        dispatch<any>(getUserData());
-        dispatch<any>(getItems());
-        dispatch<any>(getInvoince(format(new Date().toLocaleDateString())));
-        dispatch<any>(getReports());
+      if (auth.currentUser) {
+        dispatch<any>(getUserData()).catch((e: any) => console.log(e));
+        dispatch<any>(getItems()).catch((e: any) => console.log(e));
+        dispatch<any>(getInvoince(format(new Date().toLocaleDateString()))).catch((e: any) => console.log(e));
+        dispatch<any>(getReports()).catch((e: any) => console.log(e));
         dispatch(closeLoading());
       } else {
         redirect("/login");

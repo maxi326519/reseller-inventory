@@ -14,6 +14,7 @@ import {
   GET_REPORTS,
   GET_EXPENSES,
   UPDATE_REPORTS,
+  EXPIRED_ITEMS,
 } from "../actions";
 
 const initialState: RootState = {
@@ -83,7 +84,6 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
       };
 
     case GET_USER_DATA:
-      console.log("payload", action.payload);
       return {
         ...state,
         user: { ...state.user, ...action.payload },
@@ -101,24 +101,37 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
         invoices: action.payload,
       };
 
-    case GET_REPORTS: 
-      return{
+    case GET_REPORTS:
+      return {
         ...state,
         reports: action.payload,
-      }
-      
+      };
+
     case GET_EXPENSES:
       return {
         ...state,
         expenses: action.payload,
       };
 
-      case UPDATE_REPORTS:
-        return{
-          ...state,
-          reports: action.payload,
-        }
+    case UPDATE_REPORTS:
+      return {
+        ...state,
+        reports: action.payload,
+      };
 
+    case EXPIRED_ITEMS:
+      return {
+        ...state,
+        items: state.items.map((item) => {
+          if(action.payload.some((id: number) => id === item.id)){
+            return {
+              ...item,
+              state: "Expired",
+            }
+          }
+          return item
+        })
+      }
     default:
       return state;
   }

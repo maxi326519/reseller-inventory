@@ -7,6 +7,7 @@ import {
   getItems,
   getInvoince,
   getUserData,
+  getReports,
 } from "../../redux/actions";
 import { useNavigate } from "react-router-dom";
 
@@ -62,10 +63,11 @@ export default function Signin() {
       dispatch(loading());
       dispatch<any>(logIn(user))
         .then(() => {
-          dispatch<any>(getItems());
-          dispatch<any>(getInvoince(format(new Date().toLocaleDateString())));
-          dispatch<any>(getUserData());
-          dispatch(closeLoading());
+          dispatch<any>(getItems()).catch((e: any) => console.log(e));
+          dispatch<any>(getInvoince(format(new Date().toLocaleDateString()))).catch((e: any) => console.log(e));
+          dispatch<any>(getUserData()).catch((e: any) => console.log(e));
+        dispatch<any>(getReports()).catch((e: any) => console.log(e));
+        dispatch(closeLoading());
           redirect("/");
         })
         .catch((e: any) => {

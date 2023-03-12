@@ -49,7 +49,6 @@ export default function AddBusinessExpense() {
         dispatch<any>(postExpenses(expenses))
           .then(() => {
             dispatch<any>(updateReports(expenses, reports));
-            console.log("dispatch update reports");
             setExpenses([]);
             setTotal(0);
             dispatch<any>(closeLoading());

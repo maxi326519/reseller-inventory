@@ -17,10 +17,11 @@
   max-height: 100%;
 }
 
-.imageContainer img{
-  width: 100%;
-}
-
 .imageContainer {
   flex-grow: 1;
+  max-height: calc(100vh - 250px);
+}
+
+.imageContainer img{
+  width: 100%;
 }

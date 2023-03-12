@@ -1,0 +1,24 @@
+.row{
+  display: flex;
+}
+
+.row, .col-mdmonth, .sales, .expenses{
+  outline: 1px solid #ccc;
+}
+
+.month{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+}
+
+.sales{
+  flex-grow: 1; 
+  padding: 20px;
+}
+
+.expenses{
+  flex-grow: 1; 
+  padding: 20px;
+}
