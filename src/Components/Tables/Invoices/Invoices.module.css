@@ -1,14 +1,26 @@
-.container{
+.container {
   display: flex;
   flex-direction: column;
   padding: 30px;
 }
 
-.searchBar{
+.searchBar {
   display: flex;
   margin-bottom: 20px;
 }
 
-.searchBar input{
+.searchBar input {
   width: 400px;
+}
+
+.reload {
+  position: relative;
+  z-index: 1;
+  margin-left: 10px;
+}
+
+.reload img {
+  width: 20px;
+  height: 20px;
+  filter: invert(100);
 }

@@ -15,12 +15,37 @@ import SaleData from "./SaleData/SaleData";
 import styles from "./AddSale.module.css";
 import "../../../../animation.css";
 
+interface OtherExpenses {
+  saleId: number;
+  other1: {
+    check: boolean,
+    description: string;
+    cost: number | string;
+  };
+  other2: {
+    check: boolean,
+    description: string;
+    cost: number | string;
+  };
+}
+interface ShipingExpenses {
+  saleId: number;
+  shipment: number | string;
+  ebayFees: number | string;
+}
+
 interface Props {
   handleClose: () => void;
   itemSelected: number[];
   handleSelected: (id: number) => void;
   sales: Sale[];
   setSales: (sales: Sale[]) => void;
+  other: OtherExpenses[];
+  shipment: ShipingExpenses[];
+  handleExpense: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    id: number | undefined,
+  ) => void;
 }
 
 export default function AddSale({
@@ -29,6 +54,9 @@ export default function AddSale({
   handleSelected,
   sales,
   setSales,
+  other,
+  shipment,
+  handleExpense,
 }: Props) {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.items);
@@ -68,7 +96,6 @@ export default function AddSale({
   ) {
     const id = event.target.id;
     const name = event.target.name;
-    let newData = {};
 
     console.log(id);
     console.log(saleId);
@@ -77,12 +104,6 @@ export default function AddSale({
       setSales(
         sales.map((s) => {
           if (s.id === saleId) {
-            console.log("Se encontro");
-            console.log("Name", name);
-            console.log(
-              "value",
-              name === "value" ? event.target.checked : s.shipment.value
-            );
             return {
               ...s,
               shipment: {
@@ -99,15 +120,42 @@ export default function AddSale({
         })
       );
     } else {
-      newData = { [event.target.name]: event.target.value };
+      setSales(
+        sales.map((s) => {
+          if (s.id === saleId) {
+            return {
+              ...s,
+              [name]: event.target.value,
+            };
+          }
+          return s;
+        })
+      );
     }
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    console.log(sales);
+
+    console.log("Items", itemSelected);
+    console.log("Sales", sales);
+    console.log("Other", other);
+    console.log("shipment", shipment);
+
+    if(handleValidations()){
+      dispatch(loading());
+/*       const sales = convertData(sales, other, shipment); */
+    }
   }
 
+  function handleValidations(){
+    return true
+  }
+
+/*   function convertData(sales, other, shipment){
+
+  }
+ */
   return (
     <div className={styles.background}>
       <form className={`toTop ${styles.container}`} onSubmit={handleSubmit}>
@@ -124,6 +172,7 @@ export default function AddSale({
         <div className={styles.list}>
           {rows.map((item) => (
             <ItemRow
+              key={item.id}
               item={item}
               rowSelected={rowSelected}
               handleRowSelect={handleRowSelect}
@@ -133,8 +182,13 @@ export default function AddSale({
           ))}
         </div>
         <SaleData
-          sale={sales.find((s: Sale) => s.id === rowSelected)}
+          sale={sales.find((s: Sale) => s.productId === rowSelected)}
           handleChange={handleChange}
+          shipment={shipment.find(
+            (s: ShipingExpenses) => s.saleId === rowSelected
+          )}
+          other={other.find((o: OtherExpenses) => o.saleId === rowSelected)}
+          handleExpense={handleExpense}
         />
         <hr></hr>
         <div>

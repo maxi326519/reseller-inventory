@@ -7,7 +7,6 @@ import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import {
   collection,
   doc,
-  addDoc,
   setDoc,
   getDoc,
   getDocs,
@@ -21,7 +20,6 @@ import {
   Sale,
   RootState,
   YearReport,
-  MonthReport,
 } from "../../interfaces";
 
 export const LOGIN = "LOGIN";
