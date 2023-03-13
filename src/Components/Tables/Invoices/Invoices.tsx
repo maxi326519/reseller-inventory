@@ -77,7 +77,9 @@ export default function Invoices() {
     });
   }
 
-  function handleSetDate() {}
+  function handleSetDate() {
+    
+  }
 
   return (
     <div className={styles.background}>
@@ -112,7 +114,7 @@ export default function Invoices() {
           >
             <img src={reload} alt="reload" />
           </button>
-          <div className="mb-3 form-floating">
+          {/*           <div className="mb-3 form-floating">
             <select
               id="year"
               className="form-control"
@@ -124,7 +126,7 @@ export default function Invoices() {
               ))}
             </select>
             <label htmlFor="year">Year</label>
-          </div>
+          </div> */}
         </div>
         <Table invoices={rows} handleDetails={handleDetails} />
       </div>

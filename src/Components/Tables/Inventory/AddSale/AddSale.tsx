@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Item, Sale, RootState } from "../../../../interfaces";
+import { Item, Sale, RootState, Expense } from "../../../../interfaces";
 import swal from "sweetalert";
 import {
-  postSale,
-  sellItems,
+  postSales,
   loading,
   closeLoading,
+  postExpenses,
 } from "../../../../redux/actions";
 
 import ItemRow from "./ItemRow/ItemRow";
@@ -142,20 +142,89 @@ export default function AddSale({
     console.log("Other", other);
     console.log("shipment", shipment);
 
-    if(handleValidations()){
+/*     if(handleValidations()){
       dispatch(loading());
-/*       const sales = convertData(sales, other, shipment); */
-    }
+      const newData = convertData(sales, other, shipment);
+      dispatch<any>(postSales(newData.sales));
+      dispatch<any>(postExpenses(newData.expenses));
+      dispatch(closeLoading());
+    } */
   }
 
   function handleValidations(){
     return true
   }
 
-/*   function convertData(sales, other, shipment){
+  function convertData(sales: Sale[], other: OtherExpenses[], shipment: ShipingExpenses[]){
+    let error: number[] = [];
+    let allExpenses: Expense[] = [];
 
+    const newSales = sales.map((sale) => {
+      const otherExpenses: OtherExpenses | undefined = other.find((o) => o.saleId === sale.id);
+      const shipmentExpenses: ShipingExpenses | undefined = shipment.find((s) => s.saleId === sale.id);
+      let expenses: Expense[] = [];
+      
+      if(otherExpenses && shipmentExpenses){
+
+        if(otherExpenses.other1.check){
+          expenses.push({
+            id: sale.id,
+            date: sale.date,
+            price: Number(otherExpenses.other1.cost),
+            category: "Sale",
+            description: otherExpenses.other1.description,
+          })
+        }
+        if(otherExpenses.other2.check){
+          expenses.push({
+            id: sale.id,
+            date: sale.date,
+            price: Number(otherExpenses.other2.cost),
+            category: "Sale",
+            description: otherExpenses.other2.description,
+          })
+        }
+        if(sale.shipment.value){
+          expenses.push({
+            id: sale.id,
+            date: sale.date,
+            price: Number(shipmentExpenses.shipment),
+            category: "Shipment",
+            description: "Shipment expense",
+          })
+          expenses.push({
+            id: sale.id,
+            date: sale.date,
+            price: Number(shipmentExpenses.ebayFees),
+            category: "EbayFees",
+            description: "EbayFees expense",
+
+          })
+        }
+
+        expenses.forEach((ex) => allExpenses.push(ex));
+
+        return {
+          ...sale,
+          expenses: expenses.map((ex) => {
+            return {
+              id: ex.id,
+              cost: ex.price,
+            }
+          }),
+        }
+      }else{
+        error.push(sale.id);
+        console.log(`Error to post ${sale.id}`);
+      }
+    })
+
+    return {
+      sales: newSales,
+      expenses: allExpenses
+    };
   }
- */
+
   return (
     <div className={styles.background}>
       <form className={`toTop ${styles.container}`} onSubmit={handleSubmit}>

@@ -35,7 +35,12 @@ export interface Sale {
   price: number;
   productId: number;
   shipment: Shipment;
-  expenses: Expense[];
+  expenses: ExpenseRef[];
+}
+
+interface ExpenseRef{
+  id: number;
+  cost: number;
 }
 
 export interface Shipment {

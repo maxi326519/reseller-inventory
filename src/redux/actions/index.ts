@@ -212,7 +212,7 @@ export function postExpenses(
   };
 }
 
-export function postSale(
+export function postSales(
   sales: Sale[]
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
@@ -222,14 +222,23 @@ export function postSale(
       // Agregar documentos al batch
       const batch = writeBatch(db);
       const salesRef = collection(db, "User", auth.currentUser.uid, "Sales");
+      const itemsRef = collection(
+        db,
+        "Users",
+        auth.currentUser.uid,
+        "Items"
+      );
 
       sales.forEach((sale: Sale) => {
         const date: string[] = sale.date.split("-");
         const year: string = date[0];
         const month: string = date[1];
+        
         const yearRef = doc(salesRef, year);
         const monthRef = collection(yearRef, month);
+
         batch.set(doc(monthRef, sale.id.toString()), sale);
+        batch.update(doc(itemsRef, sale.productId.toString()), { state: "Sold" });
       });
 
       await batch.commit();
@@ -501,13 +510,13 @@ export function expiredItems(
 
       itemsID.forEach((id) => {
         if (auth.currentUser === null) throw new Error("unauthenticated user");
-        const reportRef = collection(
+        const itemsRef = collection(
           db,
           "Users",
           auth.currentUser.uid,
           "Items"
         );
-        batch.update(doc(reportRef, id.toString()), { state: "Expired" });
+        batch.update(doc(itemsRef, id.toString()), { state: "Expired" });
       });
 
       await batch.commit();
@@ -522,20 +531,20 @@ export function expiredItems(
   };
 }
 
-export function sellItems(
+/* export function sellItems(
   itemsID: number[]
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       for (let i: number = 0; i < itemsID.length; i++) {
         if (auth.currentUser === null) throw new Error("unauthenticated user");
-        const reportRef = collection(
+        const itemsRef = collection(
           db,
           "Users",
           auth.currentUser.uid,
           "Items"
         );
-        await updateDoc(doc(reportRef, `${itemsID[0]}`), { state: "Sold" });
+        await updateDoc(doc(itemsRef, `${itemsID[0]}`), { state: "Sold" });
       }
 
       dispatch({
@@ -547,3 +556,4 @@ export function sellItems(
     }
   };
 }
+ */
