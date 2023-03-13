@@ -1,0 +1,17 @@
+.toTop {
+  position: relative;
+  animation-name: toTopAnimation;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-out;
+}
+
+@keyframes toTopAnimation{
+  0%{
+    top: 10%;
+    opacity: 0;
+  }
+  100%{
+    top: 0%;
+    opacity: 100%;
+  }
+}

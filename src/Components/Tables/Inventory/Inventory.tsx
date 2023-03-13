@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { closeLoading, expiredItems, loading } from "../../../redux/actions";
-import { RootState, Item } from "../../../interfaces";
+import { RootState, Item, Sale } from "../../../interfaces";
 
 import Table from "./Table/Table";
 import AddSale from "./AddSale/AddSale";
@@ -10,12 +10,25 @@ import AddSale from "./AddSale/AddSale";
 import style from "./Inventory.module.css";
 import swal from "sweetalert";
 
+const initialSale: Sale = {
+  id: 0,
+  date: new Date().toISOString().split("T")[0],
+  price: 0,
+  productId: 0,
+  shipment: {
+    value: false,
+    amount: 0,
+  },
+  expenses: [],
+};
+
 export default function Inventory() {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.items);
   const [rows, setRows] = useState<Item[]>([]);
-  const [itemSelected, setSale] = useState<number[]>([]);
   const [close, setClose] = useState<boolean>(false);
+  const [itemSelected, setItem] = useState<number[]>([]);
+  const [sales, setSales] = useState<Sale[]>([]);
   const [total, setTotal] = useState("0");
   const [search, setSearch] = useState<string>("");
 
@@ -42,10 +55,21 @@ export default function Inventory() {
 
   function handleSelected(id: number) {
     if (itemSelected.some((s) => s === id)) {
-      setSale(itemSelected.filter((s) => s !== id));
+      setItem(itemSelected.filter((s) => s !== id));
+      setSales(sales.filter((s) => s.productId !== id));
     } else {
-      setSale([...itemSelected, id]);
+      setItem([...itemSelected, id]);
+      setSales([
+        ...sales,
+        {
+          ...initialSale,
+          id: id,
+          productId: id,
+        },
+      ]);
     }
+    console.log(itemSelected);
+    console.log(sales);
   }
 
   function handleExpired() {
@@ -82,6 +106,8 @@ export default function Inventory() {
           handleClose={handleClose}
           itemSelected={itemSelected}
           handleSelected={handleSelected}
+          sales={sales}
+          setSales={setSales}
         />
       ) : null}
       <div className={style.head}>

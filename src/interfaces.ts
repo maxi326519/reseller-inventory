@@ -35,15 +35,11 @@ export interface Sale {
   price: number;
   productId: number;
   shipment: Shipment;
-  expenses: ExpenesesSold[];
+  expenses: Expense[];
 }
 
 export interface Shipment {
   value: boolean;
-  amount: 0;
-}
-export interface ExpenesesSold {
-  description: string;
   amount: number;
 }
 

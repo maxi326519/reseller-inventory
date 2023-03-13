@@ -1,0 +1,42 @@
+.shipment input[type="checkbox"]{
+  margin-right: 10px;
+}
+
+.shipmentExpenses{
+  display: flex;
+  overflow: hidden;
+  height: 0px;
+  opacity: 0%;
+  transition: 0.4s;
+}
+
+.showShipEpense{
+  height: 62px !important;
+  opacity: 100% !important;
+  transition: 0.4s;
+}
+
+.shipmentExpenses div:first-child{
+  margin-right: 10px;
+}
+
+.shipmentExpenses div{
+  flex-grow: 1;
+}
+
+.otherExpenses{
+  display: flex;
+  margin-top: 10px;
+}
+
+.otherExpenses div:first-child{
+  margin-right: 10px;
+}
+
+.otherExpenses div{
+  flex-grow: 1;
+}
+
+.otherExpenses div input:nth-child(2){
+  margin-bottom: 10px;
+}

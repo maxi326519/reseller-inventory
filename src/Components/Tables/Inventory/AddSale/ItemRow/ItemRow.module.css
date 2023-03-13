@@ -1,0 +1,27 @@
+.row{
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: #282828;
+}
+
+.row span{
+  flex-grow: 1;
+}
+
+.row button{
+  width: 40px;
+  border-radius: 8px;
+}
+
+.row input{
+  width: 100px;
+  margin-right: 10px;
+}
+
+.selected{
+  background-color: #444;
+  outline: 1px solid grey;
+}

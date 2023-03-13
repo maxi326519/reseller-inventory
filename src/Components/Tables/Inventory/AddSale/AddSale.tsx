@@ -9,59 +9,31 @@ import {
   closeLoading,
 } from "../../../../redux/actions";
 
+import ItemRow from "./ItemRow/ItemRow";
+import SaleData from "./SaleData/SaleData";
+
 import styles from "./AddSale.module.css";
+import "../../../../animation.css";
 
 interface Props {
   handleClose: () => void;
   itemSelected: number[];
   handleSelected: (id: number) => void;
-}
-
-interface Check {
-  other: boolean;
-}
-
-const initialSale: Sale = {
-  id: 0,
-  date: format(new Date().toLocaleDateString()),
-  price: 0,
-  productId: 0,
-  shipment: {
-    value: false,
-    amount: 0,
-  },
-  expenses: [],
-};
-
-function format(date: string) {
-  const dateSplit = date.split("/");
-  const format = `${dateSplit[2]}-${("0" + dateSplit[1]).slice(-2)}-${
-    "0" + dateSplit[0].slice(-2)
-  }`;
-  return format;
+  sales: Sale[];
+  setSales: (sales: Sale[]) => void;
 }
 
 export default function AddSale({
   handleClose,
   itemSelected,
   handleSelected,
+  sales,
+  setSales,
 }: Props) {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.items);
   const [rows, setRows] = useState<Item[]>([]);
-  const [check, setCheck] = useState<Check>({
-    other: false,
-  });
-
-  const [sale, setSale] = useState<Sale>(initialSale);
-  const [solds, setSolds] = useState<Sale[]>([]);
-  const [feesEbay, setFeesEbay] = useState<number>(0);
-  const [other, setOther] = useState({
-    description: "",
-    amount: 0,
-    description2: "",
-    amount2: 0,
-  });
+  const [rowSelected, setSelected] = useState<number>(itemSelected[0]);
 
   /* Cargamos los items seleccionados */
   useEffect(() => {
@@ -72,122 +44,73 @@ export default function AddSale({
     );
   }, [itemSelected, items]);
 
-  /* Seteamos las nuevas ventas con los items seleccioandos */
-  /*   useEffect(() => {
-    setSolds(
-      rows.map((i) => {
-        return {
-          itemID: i.id,
-          price: 0,
-        };
-      })
-    );
-  }, [rows]); */
+  function handleRowSelect(id: number) {
+    setSelected(id);
+  }
 
-  /* Calculamos el nuevo total */
-  /*   useEffect(() => {
-    let total: number = 0;
-
-    solds.forEach((s) => {
-      total += s.price;
-    });
-
-    if (total !== sale.total) {
-      setSale({
-        ...sale,
-        total: total,
-      });
-    }
-  }, [solds, sale]); */
-
-  /*   function handleChangeSold(id: number, price: number) {
-    setSolds(
-      solds.map((s) => {
-        if (s.itemID === id) {
+  function handleSetPrice(id: number, price: string) {
+    setSales(
+      sales.map((s) => {
+        if (s.id === id) {
           return {
-            itemID: id,
-            price: price,
+            ...s,
+            price: Number(price),
           };
         }
         return s;
       })
     );
-  } */
-
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setSale({ ...sale, [event.target.value]: event.target.value });
   }
 
-  function handleCheck(event: React.ChangeEvent<HTMLInputElement>) {
-    const name: string = event.target.name;
-    setCheck({ ...check, other: !check["other"] });
-  }
-
-  function handleShipment(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+    saleId: number | undefined
+  ) {
+    const id = event.target.id;
     const name = event.target.name;
-    const value = event.target.value;
-    console.log(name, value);
-    if (name === "value") {
-      setSale({
-        ...sale,
-        shipment: {
-          ...sale.shipment,
-          [name]: !sale.shipment.value,
-        },
-      });
+    let newData = {};
+
+    console.log(id);
+    console.log(saleId);
+
+    if (id.includes("shipment")) {
+      setSales(
+        sales.map((s) => {
+          if (s.id === saleId) {
+            console.log("Se encontro");
+            console.log("Name", name);
+            console.log(
+              "value",
+              name === "value" ? event.target.checked : s.shipment.value
+            );
+            return {
+              ...s,
+              shipment: {
+                value:
+                  name === "value" ? event.target.checked : s.shipment.value,
+                amount:
+                  name === "amount"
+                    ? Number(event.target.value)
+                    : s.shipment.amount,
+              },
+            };
+          }
+          return s;
+        })
+      );
     } else {
-      setSale({
-        ...sale,
-        shipment: {
-          ...sale.shipment,
-          [name]: value,
-        },
-      });
+      newData = { [event.target.name]: event.target.value };
     }
   }
 
-  function handleOther(event: React.ChangeEvent<HTMLInputElement>) {
-    setOther({ ...other, [event.target.name]: event.target.value });
-  }
- 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-/*     event.preventDefault();
-    const newSale = {
-      ...sale,
-      sold: solds,
-      expenses: [
-        { description: "Fees Ebay", amount: feesEbay },
-        { description: other.description, amount: other.amount },
-        { description: other.description2, amount: other.amount2 },
-      ],
-    };
-
-    dispatch(loading());
-    dispatch<any>(postSale(newSale))
-      .then(() => {
-        dispatch<any>(sellItems(newSale.sold.map((s) => s.itemID))).then(() => {
-          handleClose();
-          dispatch(closeLoading());
-          swal(
-            "Actualizado",
-            "Se actualizaron las categorias con exito",
-            "success"
-          );
-        });
-      })
-      .catch(() => {
-        dispatch(closeLoading());
-        swal(
-          "Error",
-          "Ocurrio un error al actualizar las caterogrias",
-          "error"
-        );
-      }); */
+    event.preventDefault();
+    console.log(sales);
   }
 
   return (
     <div className={styles.background}>
-      <form className={styles.container} onSubmit={handleSubmit}>
+      <form className={`toTop ${styles.container}`} onSubmit={handleSubmit}>
         <div className={styles.close}>
           <h4>Items</h4>
           <button
@@ -199,135 +122,20 @@ export default function AddSale({
           </button>
         </div>
         <div className={styles.list}>
-          {rows.length > 0 ? (
-            rows.map((item, index) => (
-              <div key={index} className={styles.row}>
-                <span>{item.id}</span>
-                <span>{item.description}</span>
-                <input
-                  placeholder="Price"
-                  type="number"
-                  /*                   onChange={(e) =>
-                    handleChangeSold(item.id, Number(e.target.value))
-                  } */
-                />
-                <button
-                  className="btn btn-danger"
-                  type="button"
-                  onClick={() => handleSelected(item.id)}
-                >
-                  -
-                </button>
-              </div>
-            ))
-          ) : (
-            <span className={styles.empty}>Empty</span>
-          )}
-        </div>
-        <div className="mb-3 form-floating">
-          <input
-            className="form-control"
-            id="date"
-            type="date"
-            name="date"
-            value={sale.date}
-            onChange={handleChange}
-          />
-          <label className="form-label" htmlFor="date">
-            Date:
-          </label>
-        </div>
-
-        {/* Shipment */}
-        <div className={styles.shipment}>
-          <div>
-            <input
-              id="shipment"
-              name="value"
-              checked={sale.shipment.value}
-              type="checkbox"
-              onChange={handleShipment}
+          {rows.map((item) => (
+            <ItemRow
+              item={item}
+              rowSelected={rowSelected}
+              handleRowSelect={handleRowSelect}
+              handleSelected={handleSelected}
+              handleSetPrice={handleSetPrice}
             />
-            <label htmlFor="shipment">Envio</label>
-            <input
-              className="form-control"
-              placeholder="$ 0.00"
-              type="number"
-              name="amount"
-              disabled={!sale.shipment.value}
-              onChange={handleShipment}
-            />
-          </div>
-          <div>
-            <label htmlFor="feesEbay">FeesEbay</label>
-            <input
-              className="form-control"
-              placeholder="$ 0.00"
-              type="number"
-              value={feesEbay}
-              disabled={!sale.shipment.value}
-              onChange={(e) => setFeesEbay(Number(e.target.value))}
-            />
-          </div>
+          ))}
         </div>
-
-        {/* Expenses */}
-        <div className={styles.expenses}>
-          <div>
-            <input
-              id="other"
-              name="other"
-              checked={check.other}
-              type="checkbox"
-              onChange={handleCheck}
-            />
-            <label className="form-label" htmlFor="other">
-              Other expenses
-            </label>
-          </div>
-          <div className={styles.inputs}>
-            <div>
-              <input
-                className="form-control"
-                placeholder="Description"
-                type="text"
-                name="description"
-                value={other.description}
-                disabled={!check.other}
-                onChange={handleOther}
-              />
-              <input
-                className="form-control"
-                placeholder="$ 0.00"
-                type="number"
-                name="amount"
-                value={other.amount}
-                disabled={!check.other}
-                onChange={handleOther}
-              />
-            </div>
-            <div>
-              <input
-                className="form-control"
-                placeholder="Description"
-                type="text"
-                name="description2"
-                value={other.description2}
-                disabled={!check.other}
-                onChange={handleOther}
-              />
-              <input
-                className="form-control"
-                placeholder="$ 0.00"
-                type="number"
-                name="amount2"
-                value={other.amount2}
-                disabled={!check.other}
-                onChange={handleOther}
-              />
-            </div>
-          </div>
-        </div>
+        <SaleData
+          sale={sales.find((s: Sale) => s.id === rowSelected)}
+          handleChange={handleChange}
+        />
         <hr></hr>
         <div>
           <span>Items: {rows.length}</span>
