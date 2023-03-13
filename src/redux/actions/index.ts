@@ -188,7 +188,7 @@ export function postExpenses(
         db,
         "Users",
         auth.currentUser.uid,
-        "Epenses"
+        "Expenses"
       );
 
       expenses.forEach((expense: Expense) => {
@@ -213,7 +213,7 @@ export function postExpenses(
 }
 
 export function postSales(
-  sales: Sale[]
+  sales: Sale[] | any
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
@@ -221,7 +221,7 @@ export function postSales(
 
       // Agregar documentos al batch
       const batch = writeBatch(db);
-      const salesRef = collection(db, "User", auth.currentUser.uid, "Sales");
+      const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
       const itemsRef = collection(
         db,
         "Users",
@@ -465,13 +465,17 @@ export function getReports(): ThunkAction<
 
 export function updateReports(
   expenses: Expense[],
-  reports: YearReport[]
+  reports: YearReport[],
+  sales: Sale[] | any,
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-      const response = calculeReports(reports, expenses);
+      let response = calculeReports(reports, expenses, true);
+      if(sales) response = calculeReports(response.reports, sales, false);
       const newReports = response.reports;
       const years = response.years;
+
+      console.log(response);
 
       for (let i = 0; i < newReports.length; i++) {
         if (auth.currentUser === null) throw new Error("unauthenticated user");
@@ -486,7 +490,7 @@ export function updateReports(
             auth.currentUser.uid,
             "Reports"
           );
-          const yearReportRef = doc(reportRef, "Reports", year);
+          const yearReportRef = doc(reportRef, year);
           setDoc(yearReportRef, { ...newReports[i] });
         }
       }

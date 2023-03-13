@@ -19,7 +19,7 @@ import {
 
 const initialState: RootState = {
   user: {
-    categories: [],
+    categories: ["General", "Shipping"],
   },
   items: [],
   invoices: [],

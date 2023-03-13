@@ -11,10 +11,10 @@
   background-color: red;
 }
 
-.chart svg text{
+/* .chart svg text{
   fill: white;
 }
-
+ */
 .controls{
   display: flex;
   align-items: center;

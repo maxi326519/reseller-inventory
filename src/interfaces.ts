@@ -64,6 +64,7 @@ export interface MonthReport {
 
 export interface ReportItem {
   id: number;
+  type: string,
   amount: number;
 }
 

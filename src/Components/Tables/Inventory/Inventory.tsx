@@ -68,13 +68,15 @@ export default function Inventory() {
   const [close, setClose] = useState<boolean>(false);
   const [itemSelected, setItem] = useState<number[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
-  const [total, setTotal] = useState("0");
   const [search, setSearch] = useState<string>("");
   const [other, setOther] = useState<OtherExpenses[]>([]);
   const [shipment, setShiping] = useState<ShipingExpenses[]>([]);
+  const [total, setTotal] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
     let total = 0;
+    let totalItems = 0;
     setRows(
       items.filter((i) => {
         if (i.state === "Sold") return false;
@@ -86,8 +88,10 @@ export default function Inventory() {
         return false;
       })
     );
-    items.forEach((i) => (total += Number(i.cost)));
-    if (items.length > 0) setTotal(Number(total).toFixed(3));
+    items.forEach((i) => i.state === "In Stock" ? total += Number(i.cost) : null);
+    items.forEach((i) => i.state === "In Stock" ? totalItems++ : null);
+    setTotal(Number(total.toFixed(2)));
+    setTotalItems(Number(totalItems.toFixed(2)));
   }, [items, search]);
 
   function handleClose() {
@@ -303,6 +307,7 @@ export default function Inventory() {
           >
             Expired
           </button>
+          <span className={style.totalStock}>Total Items: {totalItems}</span>
           <span className={style.totalStock}>Stock price: ${total}</span>
         </div>
         <Table

@@ -26,20 +26,40 @@ const initialData: Array<Array<any>> = [
 
 const options = {
   title: "Company Performance",
-  titleTextStyle: { color: "white" },
+  backgroundColor: "#333",
+  // Cambiar los colores de los textos
+  titleTextStyle: {
+    color: "white",
+    fontSize: 18,
+    bold: true,
+  },
+  legendTextStyle: {
+    color: "white",
+    fontSize: 14,
+  },
   hAxis: {
     title: "Year",
     titleTextStyle: { color: "white" },
-    textStyle: { color: "white" },
+
+    textStyle: {
+      color: "white",
+    },
   },
   vAxis: {
     title: "Sales / Expensas",
     titleTextStyle: { color: "white" },
-    textStyle: { color: "white" },
-    minValue: 0,
+
+    textStyle: {
+      color: "white",
+    },
+  },
+  tooltip: {
+    backgroundColor: "white",
+    textStyle: {
+      color: "black",
+    },
   },
   leyend: { color: "white" },
-  backgroundColor: "#333",
   chartArea: { width: "70%", height: "500px", backgroundColor: "#444" },
   animation: { startup: true, duration: 300, easing: "ease-in" },
 };
@@ -72,14 +92,6 @@ export default function Charts() {
     setYearData(newData);
   }, [reports]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (yearsData.length === 0) {
-        setError(true);
-      }
-    }, 5000);
-  }, []);
-
   function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const selected: string = event.target.value;
     setData(yearsData.find((y: any) => y.year.toString() === selected).data);
@@ -88,7 +100,6 @@ export default function Charts() {
   return (
     <div className={styles.container}>
       <div className={styles.chart}>
-        {error ? <div className={styles.notFound}><span>Empty</span></div> : null}
         <Chart
           chartType="ColumnChart"
           width="100%"

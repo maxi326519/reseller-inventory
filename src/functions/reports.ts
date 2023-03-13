@@ -1,6 +1,6 @@
-import { YearReport, MonthReport, Expense } from "../interfaces";
+import { YearReport, MonthReport, Expense, Sale } from "../interfaces";
 
-export function calculeReports(reports: YearReport[], data: Expense[]) {
+export function calculeReports(reports: YearReport[], data: Sale[] | Expense[] | undefined[], isExpense: boolean) {
   let years: string[] = []; // Save years of matching expenses
   let missingYears: string[] = []; // Save years of missing expenses
   let newReports: YearReport[] = []; // Save all reports
@@ -43,30 +43,76 @@ export function calculeReports(reports: YearReport[], data: Expense[]) {
             return false;
           });
 
+          
+          let newMonth: MonthReport;
           /* If exist, update */
           if (match.length > 0) {
-            const newMonth = {
-              ...month,
-              expenses: [
-                ...month.expenses,
-                ...match.map((m) => {
-                  return {
-                    id: m.id,
-                    amount: m.price,
-                  };
-                }),
-              ],
-              totalExpenses:
-                month.totalExpenses +
-                total(
-                  data.filter(
-                    (d) =>
-                      d.date.split("-")[0] === r.year.toString() &&
-                      d.date.split("-")[1] ===
-                        `0${month.month.toString()}`.slice(-2)
-                  )
-                ),
-            };
+            /* If are Expense */
+            if (isExpense) {
+              newMonth = {
+                ...month,
+                expenses: [
+                  ...month.expenses,
+                  ...match.map((m) => {
+                    return {
+                      id: m.id,
+                      type: m.category,
+                      amount: m.price,
+                    };
+                  }),
+                ],
+                totalExpenses:
+                  month.totalExpenses +
+                  total(
+                    data.filter(
+                      (d) =>
+                        d.date.split("-")[0] === r.year.toString() &&
+                        d.date.split("-")[1] ===
+                          `0${month.month.toString()}`.slice(-2)
+                    )
+                  ),
+              };
+            } else {
+              /* If are Sale */
+              /* Add sale */
+              newMonth = {
+                ...month,
+                sales: [
+                  ...month.sales,
+                  ...match.map((m) => {
+                    return {
+                      id: m.id,
+                      type: "Sale",
+                      amount: m.price,
+                    };
+                  }),
+                ],
+              };
+              /* If existe, Add Shiping */
+              newMonth = {
+                ...newMonth,
+                sales: [
+                  ...newMonth.sales,
+                  ...match.map((m) => {
+                    return {
+                      id: m.id,
+                      type: "Shipment",
+                      amount: m.shipment.amount,
+                    };
+                  }),
+                ],
+              };
+
+              let totalSale = 0;
+              newMonth.sales.forEach((sale) => totalSale += sale.amount);
+
+              /* Calculate total */
+              newMonth = {
+                ...newMonth,
+                totalSales:
+                month.totalSales + totalSale
+              }
+            }
             return newMonth;
           } else {
             return month;
@@ -79,9 +125,13 @@ export function calculeReports(reports: YearReport[], data: Expense[]) {
     }
   });
 
-  const updateYears = [...missingYears, ...years].filter((element, index, arr) => {
-    return arr.indexOf(element) === index && !(element in arr.slice(index + 1));
-  });
+  const updateYears = [...missingYears, ...years].filter(
+    (element, index, arr) => {
+      return (
+        arr.indexOf(element) === index && !(element in arr.slice(index + 1))
+      );
+    }
+  );
 
   return {
     reports: newReports,
@@ -90,7 +140,6 @@ export function calculeReports(reports: YearReport[], data: Expense[]) {
 }
 
 function total(array: Array<any>) {
-  console.log("suma", array);
   let total: number = 0;
   array.forEach((a) => {
     total += Number(a.price);

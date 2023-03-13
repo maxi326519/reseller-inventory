@@ -7,6 +7,7 @@ import {
   loading,
   closeLoading,
   postExpenses,
+  updateReports,
 } from "../../../../redux/actions";
 
 import ItemRow from "./ItemRow/ItemRow";
@@ -18,12 +19,12 @@ import "../../../../animation.css";
 interface OtherExpenses {
   saleId: number;
   other1: {
-    check: boolean,
+    check: boolean;
     description: string;
     cost: number | string;
   };
   other2: {
-    check: boolean,
+    check: boolean;
     description: string;
     cost: number | string;
   };
@@ -44,7 +45,7 @@ interface Props {
   shipment: ShipingExpenses[];
   handleExpense: (
     event: React.ChangeEvent<HTMLInputElement>,
-    id: number | undefined,
+    id: number | undefined
   ) => void;
 }
 
@@ -60,6 +61,7 @@ export default function AddSale({
 }: Props) {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.items);
+  const reports = useSelector((state: RootState) => state.reports);
   const [rows, setRows] = useState<Item[]>([]);
   const [rowSelected, setSelected] = useState<number>(itemSelected[0]);
 
@@ -137,69 +139,77 @@ export default function AddSale({
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    console.log("Items", itemSelected);
-    console.log("Sales", sales);
-    console.log("Other", other);
-    console.log("shipment", shipment);
-
-/*     if(handleValidations()){
+    if (handleValidations()) {
       dispatch(loading());
       const newData = convertData(sales, other, shipment);
-      dispatch<any>(postSales(newData.sales));
-      dispatch<any>(postExpenses(newData.expenses));
+      console.log("Sales", newData.sales);
+      console.log("Expenses", newData.expenses);
+      dispatch<any>(postSales(newData.sales)).then(() => {
+        dispatch<any>(postExpenses(newData.expenses)).then(() => {
+          dispatch<any>(
+            updateReports(newData.expenses, reports, newData.sales)
+          );
+        });
+      });
       dispatch(closeLoading());
-    } */
+    }
   }
 
-  function handleValidations(){
-    return true
+  function handleValidations() {
+    return true;
   }
 
-  function convertData(sales: Sale[], other: OtherExpenses[], shipment: ShipingExpenses[]){
+  function convertData(
+    sales: Sale[],
+    other: OtherExpenses[],
+    shipment: ShipingExpenses[]
+  ) {
     let error: number[] = [];
     let allExpenses: Expense[] = [];
 
     const newSales = sales.map((sale) => {
-      const otherExpenses: OtherExpenses | undefined = other.find((o) => o.saleId === sale.id);
-      const shipmentExpenses: ShipingExpenses | undefined = shipment.find((s) => s.saleId === sale.id);
+      const otherExpenses: OtherExpenses | undefined = other.find(
+        (o) => o.saleId === sale.id
+      );
+      const shipmentExpenses: ShipingExpenses | undefined = shipment.find(
+        (s) => s.saleId === sale.id
+      );
       let expenses: Expense[] = [];
-      
-      if(otherExpenses && shipmentExpenses){
 
-        if(otherExpenses.other1.check){
+      if (otherExpenses && shipmentExpenses) {
+        if (otherExpenses.other1.check) {
           expenses.push({
             id: sale.id,
             date: sale.date,
             price: Number(otherExpenses.other1.cost),
-            category: "Sale",
+            category: "SaleOther1",
             description: otherExpenses.other1.description,
-          })
+          });
         }
-        if(otherExpenses.other2.check){
+        if (otherExpenses.other2.check) {
           expenses.push({
             id: sale.id,
             date: sale.date,
             price: Number(otherExpenses.other2.cost),
-            category: "Sale",
+            category: "SaleOther2",
             description: otherExpenses.other2.description,
-          })
+          });
         }
-        if(sale.shipment.value){
+        if (sale.shipment.value) {
           expenses.push({
             id: sale.id,
             date: sale.date,
             price: Number(shipmentExpenses.shipment),
             category: "Shipment",
             description: "Shipment expense",
-          })
+          });
           expenses.push({
             id: sale.id,
             date: sale.date,
             price: Number(shipmentExpenses.ebayFees),
             category: "EbayFees",
             description: "EbayFees expense",
-
-          })
+          });
         }
 
         expenses.forEach((ex) => allExpenses.push(ex));
@@ -210,18 +220,18 @@ export default function AddSale({
             return {
               id: ex.id,
               cost: ex.price,
-            }
+            };
           }),
-        }
-      }else{
+        };
+      } else {
         error.push(sale.id);
         console.log(`Error to post ${sale.id}`);
       }
-    })
+    });
 
     return {
       sales: newSales,
-      expenses: allExpenses
+      expenses: allExpenses,
     };
   }
 
