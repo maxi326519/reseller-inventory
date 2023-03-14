@@ -334,6 +334,8 @@ export function getInvoince(
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
+      console.log(date);
+
       let newInvoices: Array<any> = [];
       const dateArr = date.split("-");
       const year = dateArr[0];

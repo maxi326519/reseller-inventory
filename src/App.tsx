@@ -36,7 +36,7 @@ function App() {
       if (auth.currentUser) {
         dispatch<any>(getUserData()).catch((e: any) => console.log(e));
         dispatch<any>(getItems()).catch((e: any) => console.log(e));
-        dispatch<any>(getInvoince(format(new Date().toLocaleDateString()))).catch((e: any) => console.log(e));
+        dispatch<any>(getInvoince(format(new Date().toISOString().split("T")[0]))).catch((e: any) => console.log(e));
         dispatch<any>(getReports()).catch((e: any) => console.log(e));
         dispatch(closeLoading());
       } else {
