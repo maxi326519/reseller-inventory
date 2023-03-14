@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import ItemsSold from "./ItemsSold/ItemsSold";
+import ItemsExpired from "./ItemsExpired/ItemsExpired";
 import Taxes from "./Taxes/Taxes";
 
 import styles from "../Tables.module.css";
@@ -31,7 +32,8 @@ export default function Reports() {
             onChange={handleChange}
           >
             <option value="1">Items Sold</option>
-            <option value="2">Taxes</option>
+            <option value="2">Items Expired</option>
+            <option value="3">Taxes</option>
           </select>
           <label className="form-label" htmlFor="filter">
             Filter by:
@@ -40,7 +42,8 @@ export default function Reports() {
       </div>
       <div className={style.container}>
         {typeReport === "1" ? <ItemsSold /> : null}
-        {typeReport === "2" ? <Taxes /> : null}
+        {typeReport === "2" ? <ItemsExpired /> : null}
+        {typeReport === "3" ? <Taxes /> : null}
       </div>
     </div>
   );

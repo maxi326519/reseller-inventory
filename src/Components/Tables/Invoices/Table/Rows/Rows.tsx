@@ -17,7 +17,8 @@ export default function Rows({ invoice, handleDetails }: Props) {
       <span>{invoice.total}</span>
       <span>{invoice.form}</span>
       <span>{invoice.source}</span>
-      <button className="btn btn-success" type="button" onClick={() => handleDetails(invoice.id)}>View Items</button>
+      <button className="btn btn-primary" type="button" onClick={() => handleDetails(invoice.id)}>View Items</button>
+      <button className="btn btn-danger" type="button" onClick={() => handleDetails(invoice.id)}>-</button>
     </div>
   );
 }

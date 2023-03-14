@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 10px;
-  height: calc(100vh - 230px);
+  height: 100%;
   overflow: hidden;
   background-color: #fff2;
 }
@@ -20,16 +20,21 @@
 
 .rows {
   display: grid;
-  grid-template-columns: 110px 120px repeat(4, 1fr) 150px 80px;
+  grid-template-columns: 110px 200px 150px 1fr;
   text-align: center;
   border-bottom: 1px solid #ccc;
 }
 
-.rows span {
-  padding: 5px;
-  border-right: 1px solid #ccc;
+.rows label {
+  display: none;
 }
 
-.rows button{
-  border-radius: 0;
+.rows input[type="checkbox"] {
+  width: 20px;
+}
+
+.rows span,
+.rows div {
+  padding: 5px;
+  border-right: 1px solid #ccc;
 }

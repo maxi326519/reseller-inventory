@@ -1,15 +1,16 @@
 import { YearReport, MonthReport, Expense, Sale } from "../interfaces";
 
-export function calculeReports(reports: YearReport[], data: Sale[] | Expense[] | undefined[], isExpense: boolean) {
+export function calculeReports(reports: YearReport[], data: any, isExpense: boolean) {
   let years: string[] = []; // Save years of matching expenses
   let missingYears: string[] = []; // Save years of missing expenses
   let newReports: YearReport[] = []; // Save all reports
+
 
   if (reports.length <= 0)
     reports.push(reportGenerator(new Date().getFullYear().toString()));
 
   /* Matching and missing date search */
-  data.forEach((d) => {
+  data.forEach((d: any) => {
     let dataDate = d.date.split("-")[0];
     /* If exist any report with the date of the data */
     if (reports.some((r) => r.year.toString() === dataDate))
@@ -53,7 +54,7 @@ export function calculeReports(reports: YearReport[], data: Sale[] | Expense[] |
                 ...month,
                 expenses: [
                   ...month.expenses,
-                  ...match.map((m) => {
+                  ...match.map((m: Expense) => {
                     return {
                       id: m.id,
                       type: m.category,
@@ -65,7 +66,7 @@ export function calculeReports(reports: YearReport[], data: Sale[] | Expense[] |
                   month.totalExpenses +
                   total(
                     data.filter(
-                      (d) =>
+                      (d: Expense) =>
                         d.date.split("-")[0] === r.year.toString() &&
                         d.date.split("-")[1] ===
                           `0${month.month.toString()}`.slice(-2)
@@ -79,7 +80,7 @@ export function calculeReports(reports: YearReport[], data: Sale[] | Expense[] |
                 ...month,
                 sales: [
                   ...month.sales,
-                  ...match.map((m) => {
+                  ...match.map((m: Sale) => {
                     return {
                       id: m.id,
                       type: "Sale",
@@ -93,7 +94,7 @@ export function calculeReports(reports: YearReport[], data: Sale[] | Expense[] |
                 ...newMonth,
                 sales: [
                   ...newMonth.sales,
-                  ...match.map((m) => {
+                  ...match.map((m: Sale) => {
                     return {
                       id: m.id,
                       type: "Shipment",

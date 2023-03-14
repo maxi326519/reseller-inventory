@@ -4,9 +4,8 @@ import { Item, RootState } from "../../../../interfaces";
 import { getFirstAndLastDayOfMonth } from "../../../../functions/date";
 
 import Table from "./Table/Table";
-import Excel from "./Excel/Excel.jsx";
 
-import styles from "./ItemsSold.module.css";
+import styles from "./ItemsExpired.module.css";
 
 interface Dates {
   firstDay: string;
@@ -15,7 +14,7 @@ interface Dates {
 
 const initialDates: Dates = getFirstAndLastDayOfMonth(new Date());
 
-export default function ItemsSold() {
+export default function ItemsExpired() {
   const items: Item[] = useSelector((state: RootState) => state.items);
   const [itemsSold, setItemSold] = useState<Item[]>([]);
   const [dates, setDates] = useState(initialDates);
@@ -25,7 +24,7 @@ export default function ItemsSold() {
       filterAndSortItems(
         dates.firstDay,
         dates.lastDay,
-        items.filter((i) => i.state === "Sold")
+        items.filter((i) => i.state === "Expired")
       )
     );
   }, [items, dates]);
@@ -89,7 +88,6 @@ export default function ItemsSold() {
             From:
           </label>
         </div>
-        <Excel sales={itemsSold} />
       </div>
       <Table items={itemsSold} />
     </div>

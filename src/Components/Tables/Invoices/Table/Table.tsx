@@ -20,6 +20,7 @@ export default function Table({ invoices, handleDetails }: Props) {
         <span>Form of payment</span>
         <span>Source</span>
         <span>View</span>
+        <span>Delete</span>
       </div>
       <div className={styles.data}>
         {invoices.map((invoice) => (
