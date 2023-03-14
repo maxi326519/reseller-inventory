@@ -6,7 +6,12 @@
 
 .searchBar {
   display: flex;
+  align-items: center;
   margin-bottom: 20px;
+}
+
+.searchBar .total{
+  margin-left: 20px;
 }
 
 .searchBar input {

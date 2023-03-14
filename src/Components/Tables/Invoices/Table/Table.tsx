@@ -13,7 +13,7 @@ export default function Table({ invoices, handleDetails }: Props) {
   return (
     <div className={styles.table}>
       <div className={`${styles.firstRow} ${styles.rows}`}>
-        <span>ID</span>
+        <span>Invoice ID</span>
         <span>Date</span>
         <span>Total items</span>
         <span>Total cost</span>
@@ -24,7 +24,7 @@ export default function Table({ invoices, handleDetails }: Props) {
       </div>
       <div className={styles.data}>
         {invoices.map((invoice) => (
-          <Rows invoice={invoice} handleDetails={handleDetails}/>
+          <Rows key={invoice.id} invoice={invoice} handleDetails={handleDetails}/>
         ))}
       </div>
     </div>

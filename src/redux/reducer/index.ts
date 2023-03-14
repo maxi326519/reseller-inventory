@@ -1,25 +1,27 @@
 import { RootState } from "../../interfaces";
 import { AnyAction } from "redux";
 import {
+  SELL_ITEMS,
+  EXPIRED_ITEMS,
+  LOADING,
+  CLOSE_LOADING,
   POST_ITEMS,
   POST_INVOICE,
   POST_CATEGORIES,
   POST_SALE,
-  SELL_ITEMS,
-  LOADING,
-  CLOSE_LOADING,
   GET_USER_DATA,
   GET_ITEMS,
   GET_INVOICE,
   GET_REPORTS,
   GET_EXPENSES,
   UPDATE_REPORTS,
-  EXPIRED_ITEMS,
+  DELETE_INVOICE,
+  DELETE_ITEMS,
 } from "../actions";
 
 const initialState: RootState = {
   user: {
-    categories: ["General", "Shipping"],
+    categories: ["General", "Shipment"],
   },
   items: [],
   invoices: [],
@@ -123,15 +125,29 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
       return {
         ...state,
         items: state.items.map((item) => {
-          if(action.payload.some((id: number) => id === item.id)){
+          if (action.payload.some((id: number) => id === item.id)) {
             return {
               ...item,
               state: "Expired",
-            }
+            };
           }
-          return item
-        })
-      }
+          return item;
+        }),
+      };
+    case DELETE_INVOICE:
+      return {
+        ...state,
+        invoices: state.invoices.filter(
+          (invoice) => invoice.id !== action.payload
+        ),
+      };
+    case DELETE_ITEMS:
+      return {
+        ...state,
+        items: state.items.filter(
+          (item) => !action.payload.some((id: number) => id === item.id)
+        ),
+      };
     default:
       return state;
   }

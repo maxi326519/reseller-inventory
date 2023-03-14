@@ -1,6 +1,6 @@
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import { db, auth, storage } from "../../firebase";
+import { db, auth, storage, batch } from "../../firebase";
 import { calculeReports } from "../../functions/reports";
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
@@ -11,7 +11,7 @@ import {
   getDoc,
   getDocs,
   updateDoc,
-  writeBatch,
+  deleteDoc,
 } from "firebase/firestore";
 import {
   Item,
@@ -25,6 +25,13 @@ import {
 export const LOGIN = "LOGIN";
 export const LOGOUT = "LOGOUT";
 
+export const LOADING = "LOADING";
+export const CLOSE_LOADING = "CLOSE_LOADING";
+
+export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
+export const SELL_ITEMS = "SELL_ITEMS";
+
+/* POST */
 export const POST_ITEMS = "POST_ITEMS";
 export const POST_INVOICE = "POST_INVOICE";
 export const POST_CATEGORIES = "POST_CATEGORIES";
@@ -32,11 +39,7 @@ export const POST_EXPENSES = "POST_EXPENSES";
 export const POST_SALE = "POST_SALE";
 export const POST_IMAGE = "POST_IMAGE";
 
-export const UPDATE_REPORTS = "UPDATE_REPORTS";
-
-export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
-export const SELL_ITEMS = "SELL_ITEMS";
-
+/* GET */
 export const GET_USER_DATA = "GET_USER_DATA";
 export const GET_ITEMS = "GET_ITEMS";
 export const GET_INVOICE = "GET_INVOICE";
@@ -44,8 +47,12 @@ export const GET_EXPENSES = "GET_EXPENSES";
 export const GET_SALES = "GET_SALES";
 export const GET_REPORTS = "GET_REPORTS";
 
-export const LOADING = "LOADING";
-export const CLOSE_LOADING = "CLOSE_LOADING";
+/* UPDATE */
+export const UPDATE_REPORTS = "UPDATE_REPORTS";
+
+/* DELETE */
+export const DELETE_INVOICE = "DELETE_INVOICE";
+export const DELETE_ITEMS = "DELETE_ITEMS";
 
 export function logIn(
   user: any
@@ -100,7 +107,6 @@ export function postItems(
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
       // Agregar documentos al batch
-      const batch = writeBatch(db);
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
 
       items.forEach((item) => {
@@ -183,7 +189,6 @@ export function postExpenses(
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
       // Agregar documentos al batch
-      const batch = writeBatch(db);
       const expensesRef = collection(
         db,
         "Users",
@@ -220,7 +225,6 @@ export function postSales(
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
       // Agregar documentos al batch
-      const batch = writeBatch(db);
       const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
       const itemsRef = collection(
         db,
@@ -333,8 +337,6 @@ export function getInvoince(
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
-
-      console.log(date);
 
       let newInvoices: Array<any> = [];
       const dateArr = date.split("-");
@@ -512,8 +514,7 @@ export function expiredItems(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-      const batch = writeBatch(db);
-
+      
       itemsID.forEach((id) => {
         if (auth.currentUser === null) throw new Error("unauthenticated user");
         const itemsRef = collection(
@@ -529,6 +530,64 @@ export function expiredItems(
 
       dispatch({
         type: EXPIRED_ITEMS,
+        payload: itemsID,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function deleteInvoice(
+  invoice: Invoice
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
+
+      const dateArr = invoice.date.split("-");
+      const year = dateArr[0];
+      const month = dateArr[1];
+
+      const invoiceRef = collection(
+        db,
+        "Users",
+        auth.currentUser.uid,
+        "Invoices"
+      );
+
+      const yearRef = doc(invoiceRef, year);
+      const monthRef = collection(yearRef, month);
+      await deleteDoc(doc(monthRef, invoice.id.toString()));
+
+      dispatch({
+        type: DELETE_INVOICE,
+        payload: invoice.id,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function deleteItems(
+  itemsID: number[]
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      
+      itemsID.forEach((id) => {
+        if (auth.currentUser === null) throw new Error("unauthenticated user");
+        const itemsRef = collection(
+          db,
+          "Users",
+          auth.currentUser.uid,
+          "Items"
+        );
+        batch.update(doc(itemsRef, id.toString()), { state: "Expired" });
+      });
+      dispatch({
+        type: DELETE_ITEMS,
         payload: itemsID,
       });
     } catch (e: any) {

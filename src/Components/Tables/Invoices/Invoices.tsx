@@ -22,6 +22,7 @@ export default function Invoices() {
   const [close, setClose] = useState(false);
   const [rows, setRows] = useState<Invoice[]>([]);
   const [search, setSearch] = useState<string>("");
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     setRows(
@@ -35,6 +36,12 @@ export default function Invoices() {
       })
     );
   }, [search, invoices]);
+
+  useEffect(() => {
+    let total = 0;
+    rows.forEach((invoice) => total += invoice.total);
+    setTotal(total);
+  }, [rows])
 
   function handleDetails(invoiceID: number) {
     const showInvoice = invoices.find((i) => i.id === invoiceID);
@@ -78,7 +85,7 @@ export default function Invoices() {
   }
 
   function handleSetDate() {
-    
+
   }
 
   return (
@@ -114,7 +121,7 @@ export default function Invoices() {
           >
             <img src={reload} alt="reload" />
           </button>
-          {/*           <div className="mb-3 form-floating">
+          {/* <div className="mb-3 form-floating">
             <select
               id="year"
               className="form-control"
@@ -127,6 +134,7 @@ export default function Invoices() {
             </select>
             <label htmlFor="year">Year</label>
           </div> */}
+          <span className={style.total}>Total cost of invoices: ${total}</span>
         </div>
         <Table invoices={rows} handleDetails={handleDetails} />
       </div>

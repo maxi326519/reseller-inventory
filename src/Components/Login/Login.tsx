@@ -28,8 +28,8 @@ export default function Signin() {
   const dispatch = useDispatch();
   const [error, setError] = useState(initialError);
   const [user, setUser] = useState({
-    email: "",
-    password: "",
+    email: "maxi.32519@gmail.com",
+    password: "12345678",
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>): void {
@@ -101,6 +101,7 @@ export default function Signin() {
           <input
             type="email"
             name="email"
+            value={user.email}
             className={`form-control ${!error.email ? "" : "is-invalid"}`}
             id={error.email ? "floatingInputInvalid" : "user"}
             placeholder="name"
@@ -116,6 +117,7 @@ export default function Signin() {
           <input
             type="password"
             name="password"
+            value={user.password}
             className={`form-control ${!error.password ? "" : "is-invalid"}`}
             id={error.password ? "floatingInputInvalid" : "pass"}
             placeholder="Contraseña"

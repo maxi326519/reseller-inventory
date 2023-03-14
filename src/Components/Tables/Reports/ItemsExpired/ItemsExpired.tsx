@@ -16,11 +16,12 @@ const initialDates: Dates = getFirstAndLastDayOfMonth(new Date());
 
 export default function ItemsExpired() {
   const items: Item[] = useSelector((state: RootState) => state.items);
-  const [itemsSold, setItemSold] = useState<Item[]>([]);
+  const [itemsExpired, setItemsExpired] = useState<Item[]>([]);
   const [dates, setDates] = useState(initialDates);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    setItemSold(
+    setItemsExpired(
       filterAndSortItems(
         dates.firstDay,
         dates.lastDay,
@@ -28,6 +29,12 @@ export default function ItemsExpired() {
       )
     );
   }, [items, dates]);
+
+  useEffect(() => {
+    let total = 0;
+    itemsExpired.forEach((item) => total += Number(item.cost));
+    setTotal(total);
+  }, [itemsExpired])
 
   function filterAndSortItems(
     dateFrom: string,
@@ -88,8 +95,9 @@ export default function ItemsExpired() {
             From:
           </label>
         </div>
+        <span className={styles.total}>Total cost: ${Number(total).toFixed(2)}</span>
       </div>
-      <Table items={itemsSold} />
+      <Table items={itemsExpired} />
     </div>
   );
 }

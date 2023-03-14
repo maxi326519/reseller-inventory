@@ -6,9 +6,14 @@
 
 .controls{
   display: flex;
+  align-items: center;
   margin-bottom: 20px;
 }
 
 .controls div{
   margin-right: 10px;
+}
+
+.controls .total{
+  margin-left: 10px;
 }

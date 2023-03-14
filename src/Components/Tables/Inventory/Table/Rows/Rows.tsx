@@ -27,11 +27,10 @@ export default function Rows({ item, itemSelected, handleSelected }: Props) {
           onChange={() => handleCheck(item.id)}
         />
       </div>
-      <span>{changeDateFormat(item.date)}</span>
       <span>{item.id}</span>
+      <span>{changeDateFormat(item.date)}</span>
       <span>{item.description}</span>
       <span>{item.cost}</span>
     </div>
   );
 }
-  
