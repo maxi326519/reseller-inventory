@@ -68,6 +68,31 @@ export interface ReportItem {
   amount: number;
 }
 
+export interface YearTaxesData{
+  year: number;
+  month: MonthTaxesData[];
+}
+
+export interface MonthTaxesData {
+  month: {
+    number: number;
+    name: string;
+  };
+  sales: {
+    total: number,
+    sales: number,
+    shipment: number,
+  },
+  expenses: {
+    total: number,
+    COGS: number,
+    shipment: number,
+    ebayFees: number,
+    otherExpense1: number,
+    otherExpense2: number,
+  }
+}
+
 export interface RootState {
   user: User;
   items: Item[];
