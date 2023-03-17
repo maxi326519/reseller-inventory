@@ -20,6 +20,7 @@ export default function ItemsSold() {
   const [itemsSold, setItemSold] = useState<Item[]>([]);
   const [dates, setDates] = useState(initialDates);
   const [total, setTotal] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
     setItemSold(
@@ -33,8 +34,10 @@ export default function ItemsSold() {
 
   useEffect(() => {
     let total = 0;
-    itemsSold.forEach((item) => total += Number(item.cost));
+    let totaltems = 0;
+    itemsSold.forEach((item) => {total += Number(item.cost); totaltems++});
     setTotal(total);
+    setTotalItems(totaltems);
   }, [itemsSold])
 
   function filterAndSortItems(
@@ -97,7 +100,9 @@ export default function ItemsSold() {
           </label>
         </div>
         <Excel sales={itemsSold} />
+        <span className={styles.total}>Total items: {totalItems}</span>
         <span className={styles.total}>Total cost: ${Number(total).toFixed(2)}</span>
+        <span className={styles.total}>Order total: 0</span>
       </div>
       <Table items={itemsSold} />
     </div>

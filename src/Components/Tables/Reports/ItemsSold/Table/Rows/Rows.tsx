@@ -14,6 +14,8 @@ export default function Rows({ item }: Props) {
       <span>{item.id}</span>
       <span>{item.date}</span>
       <span>{item.cost}</span>
+      <span>{0}</span>
+      <span>{0}</span>
       <span>{item.description}</span>
     </div>
   );

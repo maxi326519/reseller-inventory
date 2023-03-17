@@ -16,6 +16,8 @@ export default function Table({ items }: Props) {
         <span>Item ID</span>
         <span>Date</span>
         <span>Unit cost</span>
+        <span>Price</span>
+        <span>Shipment income</span>
         <span>Description</span>
       </div>
       <div className={styles.data}>

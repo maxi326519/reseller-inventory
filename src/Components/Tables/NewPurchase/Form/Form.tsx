@@ -207,7 +207,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
             onChange={handleNewItems}
           />
           <label className="form-label" htmlFor="cost">
-            Unit cost:
+            Unit cost $:
           </label>
           {!error.cost ? null : <small>{error.cost}</small>}
         </div>

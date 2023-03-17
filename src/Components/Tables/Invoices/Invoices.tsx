@@ -134,7 +134,7 @@ export default function Invoices() {
             </select>
             <label htmlFor="year">Year</label>
           </div> */}
-          <span className={style.total}>Total cost of invoices: ${total}</span>
+          <span className={style.total}>Total cost of invoices: ${total.toFixed(2)}</span>
         </div>
         <Table invoices={rows} handleDetails={handleDetails} />
       </div>

@@ -336,6 +336,7 @@ export function getInvoince(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
+      console.log("Invoice date", date);
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
       let newInvoices: Array<any> = [];

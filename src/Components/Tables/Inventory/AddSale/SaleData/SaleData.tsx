@@ -73,7 +73,7 @@ export default function SaleData({
             checked={sale?.shipment.value}
             onChange={(e) => handleChange(e, sale?.id)}
           />
-          <label htmlFor="shipment-value">Shipment</label>
+          <label htmlFor="shipment-value">Shipment income</label>
           <input
             id="shipment-amount"
             className="form-control"
@@ -98,7 +98,7 @@ export default function SaleData({
           }`}
         >
           <div>
-            <label htmlFor="ebayFees">Shipment</label>
+            <label htmlFor="ebayFees">Ship Label</label>
             <input
               className="form-control"
               id="expense-shipment"
@@ -171,7 +171,7 @@ export default function SaleData({
                 checked={other?.other2.check}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
-              <label htmlFor="other2Check">Other expenses</label>
+              <label htmlFor="AdsfeeCheck">Ads Fee</label>
             </div>
             <div
               className={`${styles.otherContainer} ${
@@ -182,7 +182,7 @@ export default function SaleData({
                 className="form-control"
                 placeholder="Description"
                 type="text"
-                name="other2Description"
+                name="AdsfeeDescription"
                 value={other?.other2.description}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
@@ -190,7 +190,7 @@ export default function SaleData({
                 className="form-control"
                 placeholder="$ 0.00"
                 type="number"
-                name="other2Cost"
+                name="AdsfeeCost"
                 value={other?.other2.cost}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
