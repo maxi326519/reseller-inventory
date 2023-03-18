@@ -8,17 +8,16 @@ import {
   loading,
   closeLoading,
 } from "../../../redux/actions/";
+import swal from "sweetalert";
 
 import Form from "./Form/Form";
 import Table from "./Table/Table";
-
-import styles from "../Tables.module.css";
-import style from "./NewPurchase.module.css";
 import InvoiceImage from "./InvoiceImage/InvoiceImage";
-import swal from "sweetalert";
 import AddSource from "./AddSource/AddSource";
 import DownloadExcel from "./DownloadExcel/DownloadExcel";
 
+import style from "./NewPurchase.module.css";
+import styles from "../Tables.module.css";
 interface ExportData {
   id: number;
   description: string;
@@ -104,7 +103,7 @@ export default function NewPurchase() {
               dispatch(closeLoading());
               swal(
                 "Error",
-                "Error to save the invoice or items, try again leter",
+                "Error to save the invoice or items, try again later",
                 "error"
               );
               console.log(e);

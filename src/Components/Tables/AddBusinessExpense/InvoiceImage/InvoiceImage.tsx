@@ -1,21 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import style from "./InvoiceImage.module.css";
 import invoice from "../../../../assets/svg/invoice.svg";
 
 interface Props {
+  file: File | null;
   setFile: (image: File) => void;
 }
 
-export default function InvoiceImage({ setFile }: Props) {
+export default function InvoiceImage({ file, setFile }: Props) {
   const [image, setImage] = useState<string>("");
+
+  useEffect(() => {
+    if (file === null) setImage("");
+    else setImage(URL.createObjectURL(file));
+  }, [file]);
 
   function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-    if (file) {
-      setFile(file);
-      setImage(URL.createObjectURL(file));
-    }
+    if (file) setFile(file);
   }
 
   return (

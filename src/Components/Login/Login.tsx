@@ -64,7 +64,7 @@ export default function Signin() {
           const year = new Date().toISOString().split("T")[0].split("-")[0];
           const month = new Date().toISOString().split("T")[0].split("-")[1];
           dispatch<any>(getItems()).catch((e: any) => console.log(e));
-          dispatch<any>(getInvoices(year, month)).catch((e: any) => console.log(e));
+          dispatch<any>(getInvoices(year, null)).catch((e: any) => console.log(e));
           dispatch<any>(getUserData()).catch((e: any) => console.log(e));
           dispatch<any>(getReports()).catch((e: any) => console.log(e));
           dispatch(closeLoading());
@@ -82,14 +82,6 @@ export default function Signin() {
           console.log(e);
         });
     }
-  }
-
-  function format(date: string) {
-    const dateArray: string[] = date.split("/");
-    const dateStr = `${dateArray[2]}-${`0${dateArray[1]}`.slice(
-      -0
-    )}-${`0${dateArray[1]}`.slice(-2)}`;
-    return dateStr;
   }
 
   return (

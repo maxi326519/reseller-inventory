@@ -38,8 +38,6 @@ export default function Invoices() {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    console.log("search");
-    console.log("dateFIlter: ", dateFilter);
     setRows(
       invoices.filter((i) => {
         console.log(i.date);
@@ -116,10 +114,6 @@ export default function Invoices() {
         .then(() => {
           if (day !== "00") {
             setDateFilter(`${year}-${month}-${day}`);
-            /*             const newRows = invoices.filter((invoice) => {
-              return invoice.date === `${year}-${month}-${day}`;
-            });
-            setRows(newRows); */
           } else {
             setDateFilter("");
           }

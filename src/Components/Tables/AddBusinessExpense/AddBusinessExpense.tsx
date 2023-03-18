@@ -11,6 +11,7 @@ import { Expense, RootState } from "../../../interfaces";
 
 import Form from "./Form/Form";
 import Table from "./Table/Table";
+import InvoiceImage from "./InvoiceImage/InvoiceImage";
 import Categories from "./Categories/Categories";
 
 import style from "./AddBusinessExpense.module.css";
@@ -23,6 +24,7 @@ export default function AddBusinessExpense() {
   const [total, setTotal] = useState<number>(0);
   const [close, setClose] = useState<boolean>(false);
   const [amount, setAmount] = useState<any>("");
+  const [file, setFile] = useState<File | null>(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function AddBusinessExpense() {
 
   function handleAddExpese() {
     swal({
-      text: "¿Quiere guardar sus expensas?",
+      text: "Do you want to save the expenses?",
       icon: "info",
       buttons: {
         confirm: true,
@@ -52,11 +54,11 @@ export default function AddBusinessExpense() {
             setExpenses([]);
             setTotal(0);
             dispatch<any>(closeLoading());
-            swal("Guardado", "Se guardaron sus expensas con exito", "success");
+            swal("Saved", "Saved expenses successfully", "success");
           })
           .catch((e: any) => {
             dispatch<any>(closeLoading());
-            swal("Error", "Ocurrio un error al guardar sus expensas", "error");
+            swal("Error", "Error to save the expenses, try again later", "error");
             console.log(e);
           });
       }
@@ -65,7 +67,7 @@ export default function AddBusinessExpense() {
 
   function handleReset() {
     swal({
-      text: "¿Seguro que quiere eliminar las expensas actuales?",
+      text: "Are you sure you want to empty the invoice?",
       icon: "info",
       buttons: {
         confirm: true,
@@ -126,6 +128,7 @@ export default function AddBusinessExpense() {
             <span>{`Total:  $${total}`}</span>
           </div>
         </div>
+        <InvoiceImage file={file} setFile={setFile} />
       </div>
     </div>
   );
