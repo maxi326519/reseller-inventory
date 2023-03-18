@@ -1,10 +1,13 @@
 import { YearReport, MonthReport, Expense, Sale } from "../interfaces";
 
-export function calculeReports(reports: YearReport[], data: any, isExpense: boolean) {
+export function calculeReports(
+  reports: YearReport[],
+  data: any,
+  isExpense: boolean
+) {
   let years: string[] = []; // Save years of matching expenses
   let missingYears: string[] = []; // Save years of missing expenses
   let newReports: YearReport[] = []; // Save all reports
-
 
   if (reports.length <= 0)
     reports.push(reportGenerator(new Date().getFullYear().toString()));
@@ -44,7 +47,6 @@ export function calculeReports(reports: YearReport[], data: any, isExpense: bool
             return false;
           });
 
-          
           let newMonth: MonthReport;
           /* If exist, update */
           if (match.length > 0) {
@@ -63,7 +65,7 @@ export function calculeReports(reports: YearReport[], data: any, isExpense: bool
                   }),
                 ],
                 totalExpenses:
-                  month.totalExpenses +
+                  Number(month.totalExpenses) +
                   total(
                     data.filter(
                       (d: Expense) =>
@@ -75,12 +77,14 @@ export function calculeReports(reports: YearReport[], data: any, isExpense: bool
               };
             } else {
               /* If are Sale */
+              let totalSale = 0;
               /* Add sale */
               newMonth = {
                 ...month,
                 sales: [
                   ...month.sales,
                   ...match.map((m: Sale) => {
+                    totalSale += Number(m.price);
                     return {
                       id: m.id,
                       type: "Sale",
@@ -95,6 +99,7 @@ export function calculeReports(reports: YearReport[], data: any, isExpense: bool
                 sales: [
                   ...newMonth.sales,
                   ...match.map((m: Sale) => {
+                    totalSale += Number(m.shipment.amount);
                     return {
                       id: m.id,
                       type: "Shipment",
@@ -104,15 +109,11 @@ export function calculeReports(reports: YearReport[], data: any, isExpense: bool
                 ],
               };
 
-              let totalSale = 0;
-              newMonth.sales.forEach((sale) => totalSale += Number(sale.amount));
-
-              /* Calculate total */
+              /* Save total */
               newMonth = {
                 ...newMonth,
-                totalSales:
-                month.totalSales + Number(totalSale)
-              }
+                totalSales: Number(month.totalSales) + Number(totalSale),
+              };
             }
             return newMonth;
           } else {

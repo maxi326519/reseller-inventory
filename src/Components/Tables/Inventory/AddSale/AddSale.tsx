@@ -76,6 +76,52 @@ export default function AddSale({
     );
   }, [itemSelected, items]);
 
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (handleValidations()) {
+      dispatch(loading());
+      const newData = convertData(sales, other, shipment);
+      console.log("Sales", newData.sales);
+      console.log("Expenses", newData.expenses);
+      dispatch<any>(postSales(newData.sales))
+        .then(() => {
+          dispatch<any>(postExpenses(newData.expenses))
+            .then(() => {
+              dispatch<any>(
+                updateReports(newData.expenses, reports, newData.sales)
+              )
+                .then(() => {
+                  handleClose();
+                  swal("Save", "Items sold successfully", "success");
+                  setItem([]);
+                })
+                .catch((err: any) => {
+                  swal(
+                    "Error",
+                    "Error to update reports, try again leter",
+                    "error"
+                  );
+                  console.log(err);
+                });
+            })
+            .catch((err: any) => {
+              swal(
+                "Error",
+                "Error to create expenses, try again leter",
+                "error"
+              );
+              console.log(err);
+            });
+        })
+        .catch((err: any) => {
+          swal("Error", "Error to sale items, try again leter", "error");
+          console.log(err);
+        });
+      dispatch(closeLoading());
+    }
+  }
+
   function handleRowSelect(id: number) {
     setSelected(id);
   }
@@ -114,9 +160,7 @@ export default function AddSale({
                 value:
                   name === "value" ? event.target.checked : s.shipment.value,
                 amount:
-                  name === "amount"
-                    ? Number(event.target.value)
-                    : s.shipment.amount,
+                  name === "amount" ? event.target.value : s.shipment.amount,
               },
             };
           }
@@ -135,42 +179,6 @@ export default function AddSale({
           return s;
         })
       );
-    }
-  }
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (handleValidations()) {
-      dispatch(loading());
-      const newData = convertData(sales, other, shipment);
-      console.log("Sales", newData.sales);
-      console.log("Expenses", newData.expenses);
-      dispatch<any>(postSales(newData.sales))
-        .then(() => {
-          dispatch<any>(postExpenses(newData.expenses))
-            .then(() => {
-              dispatch<any>(
-                updateReports(newData.expenses, reports, newData.sales)
-              ).then(() => {
-                handleClose();
-                swal("Save", "Items sold successfully", "success");
-                setItem([]);
-              }).catch((err: any) => {
-                swal("Error", "Error to update reports, try again leter", "error");
-                console.log(err);
-              });
-            })
-            .catch((err: any) => {
-              swal("Error", "Error to create expenses, try again leter", "error");
-              console.log(err);
-            });
-        })
-        .catch((err: any) => {
-          swal("Error", "Error to sale items, try again leter", "error");
-          console.log(err);
-        });
-      dispatch(closeLoading());
     }
   }
 
@@ -196,13 +204,27 @@ export default function AddSale({
       let expenses: Expense[] = [];
 
       if (otherExpenses && shipmentExpenses) {
+        expenses.push({
+          id: sale.id,
+          date: sale.date,
+          price: Number(shipmentExpenses.shipLabel),
+          category: "Ship Label",
+          description: "Ship label expense",
+        });
+        expenses.push({
+          id: sale.id,
+          date: sale.date,
+          price: Number(shipmentExpenses.ebayFees),
+          category: "Ebay Fees",
+          description: "Ebay fees expense",
+        });
         if (otherExpenses.adsFee.check) {
           expenses.push({
             id: sale.id,
             date: sale.date,
             price: Number(otherExpenses.adsFee.cost),
             category: "Ads Fee",
-            description: otherExpenses.adsFee.description,
+            description: "Ads fee expense",
           });
         }
         if (otherExpenses.other.check) {
@@ -212,22 +234,6 @@ export default function AddSale({
             price: Number(otherExpenses.other.cost),
             category: "Other",
             description: otherExpenses.other.description,
-          });
-        }
-        if (sale.shipment.value) {
-          expenses.push({
-            id: sale.id,
-            date: sale.date,
-            price: Number(shipmentExpenses.shipLabel),
-            category: "Ship Label",
-            description: "Ship label expense",
-          });
-          expenses.push({
-            id: sale.id,
-            date: sale.date,
-            price: Number(shipmentExpenses.ebayFees),
-            category: "Ebay Fees",
-            description: "Ebay fees expense",
           });
         }
         expenses.push({

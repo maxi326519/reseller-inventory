@@ -6,6 +6,8 @@ import {
   expiredItems,
   getItems,
   loading,
+  postExpenses,
+  updateReports,
 } from "../../../redux/actions";
 import { RootState, Item, Sale } from "../../../interfaces";
 
@@ -65,6 +67,7 @@ const initialShipingExpenses: ShipingExpenses = {
 export default function Inventory() {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.items);
+  const reports = useSelector((state: RootState) => state.reports);
   const [rows, setRows] = useState<Item[]>([]);
   const [close, setClose] = useState<boolean>(false);
   const [itemSelected, setItem] = useState<number[]>([]);
@@ -89,8 +92,10 @@ export default function Inventory() {
         return false;
       })
     );
-    items.forEach((i) => i.state === "In Stock" ? total += Number(i.cost) : null);
-    items.forEach((i) => i.state === "In Stock" ? totalItems++ : null);
+    items.forEach((i) =>
+      i.state === "In Stock" ? (total += Number(i.cost)) : null
+    );
+    items.forEach((i) => (i.state === "In Stock" ? totalItems++ : null));
     setTotal(Number(total.toFixed(2)));
     setTotalItems(Number(totalItems.toFixed(2)));
   }, [items, search]);
@@ -99,13 +104,85 @@ export default function Inventory() {
     setClose(!close);
   }
 
+  function handleReload() {
+    swal({
+      title: "¡Attention!",
+      text: `All items will be reloaded`,
+      icon: "info",
+      buttons: { confirm: true, cancel: true },
+    }).then((response) => {
+      if (response) {
+        dispatch(loading());
+        dispatch<any>(getItems())
+          .then(() => {
+            dispatch(closeLoading());
+          })
+          .catch((e: any) => {
+            swal(
+              "Error",
+              "Error trying to get the inventory, try again leter",
+              "error"
+            );
+            console.log(e);
+          });
+      }
+    });
+  }
+
+  function handleExpired() {
+    if (itemSelected.length > 0) {
+      swal({
+        title: "Warning",
+        text: `You want to change the status of ${itemSelected.length} products to "Expired"`,
+        icon: "warning",
+        buttons: { confirm: true, cancel: true },
+      }).then((response) => {
+        if (response) {
+          dispatch<any>(loading());
+          dispatch<any>(expiredItems(itemSelected))
+            .then(() => {
+              dispatch(closeLoading());
+              const dataItemSelected = items.filter((item) =>
+                itemSelected.some((id) => id === item.id)
+              );
+              const newExpenses = dataItemSelected.map((item: Item) => {
+                return {
+                  id: item.id,
+                  date: new Date().toISOString().split("T")[0],
+                  price: item.cost,
+                  category: "Expired",
+                  description: "Expired item expense",
+                };
+              });
+
+              dispatch<any>(postExpenses(newExpenses));
+              dispatch<any>(updateReports(newExpenses, reports, null));
+              setItem([]);
+              setOther([]);
+              setShiping([]);
+              setSales([]);
+            })
+            .catch((e: any) => {
+              swal(
+                "Error",
+                "Error trying to expire some items, try again leter",
+                "error"
+              );
+              console.log(e);
+              setItem([]);
+            });
+        }
+      });
+    }
+  }
+
   function handleSelected(id: number, cost: number | null) {
     if (itemSelected.some((s) => s === id)) {
       setItem(itemSelected.filter((s) => s !== id));
       setOther(other.filter((o) => o.saleId !== id));
       setShiping(shipment.filter((s) => s.saleId !== id));
       setSales(sales.filter((s) => s.productId !== id));
-    } else if(cost !== null){
+    } else if (cost !== null) {
       setItem([...itemSelected, id]);
       setOther([...other, { ...initialOtherExpenses, saleId: id }]);
       setShiping([...shipment, { ...initialShipingExpenses, saleId: id }]);
@@ -193,60 +270,6 @@ export default function Inventory() {
         })
       );
     }
-  }
-
-  function handleExpired() {
-    if (itemSelected.length > 0) {
-      swal({
-        title: "Warning",
-        text: `You want to change the status of ${itemSelected.length} products to "Expired"`,
-        icon: "warning",
-        buttons: { confirm: true, cancel: true },
-      }).then((response) => {
-        if (response) {
-          dispatch<any>(loading());
-          dispatch<any>(expiredItems(itemSelected))
-            .then(() => {
-              dispatch<any>(closeLoading());
-              setItem([]);
-            })
-            .catch((e: any) => {
-              swal(
-                "Error",
-                "Error trying to expire some items, try again leter",
-                "error"
-              );
-              console.log(e);
-              setItem([]);
-            });
-        }
-      });
-    }
-  }
-
-  function handleReload() {
-    swal({
-      title: "¡Attention!",
-      text: `All items will be reloaded`,
-      icon: "info",
-      buttons: { confirm: true, cancel: true },
-    }).then((response) => {
-      if (response) {
-        dispatch(loading());
-        dispatch<any>(getItems())
-          .then(() => {
-            dispatch(closeLoading());
-          })
-          .catch((e: any) => {
-            swal(
-              "Error",
-              "Error trying to get the inventory, try again leter",
-              "error"
-            );
-            console.log(e);
-          });
-      }
-    });
   }
 
   return (

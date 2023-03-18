@@ -501,11 +501,12 @@ export function getReports(): ThunkAction<
 export function updateReports(
   expenses: Expense[],
   reports: YearReport[],
-  sales: Sale[] | any
+  sales: Sale[] | null | any
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       let response = calculeReports(reports, expenses, true);
+      console.log(sales);
       if (sales) response = calculeReports(response.reports, sales, false);
       const newReports = response.reports;
       const years = response.years;
