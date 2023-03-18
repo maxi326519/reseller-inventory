@@ -16,6 +16,7 @@ import {
   UPDATE_REPORTS,
   DELETE_INVOICE,
   EXPIRED_ITEMS,
+  RESTORE_ITEMS,
 } from "../actions";
 
 const initialState: RootState = {
@@ -133,6 +134,21 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
           return item;
         }),
       };
+
+    case RESTORE_ITEMS:
+      return {
+        ...state,
+        items: state.items.map((item) => {
+          if (item.id === action.payload) {
+            return {
+              ...item,
+              state: "In Stock",
+            };
+          }
+          return item;
+        }),
+      };
+
     case DELETE_INVOICE:
       return {
         ...state,
@@ -143,10 +159,12 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
           (item) => !action.payload.items.some((id: number) => id === item.id)
         ),
         sales: state.sales.filter(
-          (sale) => !action.payload.items.some((id: number) => id === sale.productId)
+          (sale) =>
+            !action.payload.items.some((id: number) => id === sale.productId)
         ),
         expenses: state.expenses.filter(
-          (expense) => !action.payload.items.some((id: number) => id === expense.id)
+          (expense) =>
+            !action.payload.items.some((id: number) => id === expense.id)
         ),
       };
     default:

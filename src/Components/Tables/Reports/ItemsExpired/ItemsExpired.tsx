@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Item, RootState } from "../../../../interfaces";
 import { getFirstAndLastDayOfMonth } from "../../../../functions/date";
+import { closeLoading, loading, restoreItems } from "../../../../redux/actions";
 
 import Table from "./Table/Table";
 
 import styles from "./ItemsExpired.module.css";
+import swal from "sweetalert";
 
 interface Dates {
   firstDay: string;
@@ -15,6 +17,7 @@ interface Dates {
 const initialDates: Dates = getFirstAndLastDayOfMonth(new Date());
 
 export default function ItemsExpired() {
+  const dispatch = useDispatch();
   const items: Item[] = useSelector((state: RootState) => state.items);
   const [itemsExpired, setItemsExpired] = useState<Item[]>([]);
   const [dates, setDates] = useState(initialDates);
@@ -32,9 +35,9 @@ export default function ItemsExpired() {
 
   useEffect(() => {
     let total = 0;
-    itemsExpired.forEach((item) => total += Number(item.cost));
+    itemsExpired.forEach((item) => (total += Number(item.cost)));
     setTotal(total);
-  }, [itemsExpired])
+  }, [itemsExpired]);
 
   function filterAndSortItems(
     dateFrom: string,
@@ -66,6 +69,36 @@ export default function ItemsExpired() {
     setDates({ ...dates, [name]: value });
   }
 
+  function handleRestore(id: number) {
+    swal({
+      title: "Warning",
+      text: `Do you want to restore this item?`,
+      icon: "warning",
+      buttons: { confirm: true, cancel: true },
+    }).then((response) => {
+      if (response) {
+        dispatch<any>(loading());
+        dispatch<any>(restoreItems(id))
+          .then(() => {
+            dispatch(closeLoading());
+            swal(
+              "Restored",
+              "Item restores successfully",
+              "success"
+            );
+          })
+          .catch((e: any) => {
+            swal(
+              "Error",
+              "Error trying to expire some items, try again leter",
+              "error"
+            );
+            console.log(e);
+          });
+      }
+    });
+  }
+
   return (
     <div className={styles.itemsSold}>
       <div className={styles.controls}>
@@ -95,9 +128,11 @@ export default function ItemsExpired() {
             From:
           </label>
         </div>
-        <span className={styles.total}>Total cost: ${Number(total).toFixed(2)}</span>
+        <span className={styles.total}>
+          Total cost: ${Number(total).toFixed(2)}
+        </span>
       </div>
-      <Table items={itemsExpired} />
+      <Table items={itemsExpired} handleRestore={handleRestore} />
     </div>
   );
 }

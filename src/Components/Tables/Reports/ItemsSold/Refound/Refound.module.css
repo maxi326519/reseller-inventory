@@ -1,0 +1,45 @@
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #0006;
+}
+
+.container {
+  width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #333;
+}
+
+.close {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.close h4 {
+  flex-grow: 1;
+}
+
+.question{
+  display: block;
+  width: 100%;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.bntContainer{
+  display: flex;
+  justify-content: center;
+}
+
+.cancel{
+  margin-left: 20px;
+}

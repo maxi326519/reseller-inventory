@@ -41,7 +41,9 @@ export const LOADING = "LOADING";
 export const CLOSE_LOADING = "CLOSE_LOADING";
 
 export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
+export const RESTORE_ITEMS = "RESTORE_ITEMS";
 export const SELL_ITEMS = "SELL_ITEMS";
+export const REFOUND_ITEMS = "REFOUND_ITEMS";
 
 /* POST */
 export const POST_CATEGORIES = "POST_CATEGORIES";
@@ -618,6 +620,25 @@ export function expiredItems(
 
       dispatch({
         type: EXPIRED_ITEMS,
+        payload: itemsID,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function restoreItems(
+  itemsID: number
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
+      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
+      await updateDoc(doc(itemsRef, itemsID.toString()), { state: "In Stock" });
+
+      dispatch({
+        type: RESTORE_ITEMS,
         payload: itemsID,
       });
     } catch (e: any) {

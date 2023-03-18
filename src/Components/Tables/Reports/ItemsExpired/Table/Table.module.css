@@ -20,7 +20,7 @@
 
 .rows {
   display: grid;
-  grid-template-columns: 160px 160px 110px 150px 1fr;
+  grid-template-columns: 160px 160px 110px 150px 1fr 100px;
   text-align: center;
   border-bottom: 1px solid #ccc;
 }
@@ -37,4 +37,8 @@
 .rows div {
   padding: 5px;
   border-right: 1px solid #ccc;
+}
+
+.rows button {
+  border-radius: 0px;
 }

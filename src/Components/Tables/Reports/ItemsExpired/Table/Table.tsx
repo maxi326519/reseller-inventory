@@ -6,9 +6,10 @@ import styles from "./Table.module.css";
 
 interface Props {
   items: Item[];
+  handleRestore: (id: number) => void;
 }
 
-export default function Table({ items }: Props) {
+export default function Table({ items, handleRestore }: Props) {
   return (
     <div className={styles.table}>
       <div className={`${styles.firstRow} ${styles.rows}`}>
@@ -17,13 +18,11 @@ export default function Table({ items }: Props) {
         <span>Date</span>
         <span>Unit cost</span>
         <span>Description</span>
+        <span>Restore</span>
       </div>
       <div className={styles.data}>
         {items.map((item) => (
-          <Rows
-            key={item.id}
-            item={item}
-          />
+          <Rows key={item.id} item={item} handleRestore={handleRestore} />
         ))}
       </div>
     </div>

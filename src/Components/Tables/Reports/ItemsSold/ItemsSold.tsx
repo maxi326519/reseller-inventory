@@ -7,6 +7,7 @@ import Table from "./Table/Table";
 import Excel from "./Excel/Excel.jsx";
 
 import styles from "./ItemsSold.module.css";
+import Refound from "./Refound/Refound";
 
 interface Dates {
   firstDay: string;
@@ -21,6 +22,7 @@ export default function ItemsSold() {
   const [dates, setDates] = useState(initialDates);
   const [total, setTotal] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const [refound, setRefound] = useState(false);
 
   useEffect(() => {
     setItemSold(
@@ -35,10 +37,13 @@ export default function ItemsSold() {
   useEffect(() => {
     let total = 0;
     let totaltems = 0;
-    itemsSold.forEach((item) => {total += Number(item.cost); totaltems++});
+    itemsSold.forEach((item) => {
+      total += Number(item.cost);
+      totaltems++;
+    });
     setTotal(total);
     setTotalItems(totaltems);
-  }, [itemsSold])
+  }, [itemsSold]);
 
   function filterAndSortItems(
     dateFrom: string,
@@ -70,8 +75,20 @@ export default function ItemsSold() {
     setDates({ ...dates, [name]: value });
   }
 
+  // Refound
+  function handleClose() {
+    setRefound(!refound);
+  }
+
+  function handleRefound(amount: number) {
+    console.log(amount);
+  }
+
   return (
     <div className={styles.itemsSold}>
+      {refound ? (
+        <Refound handleClose={handleClose} handleSubmit={handleRefound} />
+      ) : null}
       <div className={styles.controls}>
         <div className="form-floating">
           <input
@@ -101,10 +118,12 @@ export default function ItemsSold() {
         </div>
         <Excel sales={itemsSold} />
         <span className={styles.total}>Total items: {totalItems}</span>
-        <span className={styles.total}>Total cost: ${Number(total).toFixed(2)}</span>
+        <span className={styles.total}>
+          Total cost: ${Number(total).toFixed(2)}
+        </span>
         <span className={styles.total}>Order total: 0</span>
       </div>
-      <Table items={itemsSold} />
+      <Table items={itemsSold} handleClose={handleClose} />
     </div>
   );
 }
