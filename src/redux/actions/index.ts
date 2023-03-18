@@ -357,8 +357,8 @@ export function getItems(): ThunkAction<
 }
 
 export function getInvoices(
-  year: string,
-  month: string | null
+  year: string | number,
+  month: string | number | null
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
@@ -375,15 +375,15 @@ export function getInvoices(
 
       if (year && month) {
         console.log("por mes");
-        const yearRef = doc(invoiceRef, year);
-        const query = await getDocs(collection(yearRef, month));
+        const yearRef = doc(invoiceRef, year.toString());
+        const query = await getDocs(collection(yearRef, month.toString()));
 
         query.forEach((doc) => {
           newInvoices.push(doc.data());
         });
       } else if (year && !month) {
         console.log("por year");
-        const yearRef = doc(invoiceRef, year);
+        const yearRef = doc(invoiceRef, year.toString());
         const monthQuerys = [];
 
         for (let i = 0; i < 12; i++) {

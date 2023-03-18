@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Item, Invoice, RootState } from "../../../interfaces";
-import { loading, closeLoading, getItems } from "../../../redux/actions";
+import {
+  loading,
+  closeLoading,
+  getItems,
+  getInvoices,
+} from "../../../redux/actions";
 import swal from "sweetalert";
 import reload from "../../../assets/svg/reload.svg";
 
@@ -14,9 +19,9 @@ import styles from "../Tables.module.css";
 import style from "./Invoices.module.css";
 
 interface Filter {
-  year: string | number,
-  month: string | number,
-  day: string | number
+  year: string | number;
+  month: string | number;
+  day: string | number;
 }
 
 export default function Invoices() {
@@ -29,11 +34,16 @@ export default function Invoices() {
   const [close, setClose] = useState(false);
   const [rows, setRows] = useState<Invoice[]>([]);
   const [search, setSearch] = useState<string>("");
+  const [dateFilter, setDateFilter] = useState<string>("");
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
+    console.log("search");
+    console.log("dateFIlter: ", dateFilter);
     setRows(
       invoices.filter((i) => {
+        console.log(i.date);
+        if (dateFilter !== "" && i.date !== dateFilter) return false;
         if (search === "") return true;
         if (i.id.toString().toLowerCase().includes(search)) return true;
         if (i.date.toLowerCase().includes(search)) return true;
@@ -42,7 +52,7 @@ export default function Invoices() {
         return false;
       })
     );
-  }, [search, invoices]);
+  }, [search, invoices, dateFilter]);
 
   useEffect(() => {
     let total = 0;
@@ -91,8 +101,56 @@ export default function Invoices() {
     });
   }
 
+  useEffect(() => {
+    console.log(rows);
+  }, [rows]);
+
   function handleFilterDate(date: Filter) {
-    
+    const year = date.year;
+    const month = date.month;
+    const day = date.day;
+
+    if (month !== "00") {
+      dispatch(loading());
+      dispatch<any>(getInvoices(year, month))
+        .then(() => {
+          if (day !== "00") {
+            setDateFilter(`${year}-${month}-${day}`);
+            /*             const newRows = invoices.filter((invoice) => {
+              return invoice.date === `${year}-${month}-${day}`;
+            });
+            setRows(newRows); */
+          } else {
+            setDateFilter("");
+          }
+          dispatch(closeLoading());
+        })
+        .catch((err: any) => {
+          console.log(err);
+          dispatch(closeLoading());
+          swal(
+            "Error",
+            "Error trying to get the invoices, try again leter",
+            "error"
+          );
+        });
+    } else if (date.month === "00") {
+      setDateFilter("");
+      dispatch(loading());
+      dispatch<any>(getInvoices(year, null))
+        .then(() => {
+          dispatch(closeLoading());
+        })
+        .catch((err: any) => {
+          console.log(err);
+          dispatch(closeLoading());
+          swal(
+            "Error",
+            "Error trying to get the invoices, try again leter",
+            "error"
+          );
+        });
+    }
   }
 
   return (
@@ -128,7 +186,10 @@ export default function Invoices() {
           >
             <img src={reload} alt="reload" />
           </button>
-          <DateFilter years={reports.map((report) => report.year )} handleFilterDate={handleFilterDate}/>
+          <DateFilter
+            years={reports.map((report) => report.year)}
+            handleFilterDate={handleFilterDate}
+          />
           <span className={style.total}>
             Total cost of invoices: ${total.toFixed(2)}
           </span>
