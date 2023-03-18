@@ -29,6 +29,7 @@
 .scroll{
   flex-grow: 1;
   overflow-y: scroll;
+  height: 500px;
   background-color: #fff2;
   outline: 1px solid #ccc;
 }

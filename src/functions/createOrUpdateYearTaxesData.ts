@@ -24,10 +24,10 @@ export function createOrUpdateYearTaxesData(
       expenses: {
         total: monthReport.totalExpenses,
         COGS: 0,
-        shipment: 0,
+        shipLabel: 0,
         ebayFees: 0,
-        otherExpense1: 0,
-        otherExpense2: 0,
+        adsFee: 0,
+        otherExpense: 0,
       },
     };
     monthReport.sales.forEach((item) => {
@@ -45,20 +45,20 @@ export function createOrUpdateYearTaxesData(
     });
     monthReport.expenses.forEach((item) => {
       switch (item.type) {
-        case "COGS":
+        case "Sale":
           monthTaxesData.expenses.COGS += item.amount;
           break;
-        case "Shipment":
-          monthTaxesData.expenses.shipment += item.amount;
+        case "Ship Label":
+          monthTaxesData.expenses.shipLabel += item.amount;
           break;
         case "Ebay Fees":
           monthTaxesData.expenses.ebayFees += item.amount;
           break;
-        case "SaleOther1":
-          monthTaxesData.expenses.otherExpense1 += item.amount;
+        case "Ads Fee":
+          monthTaxesData.expenses.adsFee += item.amount;
           break;
-        case "SaleOther2":
-          monthTaxesData.expenses.otherExpense2 += item.amount;
+        case "Other":
+          monthTaxesData.expenses.otherExpense += item.amount;
           break;
         default:
           // Do nothing for other types of expense items
@@ -91,10 +91,10 @@ function generateYearTaxesData(year: number) {
       expenses: {
         total: 0,
         COGS: 0,
-        shipment: 0,
+        shipLabel: 0,
         ebayFees: 0,
-        otherExpense1: 0,
-        otherExpense2: 0,
+        adsFee: 0,
+        otherExpense: 0,
       },
     })),
   };

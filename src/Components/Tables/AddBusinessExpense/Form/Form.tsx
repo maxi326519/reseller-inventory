@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Expense } from "../../../../interfaces";
 import { RootState } from "../../../../interfaces";
@@ -17,7 +17,7 @@ const initialState: Expense = {
   date: new Date().toISOString().split("T")[0],
   category: "0",
   description: "",
-  price: 0,
+  price: "",
 };
 
 interface Error {
@@ -43,17 +43,6 @@ export default function Form({
     amount: null,
   });
 
-  function gererateId(sequential: number, date: string) {
-    const toDay: string[] = date.split("-");
-    const day: string = toDay[2];
-    const month: string = toDay[1];
-    const year: string = toDay[0].toString().slice(-2);
-
-    const idStr: string = `${year}${month}${day}${`0${sequential}`.slice(-2)}`;
-    const idNumber: number = Number(idStr);
-    return idNumber;
-  }
-
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     if (handleVerification()) {
@@ -62,7 +51,7 @@ export default function Form({
       for (let i: number = 1; i <= amount; i++) {
         allExpenses.push({
           ...expense,
-          id: createUniqueId(expense.date, Math.floor(expense.price), null),
+          id: createUniqueId(expense.date, Math.floor(Number(expense.price)), null),
         });
       }
       setExpenses([...expenses, ...allExpenses]);

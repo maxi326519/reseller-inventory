@@ -23,7 +23,7 @@
   font-weight: bold;
 }
 
-.invoice .sumary button:nth-child(2) {
+.invoice .sumary button{
   margin-left: 20px;
 }
 

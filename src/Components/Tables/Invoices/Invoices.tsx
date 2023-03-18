@@ -7,6 +7,7 @@ import swal from "sweetalert";
 import reload from "../../../assets/svg/reload.svg";
 
 import Table from "./Table/Table";
+import DateFilter from "./DateFilter/DateFilter";
 import Details from "./Details/Details";
 
 import styles from "../Tables.module.css";
@@ -39,9 +40,9 @@ export default function Invoices() {
 
   useEffect(() => {
     let total = 0;
-    rows.forEach((invoice) => total += invoice.total);
+    rows.forEach((invoice) => (total += invoice.total));
     setTotal(total);
-  }, [rows])
+  }, [rows]);
 
   function handleDetails(invoiceID: number) {
     const showInvoice = invoices.find((i) => i.id === invoiceID);
@@ -84,9 +85,7 @@ export default function Invoices() {
     });
   }
 
-  function handleSetDate() {
-
-  }
+  function handleSetDate() {}
 
   return (
     <div className={styles.background}>
@@ -121,20 +120,10 @@ export default function Invoices() {
           >
             <img src={reload} alt="reload" />
           </button>
-          {/* <div className="mb-3 form-floating">
-            <select
-              id="year"
-              className="form-control"
-              defaultValue={new Date().toISOString().split("T")[0]}
-              onClick={handleSetDate}
-            >
-              {reports.map((report) => (
-                <option key={report.year} value={report.year}>{report.year}</option>
-              ))}
-            </select>
-            <label htmlFor="year">Year</label>
-          </div> */}
-          <span className={style.total}>Total cost of invoices: ${total.toFixed(2)}</span>
+          <DateFilter years={reports.map((report) => report.year )} />
+          <span className={style.total}>
+            Total cost of invoices: ${total.toFixed(2)}
+          </span>
         </div>
         <Table invoices={rows} handleDetails={handleDetails} />
       </div>

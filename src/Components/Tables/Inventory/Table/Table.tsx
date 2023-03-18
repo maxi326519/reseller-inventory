@@ -7,7 +7,7 @@ import styles from "./Table.module.css";
 interface Props {
   items: Item[];
   itemSelected: number[];
-  handleSelected: (id: number) => void;
+  handleSelected: (id: number, cost: number) => void;
 }
 
 export default function Table({ items, itemSelected, handleSelected }: Props) {

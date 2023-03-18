@@ -18,12 +18,12 @@ import "../../../../animation.css";
 
 interface OtherExpenses {
   saleId: number;
-  other1: {
+  adsFee: {
     check: boolean;
     description: string;
     cost: number | string;
   };
-  other2: {
+  other: {
     check: boolean;
     description: string;
     cost: number | string;
@@ -31,14 +31,15 @@ interface OtherExpenses {
 }
 interface ShipingExpenses {
   saleId: number;
-  shipment: number | string;
+  shipLabel: number | string;
   ebayFees: number | string;
 }
 
 interface Props {
   handleClose: () => void;
   itemSelected: number[];
-  handleSelected: (id: number) => void;
+  setItem: (items: number[]) => void;
+  handleSelected: (id: number, cost: null) => void;
   sales: Sale[];
   setSales: (sales: Sale[]) => void;
   other: OtherExpenses[];
@@ -52,6 +53,7 @@ interface Props {
 export default function AddSale({
   handleClose,
   itemSelected,
+  setItem,
   handleSelected,
   sales,
   setSales,
@@ -144,13 +146,30 @@ export default function AddSale({
       const newData = convertData(sales, other, shipment);
       console.log("Sales", newData.sales);
       console.log("Expenses", newData.expenses);
-      dispatch<any>(postSales(newData.sales)).then(() => {
-        dispatch<any>(postExpenses(newData.expenses)).then(() => {
-          dispatch<any>(
-            updateReports(newData.expenses, reports, newData.sales)
-          );
+      dispatch<any>(postSales(newData.sales))
+        .then(() => {
+          dispatch<any>(postExpenses(newData.expenses))
+            .then(() => {
+              dispatch<any>(
+                updateReports(newData.expenses, reports, newData.sales)
+              ).then(() => {
+                handleClose();
+                swal("Save", "Items sold successfully", "success");
+                setItem([]);
+              }).catch((err: any) => {
+                swal("Error", "Error to update reports, try again leter", "error");
+                console.log(err);
+              });
+            })
+            .catch((err: any) => {
+              swal("Error", "Error to create expenses, try again leter", "error");
+              console.log(err);
+            });
+        })
+        .catch((err: any) => {
+          swal("Error", "Error to sale items, try again leter", "error");
+          console.log(err);
         });
-      });
       dispatch(closeLoading());
     }
   }
@@ -177,40 +196,47 @@ export default function AddSale({
       let expenses: Expense[] = [];
 
       if (otherExpenses && shipmentExpenses) {
-        if (otherExpenses.other1.check) {
+        if (otherExpenses.adsFee.check) {
           expenses.push({
             id: sale.id,
             date: sale.date,
-            price: Number(otherExpenses.other1.cost),
-            category: "SaleOther1",
-            description: otherExpenses.other1.description,
+            price: Number(otherExpenses.adsFee.cost),
+            category: "Ads Fee",
+            description: otherExpenses.adsFee.description,
           });
         }
-        if (otherExpenses.other2.check) {
+        if (otherExpenses.other.check) {
           expenses.push({
             id: sale.id,
             date: sale.date,
-            price: Number(otherExpenses.other2.cost),
-            category: "SaleOther2",
-            description: otherExpenses.other2.description,
+            price: Number(otherExpenses.other.cost),
+            category: "Other",
+            description: otherExpenses.other.description,
           });
         }
         if (sale.shipment.value) {
           expenses.push({
             id: sale.id,
             date: sale.date,
-            price: Number(shipmentExpenses.shipment),
-            category: "Shipment",
-            description: "Shipment expense",
+            price: Number(shipmentExpenses.shipLabel),
+            category: "Ship Label",
+            description: "Ship label expense",
           });
           expenses.push({
             id: sale.id,
             date: sale.date,
             price: Number(shipmentExpenses.ebayFees),
-            category: "EbayFees",
-            description: "EbayFees expense",
+            category: "Ebay Fees",
+            description: "Ebay fees expense",
           });
         }
+        expenses.push({
+          id: sale.id,
+          date: sale.date,
+          price: sale.cost,
+          category: "Sale",
+          description: "Sale cost expense",
+        });
 
         expenses.forEach((ex) => allExpenses.push(ex));
 

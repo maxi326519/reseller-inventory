@@ -22,12 +22,12 @@ export default function AddBusinessExpense() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [close, setClose] = useState<boolean>(false);
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<any>("");
   const dispatch = useDispatch();
 
   useEffect(() => {
     let total: number = 0;
-    expenses.forEach((expense) => (total += expense.price * amount));
+    expenses.forEach((expense) => (total += Number(expense.price) * amount));
     setTotal(total);
   }, [expenses]);
 

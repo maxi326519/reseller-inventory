@@ -11,20 +11,7 @@
 }
 
 .shipmentExpenses {
-  position: relative;
-  left: -100px;
   display: flex;
-  overflow: hidden;
-  height: 0px;
-  opacity: 0%;
-  transition: 0.4s;
-}
-
-.showShipEpense {
-  left: 0px;
-  height: 62px !important;
-  opacity: 100% !important;
-  transition: 0.4s;
 }
 
 .shipmentExpenses div:first-child {

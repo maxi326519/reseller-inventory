@@ -1,6 +1,5 @@
 .background {
   position: fixed;
-  z-index: 500;
   top: 0;
   left: 0;
   display: flex;
@@ -12,8 +11,7 @@
 }
 
 .container {
-  z-index: 1000px;
-  width: 600px;
+  width: 400px;
   padding: 20px;
   border-radius: 10px;
   background-color: #333;
@@ -29,10 +27,11 @@
   flex-grow: 1;
 }
 
-.list {
+.sourcesList {
   display: flex;
   flex-direction: column;
-  height: 200px;
+  min-height: 200px;
+  max-height: 300px;
   margin: 10px 0;
   padding: 5px;
   border-radius: 10px;
@@ -44,21 +43,39 @@
   background: red;
 }
 
-.list:-webkit-scrollbar-thumb {
+.sourcesList:-webkit-scrollbar-thumb {
   background: blue;
 }
 
-.list::-webkit-scrollbar-thumb:hover {
+.sourcesList::-webkit-scrollbar-thumb:hover {
   background: green;
 }
 
-.list {
+.sourcesList {
   width: 100%;
   text-align: center;
 }
 
-.list .empty{
+.sourcesList .empty{
   color: grey;
+}
+
+.sourcesList .row{
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: #282828;
+}
+
+.sourcesList .row span{
+  flex-grow: 1;
+}
+
+.sourcesList .row button{
+  width: 40px;
+  border-radius: 8px;
 }
 
 .formContainer {
@@ -96,29 +113,3 @@
   width: 100%;
   margin-top: 20px;
 }
-
-/* SHIPMENT */
-.shipment{
-  display: flex;
-}
-
-.shipment div{
-  padding: 10px 0;
-  flex-grow: 1;
-}
-
-.shipment div:first-child{
-  margin-right: 10px;
-}
-/* SHIPMENT */
-
-/* EXPENSES */
-.expenses .inputs{
-  display: flex;
-}
-
-.expenses .inputs input:first-child{
-  margin-right: 10px;
-}
-/* EXPENSES */
-

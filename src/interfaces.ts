@@ -1,5 +1,6 @@
 export interface User {
   categories: string[];
+  sources: string[];
 }
 
 export interface Item {
@@ -7,7 +8,7 @@ export interface Item {
   date: string;
   invoiceId: number;
   state: string;
-  cost: number;
+  cost: number | string;
   description: string;
 }
 
@@ -21,10 +22,21 @@ export interface Invoice {
   image: string;
   imageRef: string;
 }
+
+export interface InvoiceExpense {
+  id: number;
+  date: string;
+  items: number[];
+  form: string;
+  source: string;
+  total: number;
+  image: string;
+  imageRef: string;
+}
 export interface Expense {
   id: number;
   date: string;
-  price: number;
+  price: number | string;
   category: string;
   description: string;
 }
@@ -32,6 +44,7 @@ export interface Expense {
 export interface Sale {
   id: number;
   date: string;
+  cost: number;
   price: number;
   productId: number;
   shipment: Shipment;
@@ -45,7 +58,7 @@ interface ExpenseRef{
 
 export interface Shipment {
   value: boolean;
-  amount: number;
+  amount: number | string;
 }
 
 /* REPORTS */
@@ -86,10 +99,10 @@ export interface MonthTaxesData {
   expenses: {
     total: number,
     COGS: number,
-    shipment: number,
+    shipLabel: number,
     ebayFees: number,
-    otherExpense1: number,
-    otherExpense2: number,
+    adsFee: number,
+    otherExpense: number,
   }
 }
 

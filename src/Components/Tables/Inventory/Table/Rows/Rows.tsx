@@ -7,13 +7,13 @@ import styles from "../Table.module.css";
 interface Props {
   item: Item;
   itemSelected: number[];
-  handleSelected: (id: number) => void;
+  handleSelected: (id: number, cost: number) => void;
 }
 
 export default function Rows({ item, itemSelected, handleSelected }: Props) {
 
-  function handleCheck(id: number) {
-    handleSelected(id);
+  function handleCheck(id: number, cost: number | string) {
+    handleSelected(id, Number(cost));
   }
 
   return (
@@ -24,7 +24,7 @@ export default function Rows({ item, itemSelected, handleSelected }: Props) {
           id="check"
           type="checkbox"
           checked={itemSelected.some((i) => i === item.id) ? true : false}
-          onChange={() => handleCheck(item.id)}
+          onChange={() => handleCheck(item.id, item.cost)}
         />
       </div>
       <span>{item.id}</span>

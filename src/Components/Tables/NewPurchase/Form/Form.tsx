@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Invoice, Item } from "../../../../interfaces";
+import { Invoice, Item, RootState } from "../../../../interfaces";
 
 import styles from "../../Tables.module.css";
+import { useSelector } from "react-redux";
 
 interface Props {
   invoice: Invoice;
@@ -20,15 +21,19 @@ interface Error {
 
 export default function Form({ invoice, setInvoice, items, setItems }: Props) {
   const maxDate = new Date().toISOString().split("T")[0];
-  const [amount, setAmount] = useState<any>(0);
-  const [newItem, setNewItems] = useState<Item>({
+  const [amount, setAmount] = useState<any>("");
+  const sources: string[] = useSelector(
+    (state: RootState) => state.user.sources
+  );
+  const initialState = {
     id: 0,
     date: invoice.date,
     invoiceId: invoice.id,
     state: "In Stock",
-    cost: 0,
+    cost: "",
     description: "",
-  });
+  };
+  const [newItem, setNewItems] = useState<Item>(initialState);
 
   const [error, setError] = useState<Error>({
     source: null,
@@ -37,15 +42,6 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     amount: null,
     image: null,
   });
-
-  function handleInvoice(event: React.ChangeEvent<HTMLInputElement>) {
-    setInvoice({ ...invoice, [event.target.name]: event.target.value });
-  }
-
-  function handleInvoiceSelect(event: React.ChangeEvent<HTMLSelectElement>) {
-    console.log(event.target.name, event.target.value);
-    setInvoice({ ...invoice, [event.target.name]: event.target.value });
-  }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -56,7 +52,11 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
       for (let i: number = 1; i <= amount; i++) {
         allItems.push({
           ...newItem,
-          id: createUniqueId(invoice.date, Math.floor(newItem.cost), items.map((i) => i.id )),
+          id: createUniqueId(
+            invoice.date,
+            Math.floor(Number(newItem.cost)),
+            items.map((i) => i.id)
+          ),
         });
       }
 
@@ -65,30 +65,61 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
         ...invoice,
         items: [...invoice.items, ...allItems.map((i) => i.id)],
       });
+      setNewItems(initialState);
+      setAmount("");
     }
   }
 
-  function createUniqueId(dateStr: string, price: number, existingIds: number[]): number {
-    const date = new Date(dateStr);
-    const formattedDate = Number(`${date.getFullYear()}${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}`);
-    let productId = Number(`${formattedDate}${price}${Math.floor(Math.random() * 1000000)}`);
-    while (existingIds.includes(productId)) {
-      productId = Number(`${formattedDate}${price}${Math.floor(Math.random() * 1000000)}`);
-    }
-    return productId;
+  function handleInvoice(event: React.ChangeEvent<HTMLInputElement>): void {
+    setInvoice({ ...invoice, [event.target.name]: event.target.value });
+    setError({ ...error, [event.target.name]: null });
   }
 
-  function handleNewItems(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleInvoiceSelect(
+    event: React.ChangeEvent<HTMLSelectElement>
+  ): void {
+    setInvoice({ ...invoice, [event.target.name]: event.target.value });
+    setError({ ...error, [event.target.name]: null });
+  }
+
+  function handleNewItems(event: React.ChangeEvent<HTMLInputElement>): void {
     if (event.target.name === "description") {
       setNewItems({ ...newItem, [event.target.name]: event.target.value });
+      setError({ ...error, [event.target.name]: null });
     } else {
       setNewItems({
         ...newItem,
         [event.target.name]: event.target.value,
       });
+      setError({ ...error, [event.target.name]: null });
     }
+  }
+
+  function handleAmount(event: React.ChangeEvent<HTMLInputElement>): void {
+    setAmount(event.target.value);
+    setError({ ...error, [event.target.name]: null });
+  }
+
+  function createUniqueId(
+    dateStr: string,
+    price: number,
+    existingIds: number[]
+  ): number {
+    const date = new Date(dateStr);
+    const formattedDate = Number(
+      `${date.getFullYear()}${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}`
+    );
+    let productId = Number(
+      `${formattedDate}${price}${Math.floor(Math.random() * 1000000)}`
+    );
+    while (existingIds.includes(productId)) {
+      productId = Number(
+        `${formattedDate}${price}${Math.floor(Math.random() * 1000000)}`
+      );
+    }
+    return productId;
   }
 
   function handleVerification(): boolean {
@@ -96,8 +127,8 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     let errObj = { ...error };
 
     /* Sourse */
-    if (invoice.source === "") {
-      errObj.source = "Source is empty";
+    if (invoice.source === "0") {
+      errObj.source = "Select a source";
       errors++;
     } else {
       errObj.source = null;
@@ -112,11 +143,14 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     }
 
     /* Amount */
-    if (amount === 0) {
+    if (amount === "0") {
       errObj.amount = "Amount is 0";
       errors++;
     } else if (amount === "") {
       errObj.amount = "Undefined amount";
+      errors++;
+    } else if (Number(amount) > 100) {
+      errObj.amount = "Limit of 100 units";
       errors++;
     } else {
       errObj.amount = null;
@@ -162,14 +196,20 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
           </label>
         </div>
         <div className="form-floating mb-3">
-          <input
-            className={`form-control ${error.source ? "is-invalid" : null}`}
-            type="text"
+          <select
             id="source"
             name="source"
+            className={`form-select ${error.source ? "is-invalid" : null}`}
             value={invoice.source}
-            onChange={handleInvoice}
-          />
+            onChange={handleInvoiceSelect}
+          >
+            <option value="0">Select</option>
+            {sources.map((source) => (
+              <option key={source} value={source}>
+                {source}
+              </option>
+            ))}
+          </select>
           <label className="form-label" htmlFor="source">
             Source:
           </label>
@@ -182,12 +222,12 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
 
         <div className="form-floating mb-3">
           <input
+            id="description"
             className={`form-control ${
               error.description ? "is-invalid" : null
             }`}
-            type="text"
-            id="description"
             name="description"
+            type="text"
             value={newItem.description}
             onChange={handleNewItems}
           />
@@ -199,10 +239,10 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
 
         <div className="form-floating mb-3">
           <input
-            className={`form-control ${error.cost ? "is-invalid" : null}`}
-            type="number"
             id="cost"
             name="cost"
+            className={`form-control ${error.cost ? "is-invalid" : null}`}
+            type="number"
             value={newItem.cost}
             onChange={handleNewItems}
           />
@@ -214,14 +254,12 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
 
         <div className="form-floating mb-3">
           <input
-            className={`form-control ${error.amount ? "is-invalid" : null}`}
-            type="number"
             id="amount"
             name="amount"
+            className={`form-control ${error.amount ? "is-invalid" : null}`}
+            type="number"
             value={amount}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setAmount(e.target.value)
-            }
+            onChange={handleAmount}
           />
           <label className="form-label" htmlFor="amount">
             Number of Items:

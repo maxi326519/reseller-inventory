@@ -5,7 +5,6 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { writeBatch } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -24,4 +23,3 @@ export const fs = initializeApp(firebaseConfig);
 export const db = getFirestore(fs);
 export const auth = getAuth(fs);
 export const storage = getStorage(fs);
-export const batch = writeBatch(db);

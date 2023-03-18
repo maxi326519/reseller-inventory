@@ -5,7 +5,7 @@ import {
   loading,
   closeLoading,
   getItems,
-  getInvoince,
+  getInvoices,
   getUserData,
   getReports,
 } from "./redux/actions";
@@ -28,15 +28,16 @@ function App() {
   const redirect = useNavigate();
   const dispatch = useDispatch();
   const setLoading = useSelector((state: RootState) => state.loading);
+  const userData = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     dispatch(loading());
     setTimeout(() => {
       const auth = getAuth();
       if (auth.currentUser) {
-        dispatch<any>(getUserData()).catch((e: any) => console.log(e));
         dispatch<any>(getItems()).catch((e: any) => console.log(e));
-        dispatch<any>(getInvoince(new Date().toISOString().split("T")[0])).catch((e: any) => console.log(e));
+        dispatch<any>(getInvoices(new Date().toISOString().split("T")[0])).catch((e: any) => console.log(e));
+        dispatch<any>(getUserData()).catch((e: any) => console.log(e));
         dispatch<any>(getReports()).catch((e: any) => console.log(e));
         dispatch(closeLoading());
       } else {
@@ -45,14 +46,6 @@ function App() {
       }
     }, 1000);
   }, []);
-
-  function format(date: string) {
-    const dateArray: string[] = date.split("/");
-    const dateStr = `${dateArray[2]}-${`0${dateArray[1]}`.slice(
-      -0
-    )}-${`0${dateArray[1]}`.slice(-2)}`;
-    return dateStr;
-  }
 
   return (
     <div className="App">

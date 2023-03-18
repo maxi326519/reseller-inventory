@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Sale } from "../../../../../interfaces";
 
 import styles from "./SaleData.module.css";
@@ -6,12 +5,12 @@ import "../../../../../animation.css";
 
 interface OtherExpenses {
   saleId: number;
-  other1: {
+  adsFee: {
     check: boolean;
     description: string;
     cost: number | string;
   };
-  other2: {
+  other: {
     check: boolean;
     description: string;
     cost: number | string;
@@ -20,7 +19,7 @@ interface OtherExpenses {
 
 interface ShipingExpenses {
   saleId: number;
-  shipment: number | string;
+  shipLabel: number | string;
   ebayFees: number | string;
 }
 
@@ -92,23 +91,18 @@ export default function SaleData({
       <div className={styles.expenses}>
         <h4>Expenses</h4>
 
-        <div
-          className={`${styles.shipmentExpenses} ${
-            sale?.shipment.value ? styles.showShipEpense : ""
-          }`}
-        >
+        <div className={styles.shipmentExpenses}>
           <div>
             <label htmlFor="ebayFees">Ship Label</label>
             <input
               className="form-control"
-              id="expense-shipment"
-              name="expense-shipment"
+              id="expense-shipLabel"
+              name="expense-shipLabel"
               type="number"
               step="any"
-              value={shipment?.shipment}
+              value={shipment?.shipLabel}
               placeholder="$ 0.00"
               onChange={(e) => handleExpense(e, sale?.id)}
-              disabled={!sale?.shipment.value}
             />
           </div>
           <div>
@@ -122,7 +116,6 @@ export default function SaleData({
               value={shipment?.ebayFees}
               placeholder="$ 0.00"
               onChange={(e) => handleExpense(e, sale?.id)}
-              disabled={!sale?.shipment.value}
             />
           </div>
         </div>
@@ -131,33 +124,33 @@ export default function SaleData({
           <div className={styles.left}>
             <div>
               <input
-                id="other1Check"
-                name="other1Check"
+                id="adsFeeCheck"
+                name="adsFeeCheck"
                 type="checkbox"
-                checked={other?.other1.check}
+                checked={other?.adsFee.check}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
-              <label htmlFor="other1Check">Other expenses</label>
+              <label htmlFor="adsFeeCheck">Ads Fee</label>
             </div>
             <div
               className={`${styles.otherContainer} ${
-                other?.other1.check ? styles.showOther : ""
+                other?.adsFee.check ? styles.showOther : ""
               }`}
             >
               <input
                 className="form-control"
                 placeholder="Description"
                 type="text"
-                name="other1Description"
-                value={other?.other1.description}
+                name="adsFeeDescription"
+                value={other?.adsFee.description}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
               <input
                 className="form-control"
                 placeholder="$ 0.00"
                 type="number"
-                name="other1Cost"
-                value={other?.other1.cost}
+                name="adsFeeCost"
+                value={other?.adsFee.cost}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
             </div>
@@ -165,33 +158,33 @@ export default function SaleData({
           <div className={styles.right}>
             <div>
               <input
-                id="other2Check"
-                name="other2Check"
+                id="otherCheck"
+                name="otherCheck"
                 type="checkbox"
-                checked={other?.other2.check}
+                checked={other?.other.check}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
-              <label htmlFor="AdsfeeCheck">Ads Fee</label>
+              <label htmlFor="otherCheck">Other expenses</label>
             </div>
             <div
               className={`${styles.otherContainer} ${
-                other?.other2.check ? styles.showOther : ""
+                other?.other.check ? styles.showOther : ""
               }`}
             >
               <input
                 className="form-control"
                 placeholder="Description"
                 type="text"
-                name="AdsfeeDescription"
-                value={other?.other2.description}
+                name="otherDescription"
+                value={other?.other.description}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
               <input
                 className="form-control"
                 placeholder="$ 0.00"
                 type="number"
-                name="AdsfeeCost"
-                value={other?.other2.cost}
+                name="otherCost"
+                value={other?.other.cost}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
             </div>

@@ -19,12 +19,12 @@ import swal from "sweetalert";
 
 interface OtherExpenses {
   saleId: number;
-  other1: {
+  adsFee: {
     check: boolean;
     description: string;
     cost: number | string;
   };
-  other2: {
+  other: {
     check: boolean;
     description: string;
     cost: number | string;
@@ -33,32 +33,33 @@ interface OtherExpenses {
 
 interface ShipingExpenses {
   saleId: number;
-  shipment: number | string;
+  shipLabel: number | string;
   ebayFees: number | string;
 }
 
 const initialSale: Sale = {
   id: 0,
   date: new Date().toISOString().split("T")[0],
+  cost: 0,
   price: 0,
   productId: 0,
   shipment: {
     value: false,
-    amount: 0,
+    amount: "",
   },
   expenses: [],
 };
 
 const initialOtherExpenses: OtherExpenses = {
   saleId: 0,
-  other1: { check: false, description: "", cost: "" },
-  other2: { check: false, description: "", cost: "" },
+  adsFee: { check: false, description: "", cost: "" },
+  other: { check: false, description: "", cost: "" },
 };
 
 const initialShipingExpenses: ShipingExpenses = {
   saleId: 0,
-  shipment: 0,
-  ebayFees: 0,
+  shipLabel: "",
+  ebayFees: "",
 };
 
 export default function Inventory() {
@@ -98,13 +99,13 @@ export default function Inventory() {
     setClose(!close);
   }
 
-  function handleSelected(id: number) {
+  function handleSelected(id: number, cost: number | null) {
     if (itemSelected.some((s) => s === id)) {
       setItem(itemSelected.filter((s) => s !== id));
       setOther(other.filter((o) => o.saleId !== id));
       setShiping(shipment.filter((s) => s.saleId !== id));
       setSales(sales.filter((s) => s.productId !== id));
-    } else {
+    } else if(cost !== null){
       setItem([...itemSelected, id]);
       setOther([...other, { ...initialOtherExpenses, saleId: id }]);
       setShiping([...shipment, { ...initialShipingExpenses, saleId: id }]);
@@ -113,14 +114,11 @@ export default function Inventory() {
         {
           ...initialSale,
           id: id,
+          cost: cost,
           productId: id,
         },
       ]);
     }
-    console.log("Items", itemSelected);
-    console.log("Sales", sales);
-    console.log("Other", other);
-    console.log("shipment", shipment);
   }
 
   function handleExpense(
@@ -130,23 +128,19 @@ export default function Inventory() {
     const name: string = event.target.name;
     const value: number | string = event.target.value;
 
-    console.log(name, value);
-
-    if (name.includes("shipment")) {
-      console.log("Entro shipment");
+    if (name.includes("shipLabel")) {
       setShiping(
         shipment.map((s) => {
           if (s.saleId === id) {
             return {
               ...s,
-              shipment: value,
+              shipLabel: value,
             };
           }
           return s;
         })
       );
     } else if (name.includes("ebayFees")) {
-      console.log("Entro ebayFees");
       setShiping(
         shipment.map((s) => {
           if (s.saleId === id) {
@@ -158,42 +152,40 @@ export default function Inventory() {
           return s;
         })
       );
-    } else if (name.includes("other1")) {
-      console.log("Entro other1");
+    } else if (name.includes("adsFee")) {
       setOther(
         other.map((o) => {
           if (o.saleId === id) {
             return {
               ...o,
-              other1: {
+              adsFee: {
                 check: name.includes("Check")
                   ? event.target.checked
-                  : o.other1.check,
+                  : o.adsFee.check,
                 description: name.includes("Description")
                   ? value
-                  : o.other1.description,
-                cost: name.includes("Cost") ? value : o.other1.cost,
+                  : o.adsFee.description,
+                cost: name.includes("Cost") ? value : o.adsFee.cost,
               },
             };
           }
           return o;
         })
       );
-    } else if (name.includes("other2")) {
-      console.log("Entro other2");
+    } else if (name.includes("other")) {
       setOther(
         other.map((o) => {
           if (o.saleId === id) {
             return {
               ...o,
-              other2: {
+              other: {
                 check: name.includes("Check")
                   ? event.target.checked
-                  : o.other2.check,
+                  : o.other.check,
                 description: name.includes("Description")
                   ? value
-                  : o.other2.description,
-                cost: name.includes("Cost") ? value : o.other2.cost,
+                  : o.other.description,
+                cost: name.includes("Cost") ? value : o.other.cost,
               },
             };
           }
@@ -216,6 +208,7 @@ export default function Inventory() {
           dispatch<any>(expiredItems(itemSelected))
             .then(() => {
               dispatch<any>(closeLoading());
+              setItem([]);
             })
             .catch((e: any) => {
               swal(
@@ -224,6 +217,7 @@ export default function Inventory() {
                 "error"
               );
               console.log(e);
+              setItem([]);
             });
         }
       });
@@ -261,6 +255,7 @@ export default function Inventory() {
         <AddSale
           handleClose={handleClose}
           itemSelected={itemSelected}
+          setItem={setItem}
           handleSelected={handleSelected}
           sales={sales}
           setSales={setSales}

@@ -5,7 +5,7 @@ import {
   closeLoading,
   logIn,
   getItems,
-  getInvoince,
+  getInvoices,
   getUserData,
   getReports,
 } from "../../redux/actions";
@@ -49,8 +49,6 @@ export default function Signin() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-/*     redirect("/");
- */
     if ((user.email === "") || (user.password === "")) {
       let err: Error = {
         email: null,
@@ -64,10 +62,10 @@ export default function Signin() {
       dispatch<any>(logIn(user))
         .then(() => {
           dispatch<any>(getItems()).catch((e: any) => console.log(e));
-          dispatch<any>(getInvoince(format(new Date().toLocaleDateString()))).catch((e: any) => console.log(e));
+          dispatch<any>(getInvoices(new Date().toISOString().split("T")[0])).catch((e: any) => console.log(e));
           dispatch<any>(getUserData()).catch((e: any) => console.log(e));
-        dispatch<any>(getReports()).catch((e: any) => console.log(e));
-        dispatch(closeLoading());
+          dispatch<any>(getReports()).catch((e: any) => console.log(e));
+          dispatch(closeLoading());
           redirect("/");
         })
         .catch((e: any) => {

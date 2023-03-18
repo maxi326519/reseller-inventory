@@ -1,10 +1,9 @@
-import { RootState } from "../../interfaces";
+import { RootState, Sale } from "../../interfaces";
 import { AnyAction } from "redux";
 import {
-  SELL_ITEMS,
-  EXPIRED_ITEMS,
   LOADING,
   CLOSE_LOADING,
+  POST_SOURCES,
   POST_ITEMS,
   POST_INVOICE,
   POST_CATEGORIES,
@@ -17,11 +16,13 @@ import {
   UPDATE_REPORTS,
   DELETE_INVOICE,
   DELETE_ITEMS,
+  EXPIRED_ITEMS,
 } from "../actions";
 
 const initialState: RootState = {
   user: {
-    categories: ["General", "Shipment"],
+    categories: ["General"],
+    sources: []
   },
   items: [],
   invoices: [],
@@ -33,6 +34,18 @@ const initialState: RootState = {
 
 export const Reducer = (state: RootState = initialState, action: AnyAction) => {
   switch (action.type) {
+    case POST_CATEGORIES:
+      return {
+        ...state,
+        user: { ...state.user, categories: action.payload },
+      };
+
+    case POST_SOURCES:
+      return {
+        ...state,
+        user: { ...state.user, sources: action.payload },
+      };
+
     case POST_ITEMS:
       return {
         ...state,
@@ -45,32 +58,19 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
         invoices: [...state.invoices, action.payload],
       };
 
-    case POST_CATEGORIES:
-      return {
-        ...state,
-        user: { ...state.user, categories: action.payload },
-      };
-
     case POST_SALE:
       return {
         ...state,
-        sales: [...state.sales, action.payload],
-      };
-
-    case SELL_ITEMS:
-      const updateSate = state.items.map((item) => {
-        if (action.payload.some((id: number) => id === item.id)) {
-          return {
-            ...item,
-            state: "sold",
-          };
-        }
-        return item;
-      });
-
-      return {
-        ...state,
-        items: updateSate,
+        sales: [...state.sales, ...action.payload],
+        items: state.items.map((item) => {
+          if (action.payload.some((sale: Sale) => sale.productId === item.id)) {
+            return {
+              ...item,
+              state: "Sold",
+            };
+          }
+          return item;
+        }),
       };
 
     case LOADING:

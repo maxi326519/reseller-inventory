@@ -1,6 +1,6 @@
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import { db, auth, storage, batch } from "../../firebase";
+import { db, auth, storage } from "../../firebase";
 import { calculeReports } from "../../functions/reports";
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
@@ -12,6 +12,7 @@ import {
   getDocs,
   updateDoc,
   deleteDoc,
+  writeBatch,
 } from "firebase/firestore";
 import {
   Item,
@@ -32,9 +33,10 @@ export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
 export const SELL_ITEMS = "SELL_ITEMS";
 
 /* POST */
+export const POST_CATEGORIES = "POST_CATEGORIES";
+export const POST_SOURCES = "POST_SOURCES";
 export const POST_ITEMS = "POST_ITEMS";
 export const POST_INVOICE = "POST_INVOICE";
-export const POST_CATEGORIES = "POST_CATEGORIES";
 export const POST_EXPENSES = "POST_EXPENSES";
 export const POST_SALE = "POST_SALE";
 export const POST_IMAGE = "POST_IMAGE";
@@ -105,6 +107,7 @@ export function postItems(
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
+      const batch = writeBatch(db);
 
       // Agregar documentos al batch
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
@@ -187,6 +190,7 @@ export function postExpenses(
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
+      const batch = writeBatch(db);
 
       // Agregar documentos al batch
       const expensesRef = collection(
@@ -223,26 +227,24 @@ export function postSales(
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
+      const batch = writeBatch(db);
 
       // Agregar documentos al batch
       const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
-      const itemsRef = collection(
-        db,
-        "Users",
-        auth.currentUser.uid,
-        "Items"
-      );
+      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
 
       sales.forEach((sale: Sale) => {
         const date: string[] = sale.date.split("-");
         const year: string = date[0];
         const month: string = date[1];
-        
+
         const yearRef = doc(salesRef, year);
         const monthRef = collection(yearRef, month);
 
         batch.set(doc(monthRef, sale.id.toString()), sale);
-        batch.update(doc(itemsRef, sale.productId.toString()), { state: "Sold" });
+        batch.update(doc(itemsRef, sale.productId.toString()), {
+          state: "Sold",
+        });
       });
 
       await batch.commit();
@@ -278,6 +280,27 @@ export function postCategories(
   };
 }
 
+export function postSources(
+  sources: string[]
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
+
+      await updateDoc(doc(db, "Users", auth.currentUser.uid), {
+        sources,
+      });
+
+      dispatch({
+        type: POST_SOURCES,
+        payload: sources,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
 export function getUserData(): ThunkAction<
   Promise<void>,
   RootState,
@@ -291,6 +314,13 @@ export function getUserData(): ThunkAction<
       const query = await getDoc(doc(db, "Users", auth.currentUser.uid));
 
       const userData = query.data();
+
+      if (!query.exists()) {
+        await setDoc(doc(db, "Users", auth.currentUser.uid), {
+          categories: ["General"],
+          sources: [],
+        });
+      }
 
       dispatch({
         type: GET_USER_DATA,
@@ -331,7 +361,7 @@ export function getItems(): ThunkAction<
   };
 }
 
-export function getInvoince(
+export function getInvoices(
   date: string
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
@@ -471,12 +501,12 @@ export function getReports(): ThunkAction<
 export function updateReports(
   expenses: Expense[],
   reports: YearReport[],
-  sales: Sale[] | any,
+  sales: Sale[] | any
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       let response = calculeReports(reports, expenses, true);
-      if(sales) response = calculeReports(response.reports, sales, false);
+      if (sales) response = calculeReports(response.reports, sales, false);
       const newReports = response.reports;
       const years = response.years;
 
@@ -515,15 +545,11 @@ export function expiredItems(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-      
+      const batch = writeBatch(db);
+
       itemsID.forEach((id) => {
         if (auth.currentUser === null) throw new Error("unauthenticated user");
-        const itemsRef = collection(
-          db,
-          "Users",
-          auth.currentUser.uid,
-          "Items"
-        );
+        const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
         batch.update(doc(itemsRef, id.toString()), { state: "Expired" });
       });
 
@@ -576,15 +602,11 @@ export function deleteItems(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-      
+      const batch = writeBatch(db);
+
       itemsID.forEach((id) => {
         if (auth.currentUser === null) throw new Error("unauthenticated user");
-        const itemsRef = collection(
-          db,
-          "Users",
-          auth.currentUser.uid,
-          "Items"
-        );
+        const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
         batch.update(doc(itemsRef, id.toString()), { state: "Expired" });
       });
       dispatch({
@@ -596,30 +618,3 @@ export function deleteItems(
     }
   };
 }
-
-/* export function sellItems(
-  itemsID: number[]
-): ThunkAction<Promise<void>, RootState, null, AnyAction> {
-  return async (dispatch: Dispatch<AnyAction>) => {
-    try {
-      for (let i: number = 0; i < itemsID.length; i++) {
-        if (auth.currentUser === null) throw new Error("unauthenticated user");
-        const itemsRef = collection(
-          db,
-          "Users",
-          auth.currentUser.uid,
-          "Items"
-        );
-        await updateDoc(doc(itemsRef, `${itemsID[0]}`), { state: "Sold" });
-      }
-
-      dispatch({
-        type: SELL_ITEMS,
-        payload: itemsID,
-      });
-    } catch (e: any) {
-      throw new Error(e);
-    }
-  };
-}
- */

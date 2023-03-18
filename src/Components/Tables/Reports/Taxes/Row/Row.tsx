@@ -1,24 +1,30 @@
 
+import { MonthTaxesData } from "../../../../../interfaces";
 import styles from "./Row.module.css";
 
-export default function Row () {
+interface Props{
+  taxesMonth: MonthTaxesData;
+}
+
+export default function Row ({ taxesMonth }: Props) {
   return (
     <div className={styles.row}>
     <div className={styles.month}>
-      <span>Enero{/* Month */}</span>
+      <span>{ taxesMonth.month.name }</span>
     </div>
     <div className={styles.sales}>
-      <span>Sales: {/* Sales variables */}</span>
-      <span>Shipping: {/* Shipping variables */}</span>
+      <span>Sales: { taxesMonth.sales.sales }</span>
+      <span>Shipment: { taxesMonth.sales.shipment }</span>
     </div>
     <div className={styles.expenses}>
       <div>
-        <span>Shipping {/* Shippiing expenses variables */}</span>
-        <span>Ebya Fees: {/* Evay fees variables */}</span>
+        <span>Ship Label: { taxesMonth.expenses.shipLabel }</span>
+        <span>Ebya Fees: { taxesMonth.expenses.ebayFees }</span>
       </div>
       <div>
-        <span>Other Expenses 1: {/* Other Expenses 1 variables */}</span>
-        <span>Other Expenses 2: {/* Other Expenses 2 variables */}</span>
+        <span>Ads Fee: { taxesMonth.expenses.adsFee }</span>
+        <span>Other Expenses: { taxesMonth.expenses.otherExpense }</span>
+        <span>COGS: { taxesMonth.expenses.COGS }</span>
       </div>
     </div>
   </div>

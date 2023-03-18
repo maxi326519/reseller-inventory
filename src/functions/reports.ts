@@ -105,13 +105,13 @@ export function calculeReports(reports: YearReport[], data: any, isExpense: bool
               };
 
               let totalSale = 0;
-              newMonth.sales.forEach((sale) => totalSale += sale.amount);
+              newMonth.sales.forEach((sale) => totalSale += Number(sale.amount));
 
               /* Calculate total */
               newMonth = {
                 ...newMonth,
                 totalSales:
-                month.totalSales + totalSale
+                month.totalSales + Number(totalSale)
               }
             }
             return newMonth;

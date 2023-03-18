@@ -6,7 +6,7 @@ interface Prop {
   item: Item;
   rowSelected: number;
   handleRowSelect: (id: number) => void;
-  handleSelected: (id: number) => void;
+  handleSelected: (id: number, cost: | null) => void;
   handleSetPrice: (id: number, price: string) => void;
 }
 
@@ -36,7 +36,7 @@ export default function ItemRow({
       <button
         className="btn btn-danger"
         type="button"
-        onClick={() => handleSelected(item.id)}
+        onClick={() => handleSelected(item.id, null)}
       >
         -
       </button>
