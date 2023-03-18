@@ -362,30 +362,51 @@ export function getItems(): ThunkAction<
 }
 
 export function getInvoices(
-  date: string
+  year: string,
+  month: string | null
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-      console.log("Invoice date", date);
+      console.log("Invoice date", year, month);
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
       let newInvoices: Array<any> = [];
-      const dateArr = date.split("-");
-      const year = dateArr[0];
-      const month = dateArr[1];
-
       const invoiceRef = collection(
         db,
         "Users",
         auth.currentUser.uid,
         "Invoices"
       );
-      const yearRef = doc(invoiceRef, year);
-      const query = await getDocs(collection(yearRef, month));
 
-      query.forEach((doc) => {
-        newInvoices.push(doc.data());
-      });
+      if(year && month){
+        console.log("por mes");
+        const yearRef = doc(invoiceRef, year);
+        const query = await getDocs(collection(yearRef, month));
+
+        query.forEach((doc) => {
+          newInvoices.push(doc.data());
+        });
+      }else if(year && !month){
+        console.log("por year");
+        const yearRef = doc(invoiceRef, year);
+        const monthQuerys = [];
+
+        for(let i=0; i<12; i++){
+          const month = await getDocs(collection(yearRef, `0${i + 1}`.slice(-2)));
+          monthQuerys.push(month);
+        }
+
+        monthQuerys
+        .filter((month) => {
+          if (month.empty) return false;
+          return true;
+        })
+        .forEach((month) => {
+          month.forEach((doc) => {
+            newInvoices.push(doc.data());
+          });
+        });
+      }
 
       dispatch({
         type: GET_INVOICE,

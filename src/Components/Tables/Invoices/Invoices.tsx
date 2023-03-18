@@ -13,6 +13,12 @@ import Details from "./Details/Details";
 import styles from "../Tables.module.css";
 import style from "./Invoices.module.css";
 
+interface Filter {
+  year: string | number,
+  month: string | number,
+  day: string | number
+}
+
 export default function Invoices() {
   const dispatch = useDispatch();
   const reports = useSelector((state: RootState) => state.reports);
@@ -85,7 +91,9 @@ export default function Invoices() {
     });
   }
 
-  function handleSetDate() {}
+  function handleFilterDate(date: Filter) {
+    
+  }
 
   return (
     <div className={styles.background}>
@@ -120,7 +128,7 @@ export default function Invoices() {
           >
             <img src={reload} alt="reload" />
           </button>
-          <DateFilter years={reports.map((report) => report.year )} />
+          <DateFilter years={reports.map((report) => report.year )} handleFilterDate={handleFilterDate}/>
           <span className={style.total}>
             Total cost of invoices: ${total.toFixed(2)}
           </span>
