@@ -105,7 +105,7 @@ export default function NewPurchase() {
               swal(
                 "Error",
                 "Error to save the invoice or items, try again leter",
-                "success"
+                "error"
               );
               console.log(e);
             });

@@ -2,17 +2,25 @@ import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { db, auth, storage } from "../../firebase";
 import { calculeReports } from "../../functions/reports";
-import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
+import {
+  uploadBytes,
+  ref,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import {
   collection,
   doc,
+  addDoc,
   setDoc,
   getDoc,
   getDocs,
   updateDoc,
   deleteDoc,
   writeBatch,
+  where,
+  query,
 } from "firebase/firestore";
 import {
   Item,
@@ -201,12 +209,7 @@ export function postExpenses(
       );
 
       expenses.forEach((expense: Expense) => {
-        const date: string[] = expense.date.split("-");
-        const year: string = date[0];
-        const month: string = date[1];
-        const yearRef = doc(expensesRef, year);
-        const monthRef = collection(yearRef, month);
-        batch.set(doc(monthRef, expense.id.toString()), expense);
+        batch.set(doc(expensesRef), expense);
       });
 
       await batch.commit();
@@ -234,14 +237,7 @@ export function postSales(
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
 
       sales.forEach((sale: Sale) => {
-        const date: string[] = sale.date.split("-");
-        const year: string = date[0];
-        const month: string = date[1];
-
-        const yearRef = doc(salesRef, year);
-        const monthRef = collection(yearRef, month);
-
-        batch.set(doc(monthRef, sale.id.toString()), sale);
+        batch.set(doc(salesRef), sale);
         batch.update(doc(itemsRef, sale.productId.toString()), {
           state: "Sold",
         });
@@ -378,7 +374,7 @@ export function getInvoices(
         "Invoices"
       );
 
-      if(year && month){
+      if (year && month) {
         console.log("por mes");
         const yearRef = doc(invoiceRef, year);
         const query = await getDocs(collection(yearRef, month));
@@ -386,26 +382,28 @@ export function getInvoices(
         query.forEach((doc) => {
           newInvoices.push(doc.data());
         });
-      }else if(year && !month){
+      } else if (year && !month) {
         console.log("por year");
         const yearRef = doc(invoiceRef, year);
         const monthQuerys = [];
 
-        for(let i=0; i<12; i++){
-          const month = await getDocs(collection(yearRef, `0${i + 1}`.slice(-2)));
+        for (let i = 0; i < 12; i++) {
+          const month = await getDocs(
+            collection(yearRef, `0${i + 1}`.slice(-2))
+          );
           monthQuerys.push(month);
         }
 
         monthQuerys
-        .filter((month) => {
-          if (month.empty) return false;
-          return true;
-        })
-        .forEach((month) => {
-          month.forEach((doc) => {
-            newInvoices.push(doc.data());
+          .filter((month) => {
+            if (month.empty) return false;
+            return true;
+          })
+          .forEach((month) => {
+            month.forEach((doc) => {
+              newInvoices.push(doc.data());
+            });
           });
-        });
       }
 
       dispatch({
@@ -605,13 +603,78 @@ export function deleteInvoice(
         "Invoices"
       );
 
+      const batch = writeBatch(db);
+
+      // Delete invoice
       const yearRef = doc(invoiceRef, year);
       const monthRef = collection(yearRef, month);
-      await deleteDoc(doc(monthRef, invoice.id.toString()));
+      batch.delete(doc(monthRef, invoice.id.toString()));
+
+      console.log("Deleting items...");
+      // Delete items
+      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
+      invoice.items.forEach((id) => {
+        batch.delete(doc(itemsRef, id.toString()));
+      });
+      console.log("Finished");
+      console.log("--------------------------------");
+
+      console.log("Deleting expenses...");
+      // Get expenses and then delete them
+      const expensesRef = collection(
+        db,
+        "Users",
+        auth.currentUser.uid,
+        "Expenses"
+      );
+      for (let i = 0; i < invoice.items.length; i++) {
+        console.log("\tgeting...");
+        // Get sales matching id
+        const expensesQuery = query(
+          expensesRef,
+          where("id", "==", invoice.items[i])
+        );
+        const expensesToDelete = await getDocs(expensesQuery);
+        console.log("\tdeleting...");
+        // Delete sales
+        if (!expensesToDelete.empty) {
+          expensesToDelete.forEach((docm) => {
+            batch.delete(doc(expensesRef, docm.id));
+          });
+        }
+      }
+      console.log("Finished");
+      console.log("--------------------------------");
+
+      console.log("Deleting sales...");
+      // SALES
+      const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
+      for (let i = 0; i < invoice.items.length; i++) {
+        console.log("\tgeting...");
+        // Get sales matching id
+        const salesQuery = query(salesRef, where("id", "==", invoice.items[i]));
+        const salesToDelete = await getDocs(salesQuery);
+
+        console.log("\tdeleting...");
+        // Delete sales
+        if (!salesToDelete.empty) {
+          salesToDelete.forEach((docm) => {
+            batch.delete(doc(salesRef, docm.id));
+          });
+        }
+      }
+      console.log("Finished");
+      console.log("--------------------------------");
+
+      batch.commit();
+
+      // Delete the file, invoice image
+      const desertRef = ref(storage, invoice.imageRef);
+      await deleteObject(desertRef);
 
       dispatch({
         type: DELETE_INVOICE,
-        payload: invoice.id,
+        payload: invoice,
       });
     } catch (e: any) {
       throw new Error(e);

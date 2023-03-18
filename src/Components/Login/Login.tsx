@@ -61,8 +61,10 @@ export default function Signin() {
       dispatch(loading());
       dispatch<any>(logIn(user))
         .then(() => {
+          const year = new Date().toISOString().split("T")[0].split("-")[0];
+          const month = new Date().toISOString().split("T")[0].split("-")[1];
           dispatch<any>(getItems()).catch((e: any) => console.log(e));
-          dispatch<any>(getInvoices(new Date().toISOString().split("T")[0])).catch((e: any) => console.log(e));
+          dispatch<any>(getInvoices(year, month)).catch((e: any) => console.log(e));
           dispatch<any>(getUserData()).catch((e: any) => console.log(e));
           dispatch<any>(getReports()).catch((e: any) => console.log(e));
           dispatch(closeLoading());
