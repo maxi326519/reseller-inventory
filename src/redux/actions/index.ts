@@ -62,7 +62,6 @@ export const UPDATE_REPORTS = "UPDATE_REPORTS";
 
 /* DELETE */
 export const DELETE_INVOICE = "DELETE_INVOICE";
-export const DELETE_ITEMS = "DELETE_ITEMS";
 
 export function logIn(
   user: any
@@ -610,16 +609,12 @@ export function deleteInvoice(
       const monthRef = collection(yearRef, month);
       batch.delete(doc(monthRef, invoice.id.toString()));
 
-      console.log("Deleting items...");
       // Delete items
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
       invoice.items.forEach((id) => {
         batch.delete(doc(itemsRef, id.toString()));
       });
-      console.log("Finished");
-      console.log("--------------------------------");
 
-      console.log("Deleting expenses...");
       // Get expenses and then delete them
       const expensesRef = collection(
         db,
@@ -628,14 +623,12 @@ export function deleteInvoice(
         "Expenses"
       );
       for (let i = 0; i < invoice.items.length; i++) {
-        console.log("\tgeting...");
         // Get sales matching id
         const expensesQuery = query(
           expensesRef,
           where("id", "==", invoice.items[i])
         );
         const expensesToDelete = await getDocs(expensesQuery);
-        console.log("\tdeleting...");
         // Delete sales
         if (!expensesToDelete.empty) {
           expensesToDelete.forEach((docm) => {
@@ -643,19 +636,14 @@ export function deleteInvoice(
           });
         }
       }
-      console.log("Finished");
-      console.log("--------------------------------");
 
-      console.log("Deleting sales...");
       // SALES
       const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
       for (let i = 0; i < invoice.items.length; i++) {
-        console.log("\tgeting...");
         // Get sales matching id
         const salesQuery = query(salesRef, where("id", "==", invoice.items[i]));
         const salesToDelete = await getDocs(salesQuery);
 
-        console.log("\tdeleting...");
         // Delete sales
         if (!salesToDelete.empty) {
           salesToDelete.forEach((docm) => {
@@ -663,40 +651,18 @@ export function deleteInvoice(
           });
         }
       }
-      console.log("Finished");
-      console.log("--------------------------------");
 
       batch.commit();
 
       // Delete the file, invoice image
-      const desertRef = ref(storage, invoice.imageRef);
-      await deleteObject(desertRef);
+      if (invoice.imageRef !== "") {
+        const desertRef = ref(storage, invoice.imageRef);
+        await deleteObject(desertRef);
+      }
 
       dispatch({
         type: DELETE_INVOICE,
         payload: invoice,
-      });
-    } catch (e: any) {
-      throw new Error(e);
-    }
-  };
-}
-
-export function deleteItems(
-  itemsID: number[]
-): ThunkAction<Promise<void>, RootState, null, AnyAction> {
-  return async (dispatch: Dispatch<AnyAction>) => {
-    try {
-      const batch = writeBatch(db);
-
-      itemsID.forEach((id) => {
-        if (auth.currentUser === null) throw new Error("unauthenticated user");
-        const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
-        batch.update(doc(itemsRef, id.toString()), { state: "Expired" });
-      });
-      dispatch({
-        type: DELETE_ITEMS,
-        payload: itemsID,
       });
     } catch (e: any) {
       throw new Error(e);

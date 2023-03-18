@@ -29,6 +29,12 @@ export default function Rows({ invoice, handleDetails }: Props) {
         dispatch(loading());
         dispatch<any>(deleteInvoice(invoice)).then(() => {
           dispatch(closeLoading());
+        }).then(() => {
+          swal(
+            "Deleted",
+            "Invoice deleted successfully",
+            "success"
+          )
         }).catch((error: any) => {
           console.log(error);
           dispatch(closeLoading());

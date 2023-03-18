@@ -19,9 +19,9 @@ const months = [
 ];
 
 interface Filter {
-  year: string | number,
-  month: string | number,
-  day: string | number
+  year: string | number;
+  month: string | number;
+  day: string | number;
 }
 
 interface Porps {
@@ -39,25 +39,28 @@ export default function DateFilter({ years, handleFilterDate }: Porps) {
 
   useEffect(() => {
     // If any month selected
-    if(filter.month !== "00"){
+    if (filter.month !== "00") {
       // Number of days
-      var days = new Date(Number(filter.year), Number(filter.month), 0).getDate();
+      var days = new Date(
+        Number(filter.year),
+        Number(filter.month),
+        0
+      ).getDate();
       let dayArr = [];
       for (let i = 1; i <= days; i++) {
         dayArr.push(i);
       }
       setDays(dayArr);
-    }else{
+    } else {
       setDays([]);
     }
-
   }, [filter]);
 
   function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setFilter({ ...filter, [event.target.name]: event.target.value });
   }
 
-  function handleApply(){
+  function handleApply() {
     handleFilterDate(filter);
   }
 
@@ -71,11 +74,15 @@ export default function DateFilter({ years, handleFilterDate }: Porps) {
           value={filter.year}
           onChange={handleChange}
         >
-          {years.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
+          {years.length > 0 ? (
+            years.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))
+          ) : (
+            <option>{new Date().toLocaleDateString().split("/")[2]}</option>
+          )}
         </select>
         <label htmlFor="year">Year</label>
       </div>
@@ -112,11 +119,7 @@ export default function DateFilter({ years, handleFilterDate }: Porps) {
         </select>
         <label htmlFor="day">Day</label>
       </div>
-      <button
-        className="btn btn-success"
-        type="button"
-        onClick={handleApply}
-      >
+      <button className="btn btn-success" type="button" onClick={handleApply}>
         Apply
       </button>
     </div>

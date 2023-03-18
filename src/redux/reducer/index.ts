@@ -15,17 +15,16 @@ import {
   GET_EXPENSES,
   UPDATE_REPORTS,
   DELETE_INVOICE,
-  DELETE_ITEMS,
   EXPIRED_ITEMS,
 } from "../actions";
 
 const initialState: RootState = {
   user: {
     categories: ["General"],
-    sources: []
+    sources: [],
   },
-  items: [],
   invoices: [],
+  items: [],
   sales: [],
   expenses: [],
   reports: [],
@@ -138,14 +137,16 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
       return {
         ...state,
         invoices: state.invoices.filter(
-          (invoice) => invoice.id !== action.payload
+          (invoice) => invoice.id !== action.payload.id
         ),
-      };
-    case DELETE_ITEMS:
-      return {
-        ...state,
         items: state.items.filter(
-          (item) => !action.payload.some((id: number) => id === item.id)
+          (item) => !action.payload.items.some((id: number) => id === item.id)
+        ),
+        sales: state.sales.filter(
+          (sale) => !action.payload.items.some((id: number) => id === sale.productId)
+        ),
+        expenses: state.expenses.filter(
+          (expense) => !action.payload.items.some((id: number) => id === expense.id)
         ),
       };
     default:
