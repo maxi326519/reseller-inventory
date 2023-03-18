@@ -1,7 +1,10 @@
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { db, auth, storage } from "../../firebase";
-import { calculeReports } from "../../functions/reports";
+import {
+  calculeReports,
+  deleteDataAndUpdateTotals,
+} from "../../functions/reports";
 import {
   uploadBytes,
   ref,
@@ -552,6 +555,45 @@ export function updateReports(
       dispatch({
         type: UPDATE_REPORTS,
         payload: newReports,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function updateReportsdItems(
+  dataId: number[],
+  reports: YearReport[]
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      const { updatedReports, editedYears } = deleteDataAndUpdateTotals(
+        dataId,
+        reports
+      );
+
+      for (let i = 0; i < updatedReports.length; i++) {
+        if (auth.currentUser === null) throw new Error("unauthenticated user");
+
+        const year = editedYears.find(
+          (y) => y.toString() === updatedReports[i].year.toString()
+        );
+        if (year) {
+          const reportRef = collection(
+            db,
+            "Users",
+            auth.currentUser.uid,
+            "Reports"
+          );
+          const yearReportRef = doc(reportRef, year);
+          setDoc(yearReportRef, { ...updatedReports[i] });
+        }
+      }
+
+      dispatch({
+        type: UPDATE_REPORTS,
+        payload: updatedReports,
       });
     } catch (e: any) {
       throw new Error(e);

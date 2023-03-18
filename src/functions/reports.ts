@@ -1,4 +1,4 @@
-import { YearReport, MonthReport, Expense, Sale } from "../interfaces";
+import { YearReport, MonthReport, Expense, Sale, ReportItem } from "../interfaces";
 
 export function calculeReports(
   reports: YearReport[],
@@ -166,4 +166,38 @@ export function reportGenerator(year: string): YearReport {
     reportData.month.push(monthReport);
   }
   return reportData;
+}
+
+export function deleteDataAndUpdateTotals(id: number[], reports: YearReport[]) {
+  const updatedReports: YearReport[] = [...reports];
+  const editedYears: string[] = [];
+  
+  for (let i = 0; i < updatedReports.length; i++) {
+    const yearReport: YearReport = updatedReports[i];
+    
+    for (let j = 0; j < yearReport.month.length; j++) {
+      const monthReport: MonthReport = yearReport.month[j];
+      const sales: ReportItem[] = monthReport.sales.filter((item) => !id.includes(item.id));
+      const expenses: ReportItem[] = monthReport.expenses.filter((item) => !id.includes(item.id));
+      const totalSales: number = sales.reduce((total, item) => total + item.amount, 0);
+      const totalExpenses: number = expenses.reduce((total, item) => total + item.amount, 0);
+      
+      updatedReports[i].month[j] = {
+        ...monthReport,
+        sales,
+        expenses,
+        totalSales,
+        totalExpenses,
+      };
+      
+      if (!editedYears.includes(yearReport.year)) {
+        editedYears.push(yearReport.year);
+      }
+    }
+  }
+
+  return {
+    updatedReports,
+    editedYears, 
+  }
 }

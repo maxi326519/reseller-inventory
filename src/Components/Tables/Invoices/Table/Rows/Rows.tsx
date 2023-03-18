@@ -1,9 +1,14 @@
-import { Invoice } from "../../../../../interfaces";
+import { Invoice, RootState } from "../../../../../interfaces";
 import changeDateFormat from "../../../../../functions/changeDateFormat";
-import { closeLoading, deleteInvoice, loading } from "../../../../../redux/actions";
+import {
+  closeLoading,
+  deleteInvoice,
+  loading,
+  updateReportsdItems,
+} from "../../../../../redux/actions";
 
 import styles from "../Table.module.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import swal from "sweetalert";
 
 interface Props {
@@ -12,8 +17,8 @@ interface Props {
 }
 
 export default function Rows({ invoice, handleDetails }: Props) {
-
   const dispatch = useDispatch();
+  const reports = useSelector((state: RootState) => state.reports);
 
   function handleDelete(invoiceId: number) {
     swal({
@@ -23,29 +28,29 @@ export default function Rows({ invoice, handleDetails }: Props) {
       buttons: {
         confirm: true,
         cancel: true,
-      }
+      },
     }).then((response) => {
       if (response) {
         dispatch(loading());
-        dispatch<any>(deleteInvoice(invoice)).then(() => {
-          dispatch(closeLoading());
-        }).then(() => {
-          swal(
-            "Deleted",
-            "Invoice deleted successfully",
-            "success"
-          )
-        }).catch((error: any) => {
-          console.log(error);
-          dispatch(closeLoading());
-          swal(
-            "Error",
-            "Error deleting invoice, try again leter",
-            "error"
-          )
-        })
+        dispatch<any>(deleteInvoice(invoice))
+          .then(() => {
+            dispatch<any>(updateReportsdItems(invoice.items, reports)).then(
+              () => {
+                swal("Deleted", "Invoice deleted successfully", "success");
+                dispatch(closeLoading());
+              }
+            ).catch((error: any) => {
+              console.log(error);
+              dispatch(closeLoading());
+              swal("Error", "Error to update reports, try again leter", "error");
+            });
+          }).catch((error: any) => {
+            console.log(error);
+            dispatch(closeLoading());
+            swal("Error", "Error deleting invoice, try again leter", "error");
+          });
       }
-    })
+    });
   }
 
   return (
@@ -56,8 +61,20 @@ export default function Rows({ invoice, handleDetails }: Props) {
       <span>{invoice.total}</span>
       <span>{invoice.form}</span>
       <span>{invoice.source}</span>
-      <button className="btn btn-primary" type="button" onClick={() => handleDetails(invoice.id)}>View Items</button>
-      <button className="btn btn-danger" type="button" onClick={() => handleDelete(invoice.id)}>-</button>
+      <button
+        className="btn btn-primary"
+        type="button"
+        onClick={() => handleDetails(invoice.id)}
+      >
+        View Items
+      </button>
+      <button
+        className="btn btn-danger"
+        type="button"
+        onClick={() => handleDelete(invoice.id)}
+      >
+        -
+      </button>
     </div>
   );
 }
