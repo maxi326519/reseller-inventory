@@ -99,7 +99,7 @@ export default function AddSale({
                 .catch((err: any) => {
                   swal(
                     "Error",
-                    "Error to update reports, try again leter",
+                    "Error to update reports, try again later",
                     "error"
                   );
                   console.log(err);
@@ -108,14 +108,14 @@ export default function AddSale({
             .catch((err: any) => {
               swal(
                 "Error",
-                "Error to create expenses, try again leter",
+                "Error to create expenses, try again later",
                 "error"
               );
               console.log(err);
             });
         })
         .catch((err: any) => {
-          swal("Error", "Error to sale items, try again leter", "error");
+          swal("Error", "Error to sale items, try again later", "error");
           console.log(err);
         });
       dispatch(closeLoading());

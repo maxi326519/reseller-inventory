@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Item, RootState } from "../../../../interfaces";
+import { useDispatch, useSelector } from "react-redux";
+import { Item, RootState, YearReport } from "../../../../interfaces";
 import { getFirstAndLastDayOfMonth } from "../../../../functions/date";
 
 import Table from "./Table/Table";
@@ -8,6 +8,14 @@ import Excel from "./Excel/Excel.jsx";
 
 import styles from "./ItemsSold.module.css";
 import Refound from "./Refound/Refound";
+import swal from "sweetalert";
+import {
+  closeLoading,
+  loading,
+  postExpenses,
+  restoreItems,
+  updateReports,
+} from "../../../../redux/actions";
 
 interface Dates {
   firstDay: string;
@@ -17,12 +25,17 @@ interface Dates {
 const initialDates: Dates = getFirstAndLastDayOfMonth(new Date());
 
 export default function ItemsSold() {
+  const dispatch = useDispatch();
   const items: Item[] = useSelector((state: RootState) => state.items);
+  const reports: YearReport[] = useSelector(
+    (state: RootState) => state.reports
+  );
   const [itemsSold, setItemSold] = useState<Item[]>([]);
   const [dates, setDates] = useState(initialDates);
   const [total, setTotal] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [refound, setRefound] = useState(false);
+  const [refoundSelected, setRefoundSelected] = useState<number>();
 
   useEffect(() => {
     setItemSold(
@@ -75,6 +88,10 @@ export default function ItemsSold() {
     setDates({ ...dates, [name]: value });
   }
 
+  function handleRefoundSelected(id: number) {
+    setRefoundSelected(id);
+  }
+
   // Refound
   function handleClose() {
     setRefound(!refound);
@@ -82,6 +99,49 @@ export default function ItemsSold() {
 
   function handleRefound(amount: number) {
     console.log(amount);
+    console.log(refoundSelected);
+    if (refoundSelected === undefined) return false;
+    const newExpense = [
+      {
+        id: refoundSelected,
+        date: new Date().toISOString().split("T")[0],
+        price: amount,
+        category: "Refound",
+        description: "Refound expense",
+      },
+    ];
+
+    dispatch(loading());
+    dispatch<any>(restoreItems(refoundSelected))
+      .then(() => {
+        dispatch<any>(postExpenses(newExpense))
+          .then(() => {
+            dispatch<any>(updateReports(newExpense, reports, null))
+              .then(() => {
+                swal("Refounded", "Refounded item successfully", "success");
+                dispatch(closeLoading());
+              })
+              .catch((err: any) => {
+                swal(
+                  "Error",
+                  "Error to update reports, try again later",
+                  "error"
+                );
+                dispatch(closeLoading());
+                console.log(err);
+              });
+          })
+          .catch((err: any) => {
+            swal("Error", "Error to refound item, try again later", "error");
+            dispatch(closeLoading());
+            console.log(err);
+          });
+      })
+      .catch((err: any) => {
+        swal("Error", "Error to refound item, try again later", "error");
+        dispatch(closeLoading());
+        console.log(err);
+      });
   }
 
   return (
@@ -123,7 +183,11 @@ export default function ItemsSold() {
         </span>
         <span className={styles.total}>Order total: 0</span>
       </div>
-      <Table items={itemsSold} handleClose={handleClose} />
+      <Table
+        items={itemsSold}
+        handleClose={handleClose}
+        handleRefoundSelected={handleRefoundSelected}
+      />
     </div>
   );
 }

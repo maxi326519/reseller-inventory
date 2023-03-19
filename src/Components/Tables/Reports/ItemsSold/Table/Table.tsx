@@ -7,9 +7,10 @@ import styles from "./Table.module.css";
 interface Props {
   items: Item[];
   handleClose: () => void;
+  handleRefoundSelected: (id: number) => void;
 }
 
-export default function Table({ items, handleClose }: Props) {
+export default function Table({ items, handleClose, handleRefoundSelected }: Props) {
   return (
     <div className={styles.table}>
       <div className={`${styles.firstRow} ${styles.rows}`}>
@@ -28,6 +29,7 @@ export default function Table({ items, handleClose }: Props) {
             key={item.id}
             item={item}
             handleClose={handleClose}
+            handleRefoundSelected={handleRefoundSelected}
           />
         ))}
       </div>

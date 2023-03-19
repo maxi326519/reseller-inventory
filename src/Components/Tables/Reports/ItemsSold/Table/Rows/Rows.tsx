@@ -5,9 +5,16 @@ import styles from "../Table.module.css";
 interface Props {
   item: Item;
   handleClose: () => void;
+  handleRefoundSelected: (id: number) => void;
 }
 
-export default function Rows({ item, handleClose }: Props) {
+export default function Rows({ item, handleClose, handleRefoundSelected }: Props) {
+
+  function handleClick(){
+    handleRefoundSelected(item.id);
+    handleClose();
+  }
+
   return (
     <div key={item.id} className={styles.rows}>
       <span>{item.invoiceId}</span>
@@ -17,7 +24,7 @@ export default function Rows({ item, handleClose }: Props) {
       <span>{0}</span>
       <span>{0}</span>
       <span>{item.description}</span>
-      <button className="btn btn-success" type="button" onClick={handleClose}>
+      <button className="btn btn-success" type="button" onClick={handleClick}>
         Refound
       </button>
     </div>
