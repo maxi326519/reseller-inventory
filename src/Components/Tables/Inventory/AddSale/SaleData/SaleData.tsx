@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { Sale } from "../../../../../interfaces";
 
 import styles from "./SaleData.module.css";
@@ -7,7 +9,6 @@ interface OtherExpenses {
   saleId: number;
   adsFee: {
     check: boolean;
-    description: string;
     cost: number | string;
   };
   other: {
@@ -23,8 +24,23 @@ interface ShipingExpenses {
   ebayFees: number | string;
 }
 
+interface Errors {
+  price: null | string;
+  shipment: null | string;
+  expenses: {
+    shipLabel: null | string;
+    ebayFees: null | string;
+    adsFee: null | string;
+    other: {
+      description: null | string;
+      cost: null | string;
+    };
+  };
+}
+
 interface Props {
   sale: Sale | undefined;
+  errors: Errors | null;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement>,
     saleId: number | undefined
@@ -39,11 +55,17 @@ interface Props {
 
 export default function SaleData({
   sale,
+  errors,
   handleChange,
   shipment,
   other,
   handleExpense,
 }: Props) {
+
+/*   useEffect(() => {
+    console.log(errors);
+  }); */
+
   return (
     <div>
       <div className="mb-3 form-floating">
@@ -55,7 +77,6 @@ export default function SaleData({
           max={new Date().toISOString().split("T")[0]}
           value={sale?.date}
           onChange={(e) => handleChange(e, sale?.id)}
-          /* disabled={sale ? true : false} */
         />
         <label className="form-label" htmlFor="date">
           Date:
@@ -75,7 +96,7 @@ export default function SaleData({
           <label htmlFor="shipment-value">Shipment income</label>
           <input
             id="shipment-amount"
-            className="form-control"
+            className={`form-control ${errors?.shipment ? "is-invalid" : null}`}
             type="number"
             name="amount"
             step="any"
@@ -84,6 +105,7 @@ export default function SaleData({
             onChange={(e) => handleChange(e, sale?.id)}
             disabled={!sale?.shipment.value}
           />
+          {errors?.shipment ? <small>{errors.shipment}</small> : null}
         </div>
       </div>
       <hr></hr>
@@ -95,7 +117,9 @@ export default function SaleData({
           <div>
             <label htmlFor="ebayFees">Ship Label</label>
             <input
-              className="form-control"
+              className={`form-control ${
+                errors?.expenses.shipLabel ? "is-invalid" : null
+              }`}
               id="expense-shipLabel"
               name="expense-shipLabel"
               type="number"
@@ -104,11 +128,16 @@ export default function SaleData({
               placeholder="$ 0.00"
               onChange={(e) => handleExpense(e, sale?.id)}
             />
+            {errors?.expenses.shipLabel ? (
+              <small>{errors.expenses.shipLabel}</small>
+            ) : null}
           </div>
           <div>
             <label htmlFor="ebayFees">Ebay Fees</label>
             <input
-              className="form-control"
+              className={`form-control ${
+                errors?.expenses.ebayFees ? "is-invalid" : null
+              }`}
               id="ebayFees"
               name="ebayFees"
               type="number"
@@ -117,6 +146,9 @@ export default function SaleData({
               placeholder="$ 0.00"
               onChange={(e) => handleExpense(e, sale?.id)}
             />
+            {errors?.expenses.ebayFees ? (
+              <small>{errors?.expenses.ebayFees}</small>
+            ) : null}
           </div>
         </div>
 
@@ -134,25 +166,22 @@ export default function SaleData({
             </div>
             <div
               className={`${styles.otherContainer} ${
-                other?.adsFee.check ? styles.showOther : ""
+                other?.adsFee.check ? styles.showAds : ""
               }`}
             >
               <input
-                className="form-control"
-                placeholder="Description"
-                type="text"
-                name="adsFeeDescription"
-                value={other?.adsFee.description}
-                onChange={(e) => handleExpense(e, sale?.id)}
-              />
-              <input
-                className="form-control"
+                className={`form-control ${
+                  errors?.expenses.adsFee  ? "is-invalid" : null
+                }`}
                 placeholder="$ 0.00"
                 type="number"
                 name="adsFeeCost"
                 value={other?.adsFee.cost}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
+              {errors?.expenses.adsFee ? (
+                <small>{errors?.expenses.adsFee}</small>
+              ) : null}
             </div>
           </div>
           <div className={styles.right}>
@@ -167,26 +196,41 @@ export default function SaleData({
               <label htmlFor="otherCheck">Other expenses</label>
             </div>
             <div
-              className={`${styles.otherContainer} ${
-                other?.other.check ? styles.showOther : ""
+              className={`${styles.otherContainer}
+              ${other?.other.check ? styles.showOther : ""}
+              ${
+                errors?.expenses.other.description &&
+                errors?.expenses.other.cost
+                  ? styles.showOtherError
+                  : null
               }`}
             >
               <input
-                className="form-control"
+                className={`form-control ${
+                  errors?.expenses.other.description ? "is-invalid" : null
+                }`}
                 placeholder="Description"
                 type="text"
                 name="otherDescription"
                 value={other?.other.description}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
+              {errors?.expenses.other.description ? (
+                <small>{errors?.expenses.other.description}</small>
+              ) : null}
               <input
-                className="form-control"
+                className={`form-control ${
+                  errors?.expenses.other.cost ? "is-invalid" : null
+                }`}
                 placeholder="$ 0.00"
                 type="number"
                 name="otherCost"
                 value={other?.other.cost}
                 onChange={(e) => handleExpense(e, sale?.id)}
               />
+              {errors?.expenses.other.cost ? (
+                <small>{errors?.expenses.other.cost}</small>
+              ) : null}
             </div>
           </div>
         </div>

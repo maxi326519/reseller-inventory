@@ -39,14 +39,26 @@
   transition: 0.4s;
 }
 
-.showOther {
+.showAds {
   left: 0px;
-  height: 86px !important;
-  opacity: 100 !important;
+  height: 50px;
+  opacity: 100;
   transition: 0.4s;
 }
 
-.right, .left{
+.showOther {
+  left: 0px;
+  height: 86px;
+  opacity: 100;
+  transition: 0.4s;
+}
+
+.showOtherError {
+  height: 120px;
+}
+
+.right,
+.left {
   margin-top: 10px;
   padding: 10px;
   border-radius: 5px;
@@ -54,7 +66,7 @@
   overflow: hidden;
 }
 
-.left{
+.left {
   margin-right: 20px;
 }
 
@@ -62,6 +74,6 @@
   flex-grow: 1;
 }
 
-.otherContainer input:first-child {
-  margin-bottom: 10px;
+.otherContainer input:last-child {
+  margin-top: 10px;
 }

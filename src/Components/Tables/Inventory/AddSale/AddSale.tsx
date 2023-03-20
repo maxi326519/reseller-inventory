@@ -20,7 +20,6 @@ interface OtherExpenses {
   saleId: number;
   adsFee: {
     check: boolean;
-    description: string;
     cost: number | string;
   };
   other: {
@@ -34,6 +33,34 @@ interface ShipingExpenses {
   shipLabel: number | string;
   ebayFees: number | string;
 }
+
+interface Errors {
+  price: null | string;
+  shipment: null | string;
+  expenses: {
+    shipLabel: null | string;
+    ebayFees: null | string;
+    adsFee: null | string;
+    other: {
+      description: null | string;
+      cost: null | string;
+    };
+  };
+}
+
+const initialErrors: Errors = {
+  price: null,
+  shipment: null,
+  expenses: {
+    shipLabel: null,
+    ebayFees: null,
+    adsFee: null,
+    other: {
+      description: null,
+      cost: null,
+    },
+  },
+};
 
 interface Props {
   handleClose: () => void;
@@ -66,6 +93,11 @@ export default function AddSale({
   const reports = useSelector((state: RootState) => state.reports);
   const [rows, setRows] = useState<Item[]>([]);
   const [rowSelected, setSelected] = useState<number>(itemSelected[0]);
+  const [errors, setErrors] = useState<Array<Errors | null>>([]);
+
+  useEffect(() => {
+    console.log(itemSelected.findIndex((id) => id === rowSelected));
+  }, [itemSelected, rowSelected]);
 
   /* Cargamos los items seleccionados */
   useEffect(() => {
@@ -184,9 +216,73 @@ export default function AddSale({
       );
     }
   }
-
+  
   function handleValidations() {
-    return true;
+    const saleErrors = sales.map((sale, i) => {
+      let validation: Errors = {
+        price: null,
+        shipment: null,
+        expenses: {
+          shipLabel: null,
+          ebayFees: null,
+          adsFee: null,
+          other: {
+            description: null,
+            cost: null,
+          },
+        },
+      };
+      let empty = true;
+
+      /* PRICE */
+      if (sale.price === "") {
+        validation.price = "Add price";
+        empty = false;
+      }
+
+      /* SHIPMENT */
+      if (sale.shipment.value === true && sale.shipment.amount === "") {
+        validation.shipment = "Add price";
+        empty = false;
+      }
+
+      /* SHIP lABEL */
+      if (shipment[i].shipLabel === "") {
+        validation.expenses.shipLabel = "Add ship cost";
+        empty = false;
+      }
+      console.log(validation.expenses);
+
+      /* EBAY FEES */
+      if (shipment[i].ebayFees === "") {
+        validation.expenses.ebayFees = "Add ebay cost";
+        empty = false;
+      }
+      console.log(validation.expenses);
+
+      /* ADS FEE */
+      if (other[i].adsFee.check === true && other[i].adsFee.cost === "") {
+        validation.expenses.adsFee = "Add ads cost";
+        empty = false;
+      }
+
+      /* OTHER DESCRIPTION */
+      if (other[i].other.check === true && other[i].other.description === "") {
+        validation.expenses.other.description = "Add description";
+        empty = false;
+      }
+
+      /* OTHER COST */
+      if (other[i].other.check === true && other[i].other.cost === "") {
+        validation.expenses.other.cost = "Add cost";
+        empty = false;
+      }
+
+      return empty ? null : validation;
+    });
+    setErrors(saleErrors);
+    console.log(saleErrors);
+    return false;
   }
 
   function convertData(
@@ -284,10 +380,11 @@ export default function AddSale({
           </button>
         </div>
         <div className={styles.list}>
-          {rows.map((item) => (
+          {rows.map((item, i) => (
             <ItemRow
               key={item.id}
               item={item}
+              error={errors[i]}
               rowSelected={rowSelected}
               handleRowSelect={handleRowSelect}
               handleSelected={handleSelected}
@@ -297,6 +394,11 @@ export default function AddSale({
         </div>
         <SaleData
           sale={sales.find((s: Sale) => s.productId === rowSelected)}
+          errors={
+            itemSelected.findIndex((id) => id === rowSelected) >= 0
+              ? errors[itemSelected.findIndex((id) => id === rowSelected)]
+              : initialErrors
+          }
           handleChange={handleChange}
           shipment={shipment.find(
             (s: ShipingExpenses) => s.saleId === rowSelected

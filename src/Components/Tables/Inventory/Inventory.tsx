@@ -23,7 +23,6 @@ interface OtherExpenses {
   saleId: number;
   adsFee: {
     check: boolean;
-    description: string;
     cost: number | string;
   };
   other: {
@@ -54,7 +53,7 @@ const initialSale: Sale = {
 
 const initialOtherExpenses: OtherExpenses = {
   saleId: 0,
-  adsFee: { check: false, description: "", cost: "" },
+  adsFee: { check: false,  cost: "" },
   other: { check: false, description: "", cost: "" },
 };
 
@@ -239,9 +238,6 @@ export default function Inventory() {
                 check: name.includes("Check")
                   ? event.target.checked
                   : o.adsFee.check,
-                description: name.includes("Description")
-                  ? value
-                  : o.adsFee.description,
                 cost: name.includes("Cost") ? value : o.adsFee.cost,
               },
             };

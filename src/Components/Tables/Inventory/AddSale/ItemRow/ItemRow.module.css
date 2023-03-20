@@ -25,3 +25,7 @@
   background-color: #444;
   outline: 1px solid grey;
 }
+
+.error{
+  outline: 1px solid red;
+}

@@ -2,8 +2,23 @@ import { Item } from "../../../../../interfaces";
 
 import styles from "./ItemRow.module.css";
 
+interface Errors {
+  price: null | string;
+  shipment: null | string;
+  expenses: {
+    shipLabel: null | string;
+    ebayFees: null | string;
+    adsFee: null | string;
+    other: {
+      description: null | string;
+      cost: null | string;
+    };
+  };
+}
+
 interface Prop {
   item: Item;
+  error: Errors | null;
   rowSelected: number;
   handleRowSelect: (id: number) => void;
   handleSelected: (id: number, cost: null) => void;
@@ -12,6 +27,7 @@ interface Prop {
 
 export default function ItemRow({
   item,
+  error,
   rowSelected,
   handleRowSelect,
   handleSelected,
@@ -20,9 +36,9 @@ export default function ItemRow({
   return (
     <div
       key={item.id}
-      className={`${styles.row} ${
-        item.id === rowSelected ? styles.selected : ""
-      }`}
+      className={`${styles.row}
+      ${item.id === rowSelected ? styles.selected : ""}
+      ${error ? styles.error : ""}`}
       onClick={() => handleRowSelect(item.id)}
     >
       <span>{item.id}</span>
