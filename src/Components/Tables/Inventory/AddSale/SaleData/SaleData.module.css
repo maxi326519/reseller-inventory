@@ -42,7 +42,7 @@
 .showOther {
   left: 0px;
   height: 86px !important;
-  opacity: 100% !important;
+  opacity: 100 !important;
   transition: 0.4s;
 }
 

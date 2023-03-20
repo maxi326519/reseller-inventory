@@ -82,7 +82,13 @@ export default function NewPurchase() {
           dispatch(loading());
           dispatch<any>(postInvoice(invoice, file))
             .then(() => {
-              dispatch<any>(postItems(items)).then(() => {
+              dispatch<any>(
+                postItems(
+                  items.map((item) => {
+                    return { ...item, date: invoice.date };
+                  })
+                )
+              ).then(() => {
                 dispatch(closeLoading());
                 swal({
                   title: "Saved",
@@ -141,7 +147,9 @@ export default function NewPurchase() {
   return (
     <div className={styles.background}>
       {source ? <AddSource handleClose={handleCloseSource} /> : null}
-      {excel ? <DownloadExcel handleClose={handleCloseExcel} data={exportData} /> : null}
+      {excel ? (
+        <DownloadExcel handleClose={handleCloseExcel} data={exportData} />
+      ) : null}
       <div className={styles.head}>
         <Link className="btn btn-primary" to="/">
           {"< Menu"}

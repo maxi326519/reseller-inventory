@@ -140,7 +140,7 @@ export default function ItemsSold() {
       .catch((err: any) => {
         swal("Error", "Error to refound item, try again later", "error");
         dispatch(closeLoading());
-        console.log(err);
+        console.log(err); 
       });
   }
 

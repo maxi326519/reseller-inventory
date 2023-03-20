@@ -92,11 +92,13 @@ export default function AddSale({
                 updateReports(newData.expenses, reports, newData.sales)
               )
                 .then(() => {
+                  dispatch(closeLoading());
                   handleClose();
                   swal("Save", "Items sold successfully", "success");
                   setItem([]);
                 })
                 .catch((err: any) => {
+                  dispatch(closeLoading());
                   swal(
                     "Error",
                     "Error to update reports, try again later",
@@ -106,6 +108,7 @@ export default function AddSale({
                 });
             })
             .catch((err: any) => {
+              dispatch(closeLoading());
               swal(
                 "Error",
                 "Error to create expenses, try again later",
@@ -115,10 +118,10 @@ export default function AddSale({
             });
         })
         .catch((err: any) => {
+          dispatch(closeLoading());
           swal("Error", "Error to sale items, try again later", "error");
           console.log(err);
         });
-      dispatch(closeLoading());
     }
   }
 
@@ -132,7 +135,7 @@ export default function AddSale({
         if (s.id === id) {
           return {
             ...s,
-            price: Number(price),
+            price: price,
           };
         }
         return s;

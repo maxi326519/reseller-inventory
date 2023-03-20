@@ -45,7 +45,7 @@ export interface Sale {
   id: number;
   date: string;
   cost: number;
-  price: number;
+  price: number | string;
   productId: number;
   shipment: Shipment;
   expenses: ExpenseRef[];

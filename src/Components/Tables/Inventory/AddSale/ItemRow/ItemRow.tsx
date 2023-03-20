@@ -6,7 +6,7 @@ interface Prop {
   item: Item;
   rowSelected: number;
   handleRowSelect: (id: number) => void;
-  handleSelected: (id: number, cost: | null) => void;
+  handleSelected: (id: number, cost: null) => void;
   handleSetPrice: (id: number, price: string) => void;
 }
 
@@ -30,6 +30,7 @@ export default function ItemRow({
       <input
         className="form-control"
         type="number"
+        step="any"
         placeholder="Price"
         onChange={(e) => handleSetPrice(item.id, e.target.value)}
       />

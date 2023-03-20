@@ -50,6 +50,7 @@ export default function Refound({ handleClose, handleSubmit }: Props) {
             id="amount"
             className={`form-control ${error ? "is-invalid" : ""}`}
             type="number"
+            step="any"
             onChange={handelChange}
           />
           <label htmlFor="amount" className="form-label">
