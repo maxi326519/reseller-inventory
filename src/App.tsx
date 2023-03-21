@@ -8,6 +8,8 @@ import {
   getInvoices,
   getUserData,
   getReports,
+  getExpenses,
+  getSales,
 } from "./redux/actions";
 import { RootState } from "./interfaces";
 import { getAuth } from "firebase/auth";
@@ -23,25 +25,36 @@ import Loading from "./Components/Loading/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+import swal from "sweetalert";
 
 function App() {
   const redirect = useNavigate();
   const dispatch = useDispatch();
   const setLoading = useSelector((state: RootState) => state.loading);
-  const userData = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     dispatch(loading());
     setTimeout(() => {
       const auth = getAuth();
       if (auth.currentUser) {
-        const year = new Date().toISOString().split("T")[0].split("-")[0];
-        const month = new Date().toISOString().split("T")[0].split("-")[1];
-        dispatch<any>(getItems()).catch((e: any) => console.log(e));
-        dispatch<any>(getInvoices(year, null)).catch((e: any) => console.log(e));
-        dispatch<any>(getUserData()).catch((e: any) => console.log(e));
-        dispatch<any>(getReports()).catch((e: any) => console.log(e));
-        dispatch(closeLoading());
+        const year = new Date().getFullYear();
+        const month = new Date().getMonth() + 1;
+        console.log(year, month);
+        Promise.all([
+          dispatch<any>(getUserData()),
+          dispatch<any>(getItems()),
+          dispatch<any>(getExpenses(year, month)),
+          dispatch<any>(getSales(year, month)),
+          dispatch<any>(getInvoices(year, `0${month}`.slice(-2))),
+          dispatch<any>(getReports()),
+        ])
+          .then(() => {
+            dispatch(closeLoading());
+          })
+          .catch((err: any) => {
+            swal("Error", "Error to load info, try again later", "error");
+            console.log(err);
+          });
       } else {
         redirect("/login");
         dispatch(closeLoading());

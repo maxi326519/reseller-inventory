@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface User {
   categories: string[];
   sources: string[];
@@ -42,7 +44,7 @@ export enum InvoiceType {
 
 export interface Expense {
   id: number;
-  date: string;
+  date: Timestamp;
   price: number | string;
   category: string;
   description: string;
@@ -50,7 +52,7 @@ export interface Expense {
 
 export interface Sale {
   id: number;
-  date: string;
+  date: Timestamp;
   cost: number;
   price: number | string;
   productId: number;
@@ -116,7 +118,7 @@ export interface MonthTaxesData {
 export interface RootState {
   user: User;
   items: Item[];
-  invoices: Invoice[];
+  invoices:  Array<Invoice | InvoiceExpenses>;
   sales: Sale[];
   expenses: Expense[];
   reports: YearReport[];

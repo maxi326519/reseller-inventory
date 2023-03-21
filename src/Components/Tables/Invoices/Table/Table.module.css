@@ -33,3 +33,7 @@
 .rows button{
   border-radius: 0;
 }
+
+.expenses{
+  grid-template-columns: 180px 120px repeat(4, 1fr) 80px;
+}

@@ -1,12 +1,20 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Item, Invoice, RootState } from "../../../interfaces";
+import {
+  Item,
+  Invoice,
+  RootState,
+  InvoiceType,
+  InvoiceExpenses,
+  Expense,
+} from "../../../interfaces";
 import {
   loading,
   closeLoading,
   getItems,
   getInvoices,
+  getExpenses,
 } from "../../../redux/actions";
 import swal from "sweetalert";
 import reload from "../../../assets/svg/reload.svg";
@@ -29,28 +37,36 @@ export default function Invoices() {
   const reports = useSelector((state: RootState) => state.reports);
   const invoices = useSelector((state: RootState) => state.invoices);
   const items = useSelector((state: RootState) => state.items);
-  const [itemsList, setItemsList] = useState<Item[]>([]);
+  const expenses = useSelector((state: RootState) => state.expenses);
+  const [itemsList, setItemsList] = useState<Item[] | Expense[]>([]);
   const [image, setImage] = useState<string>("");
   const [close, setClose] = useState(false);
-  const [rows, setRows] = useState<Invoice[]>([]);
+  const [rows, setRows] = useState<Array<Invoice | InvoiceExpenses>>([]);
   const [search, setSearch] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<string>("");
   const [total, setTotal] = useState(0);
+  const [invoiceType, setInvoiceType] = useState<InvoiceType>(
+    InvoiceType.Purchase
+  );
 
   useEffect(() => {
+    invoices.forEach((invoice): invoice is Invoice => "form" in invoice);
     setRows(
       invoices.filter((i) => {
-        console.log(i.date);
         if (dateFilter !== "" && i.date !== dateFilter) return false;
+        if (i.type !== invoiceType) return false;
         if (search === "") return true;
         if (i.id.toString().toLowerCase().includes(search)) return true;
         if (i.date.toLowerCase().includes(search)) return true;
-        if (i.form.toLowerCase().includes(search)) return true;
-        if (i.source.toLowerCase().includes(search)) return true;
+        if (i.type !== InvoiceType.Purchase) {
+          const invoice = i as Invoice;
+          if (invoice.form.toLowerCase().includes(search)) return true;
+          if (invoice.source.toLowerCase().includes(search)) return true;
+        }
         return false;
       })
     );
-  }, [search, invoices, dateFilter]);
+  }, [search, invoices, dateFilter, invoiceType]);
 
   useEffect(() => {
     let total = 0;
@@ -58,14 +74,37 @@ export default function Invoices() {
     setTotal(total);
   }, [rows]);
 
+  function handleSelect(event: React.ChangeEvent<HTMLSelectElement>) {
+    const type = event.target.value;
+
+    if (type === "0") {
+      setInvoiceType(InvoiceType.Purchase);
+    } else if (type === "1") {
+      setInvoiceType(InvoiceType.Expenses);
+    }
+  }
+
   function handleDetails(invoiceID: number) {
     const showInvoice = invoices.find((i) => i.id === invoiceID);
+
     if (showInvoice) {
-      setItemsList(
-        items.filter((item) => showInvoice.items.some((id) => id === item.id))
-      );
-      setImage(showInvoice.image);
-      setClose(!close);
+      if (invoiceType === InvoiceType.Purchase) {
+        setItemsList(
+          items.filter((item) => showInvoice.items.some((id) => id === item.id))
+        );
+        setImage(showInvoice.image);
+        setClose(!close);
+      } else if (invoiceType === InvoiceType.Expenses) {
+        const expensesFilter = expenses.filter((expense) => {
+          console.log(expense.id);
+          return showInvoice.items.some((id) => id === expense.id);
+        });
+        console.log(expenses);
+        console.log(expensesFilter);
+        setItemsList(expensesFilter);
+        setImage(showInvoice.image);
+        setClose(!close);
+      }
     }
   }
 
@@ -99,10 +138,6 @@ export default function Invoices() {
     });
   }
 
-  useEffect(() => {
-    console.log(rows);
-  }, [rows]);
-
   function handleFilterDate(date: Filter) {
     const year = date.year;
     const month = date.month;
@@ -117,7 +152,9 @@ export default function Invoices() {
           } else {
             setDateFilter("");
           }
-          dispatch(closeLoading());
+          dispatch<any>(getExpenses(Number(year), Number(month))).then(() => {
+            dispatch(closeLoading());
+          });
         })
         .catch((err: any) => {
           console.log(err);
@@ -133,7 +170,9 @@ export default function Invoices() {
       dispatch(loading());
       dispatch<any>(getInvoices(year, null))
         .then(() => {
-          dispatch(closeLoading());
+          dispatch<any>(getExpenses(Number(year), null)).then(() => {
+            dispatch(closeLoading());
+          });
         })
         .catch((err: any) => {
           console.log(err);
@@ -152,6 +191,7 @@ export default function Invoices() {
       {close ? (
         <Details
           handleClose={handleClose}
+          invoiceType={invoiceType}
           itemsList={itemsList}
           image={image}
         />
@@ -180,6 +220,20 @@ export default function Invoices() {
           >
             <img src={reload} alt="reload" />
           </button>
+          <div className={`form-floating ${style.typeFilter}`}>
+            <select
+              id="type"
+              name="type"
+              className="form-select "
+              onChange={handleSelect}
+            >
+              <option value={InvoiceType.Purchase}>Purchase</option>
+              <option value={InvoiceType.Expenses}>Expenses</option>
+            </select>
+            <label htmlFor="type" className="form-label">
+              Type
+            </label>
+          </div>
           <DateFilter
             years={reports.map((report) => report.year)}
             handleFilterDate={handleFilterDate}
@@ -188,7 +242,11 @@ export default function Invoices() {
             Total cost of invoices: ${total.toFixed(2)}
           </span>
         </div>
-        <Table invoices={rows} handleDetails={handleDetails} />
+        <Table
+          invoices={rows}
+          invoiceType={invoiceType}
+          handleDetails={handleDetails}
+        />
       </div>
     </div>
   );

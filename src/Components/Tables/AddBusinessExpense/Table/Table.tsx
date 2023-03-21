@@ -13,7 +13,6 @@ export default function Table({ expenses, handleRemove }: Props) {
   return (
     <div className={styles.table}>
       <div className={`${styles.firstRow} ${styles.rows}`}>
-        <span>Date</span>
         <span>Category</span>
         <span>Description</span>
         <span>Const</span>

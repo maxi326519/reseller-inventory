@@ -1,3 +1,4 @@
+import { startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { db, auth, storage } from "../../firebase";
@@ -15,12 +16,10 @@ import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import {
   collection,
   doc,
-  addDoc,
   setDoc,
   getDoc,
   getDocs,
   updateDoc,
-  deleteDoc,
   writeBatch,
   where,
   query,
@@ -344,11 +343,11 @@ export function getItems(): ThunkAction<
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
       let newItems: Array<any> = [];
-      const query = await getDocs(
-        collection(db, "Users", auth.currentUser.uid, "Items")
-      );
+      const itemRef = collection(db, "Users", auth.currentUser.uid, "Items");
+      const newQuery = query(itemRef, where("state", "==", "In Stock"));
+      const response = await getDocs(newQuery);
 
-      query.forEach((doc) => {
+      response.forEach((doc) => {
         newItems.push(doc.data());
       });
 
@@ -368,7 +367,6 @@ export function getInvoices(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-      console.log("Invoice date", year, month);
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
       let newInvoices: Array<any> = [];
@@ -380,7 +378,6 @@ export function getInvoices(
       );
 
       if (year && month) {
-        console.log("por mes");
         const yearRef = doc(invoiceRef, year.toString());
         const query = await getDocs(collection(yearRef, month.toString()));
 
@@ -388,7 +385,6 @@ export function getInvoices(
           newInvoices.push(doc.data());
         });
       } else if (year && !month) {
-        console.log("por year");
         const yearRef = doc(invoiceRef, year.toString());
         const monthQuerys = [];
 
@@ -422,28 +418,48 @@ export function getInvoices(
 }
 
 export function getExpenses(
-  year: number
+  year: number,
+  month: number | null
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-      const expenses: any = {};
-
-      for (let i = 0; i < 12; i++) {
-        if (auth.currentUser === null) throw new Error("unauthenticated user");
-
-        const expensesRef = collection(
-          db,
-          "Users",
-          auth.currentUser.uid,
-          "Expenses"
-        );
-        const yearRef = doc(expensesRef, year.toString());
-        const query = await getDocs(collection(yearRef, `0${i}`.slice(-2)));
-
-        query.forEach((doc) => {
-          expenses[`${i + 1}`].push(doc.data());
-        });
+      if (auth.currentUser === null) {
+        throw new Error("unauthenticated user");
       }
+
+      const expensesRef = collection(
+        db,
+        "Users",
+        auth.currentUser.uid,
+        "Expenses"
+      );
+      // Date range
+      let startDate: Date;
+      let endDate: Date;
+
+      // Per year or month
+      if (month !== null) {
+        startDate = startOfMonth(new Date(year, month - 1));
+        endDate = endOfMonth(new Date(year, month - 1));
+      } else {
+        startDate = startOfYear(new Date(year, 0));
+        endDate = endOfYear(new Date(year, 11));
+      }
+
+      // Query and get docs
+      const snapshot = await getDocs(
+        query(
+          expensesRef,
+          where("date", ">=", startDate),
+          where("date", "<=", endDate)
+        )
+      );
+
+      // Get data
+      let expenses: any = [];
+      snapshot.forEach((doc: any) => {
+        expenses.push(doc.data());
+      });
 
       dispatch({
         type: GET_EXPENSES,
@@ -456,28 +472,42 @@ export function getExpenses(
 }
 
 export function getSales(
-  year: number
+  year: number,
+  month: number | null
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-      const sales: any = {};
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
 
-      for (let i = 0; i < 12; i++) {
-        if (auth.currentUser === null) throw new Error("unauthenticated user");
+      const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
 
-        const expensesRef = collection(
-          db,
-          "Users",
-          auth.currentUser.uid,
-          "Sales"
-        );
-        const yearRef = doc(expensesRef, year.toString());
-        const query = await getDocs(collection(yearRef, `0${i}`.slice(-2)));
+      // Date range
+      let startDate: Date;
+      let endDate: Date;
 
-        query.forEach((doc) => {
-          sales[`${i + 1}`].push(doc.data());
-        });
+      // Per year or month
+      if (month !== null) {
+        startDate = startOfMonth(new Date(year, month - 1));
+        endDate = endOfMonth(new Date(year, month - 1));
+      } else {
+        startDate = startOfYear(new Date(year, 0));
+        endDate = endOfYear(new Date(year, 11));
       }
+
+      // Query and get docs
+      const snapshot = await getDocs(
+        query(
+          salesRef,
+          where("date", ">=", startDate),
+          where("date", "<=", endDate)
+        )
+      );
+
+      // Get data
+      let sales: any = [];
+      snapshot.forEach((doc: any) => {
+        sales.push(doc.data());
+      });
 
       dispatch({
         type: GET_SALES,
@@ -530,12 +560,9 @@ export function updateReports(
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       let response = calculeReports(reports, expenses, true);
-      console.log(sales);
       if (sales) response = calculeReports(response.reports, sales, false);
       const newReports = response.reports;
       const years = response.years;
-
-      console.log(response);
 
       for (let i = 0; i < newReports.length; i++) {
         if (auth.currentUser === null) throw new Error("unauthenticated user");
@@ -543,6 +570,7 @@ export function updateReports(
         const year = years.find(
           (y) => y.toString() === newReports[i].year.toString()
         );
+
         if (year) {
           const reportRef = collection(
             db,
@@ -550,11 +578,10 @@ export function updateReports(
             auth.currentUser.uid,
             "Reports"
           );
-          const yearReportRef = doc(reportRef, year);
+          const yearReportRef = doc(reportRef, year.toString());
           setDoc(yearReportRef, { ...newReports[i] });
         }
       }
-
       dispatch({
         type: UPDATE_REPORTS,
         payload: newReports,
@@ -649,7 +676,7 @@ export function restoreItems(
 }
 
 export function deleteInvoice(
-  invoice: Invoice
+  invoice: Invoice | InvoiceExpenses
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {

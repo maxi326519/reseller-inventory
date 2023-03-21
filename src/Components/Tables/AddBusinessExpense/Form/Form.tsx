@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { Timestamp } from "firebase/firestore";
 import { Expense, InvoiceExpenses } from "../../../../interfaces";
 import { RootState } from "../../../../interfaces";
 
@@ -7,7 +8,7 @@ import styles from "../../Tables.module.css";
 
 const initialState: Expense = {
   id: 0,
-  date: new Date().toISOString().split("T")[0],
+  date: Timestamp.fromDate(new Date()),
   category: "0",
   description: "",
   price: "",
@@ -58,10 +59,11 @@ export default function Form({
         allExpenses.push({
           ...expense,
           id: createUniqueId(
-            expense.date,
+            invoice.date,
             Math.floor(Number(expense.price)),
             null
           ),
+          date: Timestamp.fromDate(new Date(invoice.date)),
         });
       }
       setExpenses([...expenses, ...allExpenses]);
@@ -104,6 +106,7 @@ export default function Form({
     event: React.ChangeEvent<HTMLSelectElement>
   ): void {
     setInvoice({ ...invoice, [event.target.name]: event.target.value });
+    setExpense({ ...expense, [event.target.name]: event.target.value });
     setError({ ...error, [event.target.name]: null });
   }
 

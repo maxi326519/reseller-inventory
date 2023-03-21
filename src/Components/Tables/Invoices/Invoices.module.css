@@ -32,3 +32,8 @@
   height: 30px;
   filter: invert(100);
 }
+
+.typeFilter{
+  margin-left: 10px;
+  margin-bottom: 0px !important;
+}

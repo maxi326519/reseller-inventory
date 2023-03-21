@@ -11,7 +11,6 @@ interface Props {
 export default function Rows({ expense, handleRemove }: Props) {
   return (
     <div className={styles.rows}>
-      <span>{changeDateFormat(expense.date)}</span>
       <span>{expense.category}</span>
       <span>{expense.description}</span>
       <span>{expense.price}</span>

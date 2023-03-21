@@ -18,6 +18,7 @@ import AddSale from "./AddSale/AddSale";
 
 import style from "./Inventory.module.css";
 import swal from "sweetalert";
+import { Timestamp } from "firebase/firestore";
 
 interface OtherExpenses {
   saleId: number;
@@ -40,7 +41,7 @@ interface ShipingExpenses {
 
 const initialSale: Sale = {
   id: 0,
-  date: new Date().toISOString().split("T")[0],
+  date: Timestamp.fromDate(new Date()),
   cost: 0,
   price: 0,
   productId: 0,
@@ -147,7 +148,7 @@ export default function Inventory() {
               const newExpenses = dataItemSelected.map((item: Item) => {
                 return {
                   id: item.id,
-                  date: new Date().toISOString().split("T")[0],
+                  date: Timestamp.fromDate(new Date()),
                   price: item.cost,
                   category: "Expired",
                   description: "Expired item expense",
@@ -178,9 +179,9 @@ export default function Inventory() {
   function handleSelected(id: number, cost: number | null) {
     if (itemSelected.some((s) => s === id)) {
       setItem(itemSelected.filter((s) => s !== id));
+      setSales(sales.filter((s) => s.productId !== id));
       setOther(other.filter((o) => o.saleId !== id));
       setShiping(shipment.filter((s) => s.saleId !== id));
-      setSales(sales.filter((s) => s.productId !== id));
     } else if (cost !== null) {
       setItem([...itemSelected, id]);
       setOther([...other, { ...initialOtherExpenses, saleId: id }]);

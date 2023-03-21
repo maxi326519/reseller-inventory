@@ -17,6 +17,7 @@ import {
   DELETE_INVOICE,
   EXPIRED_ITEMS,
   RESTORE_ITEMS,
+  POST_EXPENSES,
 } from "../actions";
 
 const initialState: RootState = {
@@ -73,6 +74,12 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
         }),
       };
 
+    case POST_EXPENSES:
+      return {
+        ...state,
+        expenses: [...state.expenses, action.payload],
+      };
+
     case LOADING:
       return {
         ...state,
@@ -112,7 +119,7 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
     case GET_EXPENSES:
       return {
         ...state,
-        expenses: action.payload,
+        expenses: [...action.payload],
       };
 
     case UPDATE_REPORTS:

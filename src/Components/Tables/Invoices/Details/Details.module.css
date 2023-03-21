@@ -125,20 +125,6 @@
   align-items: center;
 }
 
-.inputs {
-  display: flex;
-  flex-direction: column;
-}
-
-.inputs #id {
-  background-color: red;
-}
-
-.inputContainer {
-  display: flex;
-  width: 100%;
-}
-
 .imageContainer {
   position: relative;
   display: flex;

@@ -25,7 +25,6 @@ export default function AddSource({ handleClose }: Props) {
 
   useEffect(() => {
     handleValidation();
-    console.log("validation", validation);
   }, [sources, sourcesList]);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {

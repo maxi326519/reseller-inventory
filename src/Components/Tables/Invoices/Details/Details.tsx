@@ -1,29 +1,46 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState, Item } from "../../../../interfaces";
+import { Item, Expense, InvoiceType } from "../../../../interfaces";
 
 import styles from "./Details.module.css";
+import PurchaseData from "./PurchaseData/PurchaseData";
+import ExpenseData from "./ExpenseData/ExpenseData";
 
 interface Props {
   handleClose: () => void;
-  itemsList: Item[];
+  invoiceType: InvoiceType;
+  itemsList: Item[] | Expense[];
   image: string;
 }
 
-export default function Details({ handleClose, itemsList, image }: Props) {
+export default function Details({
+  handleClose,
+  invoiceType,
+  itemsList,
+  image,
+}: Props) {
   const [showImage, setShowImage] = useState(false);
 
-  function localHandleCLose(){
+  function localHandleCLose() {
     handleClose();
     setShowImage(false);
   }
+
+  useEffect(() => {
+    console.log(itemsList);
+  });
 
   return (
     <div className={styles.background}>
       {showImage ? (
         <div className={styles.backImage}>
           <img src={image} alt="invoice" />
-          <button className="btn btn-danger" type="button" onClick={() => setShowImage(!showImage)}>x</button>
+          <button
+            className="btn btn-danger"
+            type="button"
+            onClick={() => setShowImage(!showImage)}
+          >
+            x
+          </button>
         </div>
       ) : null}
       <div className={styles.container}>
@@ -39,63 +56,19 @@ export default function Details({ handleClose, itemsList, image }: Props) {
         </div>
         <div className={styles.data}>
           <div className={styles.list}>
-            {itemsList.map((item) => (
-              <div key={item.id} className={styles.inputs}>
-                <div className="mb-3 form-floating">
-                  <input
-                    id="id"
-                    className="form-control"
-                    value={item.id}
-                    disabled
-                  />
-                  <label htmlFor="id" className="form-label">
-                    Id:{" "}
-                  </label>
-                </div>
-                <div>
-                  <div className={styles.inputContainer}>
-                    <div className="mb-3 form-floating">
-                      <input
-                        id="state"
-                        className="form-control"
-                        value={item.state}
-                        disabled
-                      />
-                      <label htmlFor="state" className="form-label">
-                        State:{" "}
-                      </label>
-                    </div>
-                    <div className="mb-3 form-floating">
-                      <input
-                        id="cost"
-                        className="form-control"
-                        value={item.cost}
-                        disabled
-                      />
-                      <label htmlFor="cost" className="form-label">
-                        Cost:{" "}
-                      </label>
-                    </div>
-                  </div>
-                  <div className="mb-3 form-floating">
-                    <input
-                      id="description"
-                      className="form-control"
-                      value={item.description}
-                      disabled
-                    />
-                    <label htmlFor="description" className="form-label">
-                      Description:{" "}
-                    </label>
-                  </div>
-                  <hr></hr>
-                </div>
-              </div>
-            ))}
+            {itemsList.map((item, i) =>
+              invoiceType === InvoiceType.Purchase
+                ? <PurchaseData key={i} item={(item as Item)} />
+                : <ExpenseData key={i} item={(item as Expense)} />
+            )}
           </div>
           {image ? (
             <div className={styles.imageContainer}>
-              <button className={styles.imgButton} type="button" onClick={() => setShowImage(!showImage)}>
+              <button
+                className={styles.imgButton}
+                type="button"
+                onClick={() => setShowImage(!showImage)}
+              >
                 Ver
               </button>
               <img src={image} alt="invoice" />

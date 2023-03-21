@@ -4,6 +4,7 @@ import { Sale } from "../../../../../interfaces";
 
 import styles from "./SaleData.module.css";
 import "../../../../../animation.css";
+import { Timestamp } from "firebase/firestore";
 
 interface OtherExpenses {
   saleId: number;
@@ -61,8 +62,7 @@ export default function SaleData({
   other,
   handleExpense,
 }: Props) {
-
-/*   useEffect(() => {
+  /*   useEffect(() => {
     console.log(errors);
   }); */
 
@@ -75,7 +75,13 @@ export default function SaleData({
           type="date"
           name="date"
           max={new Date().toISOString().split("T")[0]}
-          value={sale?.date}
+          value={
+            sale
+              ? new Date((sale?.date as Timestamp).toDate())
+                  .toISOString()
+                  .split("T")[0]
+              : new Date().toISOString().split("T")[0]
+          }
           onChange={(e) => handleChange(e, sale?.id)}
         />
         <label className="form-label" htmlFor="date">
@@ -171,7 +177,7 @@ export default function SaleData({
             >
               <input
                 className={`form-control ${
-                  errors?.expenses.adsFee  ? "is-invalid" : null
+                  errors?.expenses.adsFee ? "is-invalid" : null
                 }`}
                 placeholder="$ 0.00"
                 type="number"

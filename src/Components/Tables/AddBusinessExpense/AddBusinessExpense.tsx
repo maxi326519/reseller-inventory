@@ -80,18 +80,37 @@ export default function AddBusinessExpense() {
         const newInvoice: InvoiceExpenses = {
           ...invoice,
           items: expenses.map((expense) => expense.id),
+          total: expenses.reduce((acc, expense) => {
+            const price =
+              typeof expense.price === "string"
+                ? parseFloat(expense.price)
+                : expense.price;
+            return acc + price;
+          }, 0),
         };
-
+        console.log(newInvoice);
+        console.log(expenses);
         dispatch<any>(loading());
         dispatch<any>(postInvoice(newInvoice, file))
           .then(() => {
             dispatch<any>(postExpenses(expenses))
               .then(() => {
-                dispatch<any>(updateReports(expenses, reports, false));
-                setExpenses([]);
-                setTotal(0);
-                dispatch<any>(closeLoading());
-                swal("Saved", "Saved expenses successfully", "success");
+                dispatch<any>(updateReports(expenses, reports, false))
+                  .then(() => {
+                    setExpenses([]);
+                    setTotal(0);
+                    dispatch<any>(closeLoading());
+                    swal("Saved", "Saved expenses successfully", "success");
+                  })
+                  .catch((err: any) => {
+                    dispatch<any>(closeLoading());
+                    console.log(err);
+                    swal(
+                      "Error",
+                      "Error to save expenses, try again later",
+                      "error"
+                    );
+                  });
               })
               .catch((e: any) => {
                 dispatch<any>(closeLoading());

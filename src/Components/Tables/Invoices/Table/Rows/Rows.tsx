@@ -1,4 +1,9 @@
-import { Invoice, RootState } from "../../../../../interfaces";
+import {
+  Invoice,
+  InvoiceExpenses,
+  InvoiceType,
+  RootState,
+} from "../../../../../interfaces";
 import changeDateFormat from "../../../../../functions/changeDateFormat";
 import {
   closeLoading,
@@ -12,11 +17,12 @@ import { useDispatch, useSelector } from "react-redux";
 import swal from "sweetalert";
 
 interface Props {
-  invoice: Invoice;
+  invoice: Invoice | InvoiceExpenses;
+  invoiceType: InvoiceType;
   handleDetails: (invoiceID: number) => void;
 }
 
-export default function Rows({ invoice, handleDetails }: Props) {
+export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
   const dispatch = useDispatch();
   const reports = useSelector((state: RootState) => state.reports);
 
@@ -34,17 +40,22 @@ export default function Rows({ invoice, handleDetails }: Props) {
         dispatch(loading());
         dispatch<any>(deleteInvoice(invoice))
           .then(() => {
-            dispatch<any>(updateReportsdItems(invoice.items, reports)).then(
-              () => {
+            dispatch<any>(updateReportsdItems(invoice.items, reports))
+              .then(() => {
                 swal("Deleted", "Invoice deleted successfully", "success");
                 dispatch(closeLoading());
-              }
-            ).catch((error: any) => {
-              console.log(error);
-              dispatch(closeLoading());
-              swal("Error", "Error to update reports, try again leter", "error");
-            });
-          }).catch((error: any) => {
+              })
+              .catch((error: any) => {
+                console.log(error);
+                dispatch(closeLoading());
+                swal(
+                  "Error",
+                  "Error to update reports, try again leter",
+                  "error"
+                );
+              });
+          })
+          .catch((error: any) => {
             console.log(error);
             dispatch(closeLoading());
             swal("Error", "Error deleting invoice, try again leter", "error");
@@ -54,13 +65,23 @@ export default function Rows({ invoice, handleDetails }: Props) {
   }
 
   return (
-    <div className={styles.rows}>
+    <div
+      className={`${styles.rows} ${
+        invoiceType === InvoiceType.Expenses ? styles.expenses : null
+      }`}
+    >
       <span>{invoice.id}</span>
       <span>{changeDateFormat(invoice.date)}</span>
       <span>{invoice.items.length}</span>
       <span>{invoice.total}</span>
-      <span>{invoice.form}</span>
-      <span>{invoice.source}</span>
+      <span>
+        {invoiceType === InvoiceType.Purchase
+          ? (invoice as Invoice).form
+          : (invoice as InvoiceExpenses).category}
+      </span>
+          {invoiceType === InvoiceType.Purchase ? (
+            <span>{(invoice as Invoice).source}</span>
+          ) : null}
       <button
         className="btn btn-primary"
         type="button"

@@ -16,6 +16,7 @@ import {
   restoreItems,
   updateReports,
 } from "../../../../redux/actions";
+import { Timestamp } from "firebase/firestore";
 
 interface Dates {
   firstDay: string;
@@ -104,7 +105,7 @@ export default function ItemsSold() {
     const newExpense = [
       {
         id: refoundSelected,
-        date: new Date().toISOString().split("T")[0],
+        date: Timestamp.fromDate(new Date()),
         price: amount,
         category: "Refound",
         description: "Refound expense",

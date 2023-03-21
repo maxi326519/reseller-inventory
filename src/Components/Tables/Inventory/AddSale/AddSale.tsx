@@ -15,6 +15,7 @@ import SaleData from "./SaleData/SaleData";
 
 import styles from "./AddSale.module.css";
 import "../../../../animation.css";
+import { Timestamp } from "firebase/firestore";
 
 interface OtherExpenses {
   saleId: number;
@@ -96,8 +97,9 @@ export default function AddSale({
   const [errors, setErrors] = useState<Array<Errors | null>>([]);
 
   useEffect(() => {
-    console.log(itemSelected.findIndex((id) => id === rowSelected));
-  }, [itemSelected, rowSelected]);
+    console.log(itemSelected[0]);
+    setSelected(itemSelected[0]);
+  }, [itemSelected]);
 
   /* Cargamos los items seleccionados */
   useEffect(() => {
@@ -182,9 +184,6 @@ export default function AddSale({
     const id = event.target.id;
     const name = event.target.name;
 
-    console.log(id);
-    console.log(saleId);
-
     if (id.includes("shipment")) {
       setSales(
         sales.map((s) => {
@@ -197,6 +196,18 @@ export default function AddSale({
                 amount:
                   name === "amount" ? event.target.value : s.shipment.amount,
               },
+            };
+          }
+          return s;
+        })
+      );
+    } else if (name === "date") {
+      setSales(
+        sales.map((s) => {
+          if (s.id === saleId) {
+            return {
+              ...s,
+              date: Timestamp.fromDate(new Date(event.target.value)),
             };
           }
           return s;
@@ -216,9 +227,12 @@ export default function AddSale({
       );
     }
   }
-  
+
   function handleValidations() {
+    let error = 0;
+
     const saleErrors = sales.map((sale, i) => {
+      let empty = true;
       let validation: Errors = {
         price: null,
         shipment: null,
@@ -232,7 +246,6 @@ export default function AddSale({
           },
         },
       };
-      let empty = true;
 
       /* PRICE */
       if (sale.price === "") {
@@ -277,12 +290,13 @@ export default function AddSale({
         validation.expenses.other.cost = "Add cost";
         empty = false;
       }
-
+      if (!empty) {
+        error++;
+      }
       return empty ? null : validation;
     });
     setErrors(saleErrors);
-    console.log(saleErrors);
-    return false;
+    return error === 0 ? true : false;
   }
 
   function convertData(

@@ -1,4 +1,10 @@
-import { YearReport, MonthReport, Expense, Sale, ReportItem } from "../interfaces";
+import {
+  YearReport,
+  MonthReport,
+  Expense,
+  Sale,
+  ReportItem,
+} from "../interfaces";
 
 export function calculeReports(
   reports: YearReport[],
@@ -14,9 +20,9 @@ export function calculeReports(
 
   /* Matching and missing date search */
   data.forEach((d: any) => {
-    let dataDate = d.date.split("-")[0];
+    let dataDate = d.date.toDate().getFullYear();
     /* If exist any report with the date of the data */
-    if (reports.some((r) => r.year.toString() === dataDate))
+    if (reports.some((r) => Number(r.year) === Number(dataDate)))
       years.push(dataDate);
     else missingYears.push(dataDate);
   });
@@ -25,6 +31,8 @@ export function calculeReports(
   missingYears = missingYears.filter((element, index, arr) => {
     return arr.indexOf(element) === index && !(element in arr.slice(index + 1));
   });
+
+  console.log(missingYears);
 
   /* Create missing reports  */
   newReports = [...reports, ...missingYears.map((y) => reportGenerator(y))];
@@ -38,9 +46,10 @@ export function calculeReports(
         month: r.month.map((month) => {
           /* Search maching date */
           let match = data.filter((d: Expense) => {
+            const date = d.date.toDate();
             if (
-              d.date.split("-")[0] === r.year.toString() &&
-              d.date.split("-")[1] === `0${month.month.toString()}`.slice(-2)
+              date.getFullYear() === Number(r.year) &&
+              date.getMonth() === Number(month.month) - 1
             ) {
               return true;
             }
@@ -69,9 +78,8 @@ export function calculeReports(
                   total(
                     data.filter(
                       (d: Expense) =>
-                        d.date.split("-")[0] === r.year.toString() &&
-                        d.date.split("-")[1] ===
-                          `0${month.month.toString()}`.slice(-2)
+                        d.date.toDate().getFullYear() === Number(r.year) &&
+                        d.date.toDate().getMonth() === Number(month.month) - 1
                     )
                   ),
               };
@@ -171,17 +179,27 @@ export function reportGenerator(year: string): YearReport {
 export function deleteDataAndUpdateTotals(id: number[], reports: YearReport[]) {
   const updatedReports: YearReport[] = [...reports];
   const editedYears: string[] = [];
-  
+
   for (let i = 0; i < updatedReports.length; i++) {
     const yearReport: YearReport = updatedReports[i];
-    
+
     for (let j = 0; j < yearReport.month.length; j++) {
       const monthReport: MonthReport = yearReport.month[j];
-      const sales: ReportItem[] = monthReport.sales.filter((item) => !id.includes(item.id));
-      const expenses: ReportItem[] = monthReport.expenses.filter((item) => !id.includes(item.id));
-      const totalSales: number = sales.reduce((total, item) => total + item.amount, 0);
-      const totalExpenses: number = expenses.reduce((total, item) => total + item.amount, 0);
-      
+      const sales: ReportItem[] = monthReport.sales.filter(
+        (item) => !id.includes(item.id)
+      );
+      const expenses: ReportItem[] = monthReport.expenses.filter(
+        (item) => !id.includes(item.id)
+      );
+      const totalSales: number = sales.reduce(
+        (total, item) => total + item.amount,
+        0
+      );
+      const totalExpenses: number = expenses.reduce(
+        (total, item) => total + item.amount,
+        0
+      );
+
       updatedReports[i].month[j] = {
         ...monthReport,
         sales,
@@ -189,7 +207,7 @@ export function deleteDataAndUpdateTotals(id: number[], reports: YearReport[]) {
         totalSales,
         totalExpenses,
       };
-      
+
       if (!editedYears.includes(yearReport.year)) {
         editedYears.push(yearReport.year);
       }
@@ -198,6 +216,6 @@ export function deleteDataAndUpdateTotals(id: number[], reports: YearReport[]) {
 
   return {
     updatedReports,
-    editedYears, 
-  }
+    editedYears,
+  };
 }
