@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  Expense,
+  InvoiceExpenses,
+  RootState,
+  InvoiceType,
+} from "../../../interfaces";
+import {
   closeLoading,
   loading,
   postExpenses,
+  postInvoice,
   updateReports,
 } from "../../../redux/actions";
-import { Expense, RootState } from "../../../interfaces";
 
 import Form from "./Form/Form";
 import Table from "./Table/Table";
@@ -19,12 +25,24 @@ import styles from "../Tables.module.css";
 import swal from "sweetalert";
 
 export default function AddBusinessExpense() {
+  const initialState: InvoiceExpenses = {
+    id: generateInvoiceId(new Date().toLocaleDateString()),
+    type: InvoiceType.Expenses,
+    date: new Date().toISOString().split("T")[0],
+    category: "0",
+    items: [],
+    total: 0,
+    image: "",
+    imageRef: "",
+  };
+
   const reports = useSelector((state: RootState) => state.reports);
+  const [invoice, setInvoice] = useState<InvoiceExpenses>(initialState);
+  const [file, setFile] = useState<File | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [close, setClose] = useState<boolean>(false);
   const [amount, setAmount] = useState<any>("");
-  const [file, setFile] = useState<File | null>(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -33,11 +51,23 @@ export default function AddBusinessExpense() {
     setTotal(total);
   }, [expenses]);
 
+  function generateInvoiceId(date: string) {
+    const toDay: string[] = date.split("/");
+    const day: string = `0${toDay[0].toString().slice(-2)}`;
+    const month: string = `0${toDay[1].toString().slice(-2)}`;
+    const year: string = `${toDay[2].toString().slice(-2)}`;
+    const sequential: number = Math.floor(Math.random() * 100);
+    const idStr: string = `${sequential}${day}${month}${year}`;
+    const idNumber: number = Number(idStr);
+    return idNumber;
+  }
+
   function handleRemove(id: number) {
     setExpenses(expenses.filter((expense) => expense.id !== id));
   }
 
   function handleAddExpese() {
+    if (expenses.length <= 0) return false;
     swal({
       text: "Do you want to save the expenses?",
       icon: "info",
@@ -47,19 +77,40 @@ export default function AddBusinessExpense() {
       },
     }).then((r) => {
       if (r) {
+        const newInvoice: InvoiceExpenses = {
+          ...invoice,
+          items: expenses.map((expense) => expense.id),
+        };
+
         dispatch<any>(loading());
-        dispatch<any>(postExpenses(expenses))
+        dispatch<any>(postInvoice(newInvoice, file))
           .then(() => {
-            dispatch<any>(updateReports(expenses, reports, false));
-            setExpenses([]);
-            setTotal(0);
-            dispatch<any>(closeLoading());
-            swal("Saved", "Saved expenses successfully", "success");
+            dispatch<any>(postExpenses(expenses))
+              .then(() => {
+                dispatch<any>(updateReports(expenses, reports, false));
+                setExpenses([]);
+                setTotal(0);
+                dispatch<any>(closeLoading());
+                swal("Saved", "Saved expenses successfully", "success");
+              })
+              .catch((e: any) => {
+                dispatch<any>(closeLoading());
+                swal(
+                  "Error",
+                  "Error to save the expenses, try again later",
+                  "error"
+                );
+                console.log(e);
+              });
           })
-          .catch((e: any) => {
+          .catch((err: any) => {
             dispatch<any>(closeLoading());
-            swal("Error", "Error to save the expenses, try again later", "error");
-            console.log(e);
+            swal(
+              "Error",
+              "Error to save the invoice, try again later",
+              "error"
+            );
+            console.log(err);
           });
       }
     });
@@ -96,6 +147,8 @@ export default function AddBusinessExpense() {
       </div>
       <div className={styles.container}>
         <Form
+          invoice={invoice}
+          setInvoice={setInvoice}
           expenses={expenses}
           setExpenses={setExpenses}
           amount={amount}
@@ -108,6 +161,7 @@ export default function AddBusinessExpense() {
               className="btn btn-primary"
               type="button"
               onClick={handleAddExpese}
+              disabled={expenses.length <= 0}
             >
               Add Expenses
             </button>
@@ -115,6 +169,7 @@ export default function AddBusinessExpense() {
               className="btn btn-primary"
               type="button"
               onClick={handleReset}
+              disabled={expenses.length <= 0}
             >
               Reset Expenses
             </button>
@@ -125,7 +180,7 @@ export default function AddBusinessExpense() {
             >
               Categories
             </button>
-            <span>{`Total:  $${total}`}</span>
+            <span>{`Total:  $${total.toFixed(2)}`}</span>
           </div>
         </div>
         <InvoiceImage file={file} setFile={setFile} />

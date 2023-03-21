@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Item, Invoice } from "../../../interfaces";
+import { Item, Invoice, InvoiceType } from "../../../interfaces";
 import { useDispatch } from "react-redux";
 import {
   postItems,
@@ -26,6 +26,7 @@ interface ExportData {
 export default function NewPurchase() {
   const initialState: Invoice = {
     id: generateInvoiceId(new Date().toLocaleDateString()),
+    type: InvoiceType.Purchase,
     date: new Date().toISOString().split("T")[0],
     items: [],
     form: "Cash",

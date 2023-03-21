@@ -1,16 +1,9 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { Expense } from "../../../../interfaces";
+import { Expense, InvoiceExpenses } from "../../../../interfaces";
 import { RootState } from "../../../../interfaces";
 
 import styles from "../../Tables.module.css";
-
-interface Props {
-  expenses: Expense[];
-  setExpenses: (expenses: Expense[]) => void;
-  amount: any;
-  setAmount: (amount: any) => void;
-}
 
 const initialState: Expense = {
   id: 0,
@@ -23,10 +16,22 @@ const initialState: Expense = {
 interface Error {
   category: null | string;
   description: null | string;
+  price: null | string;
   amount: null | string;
 }
 
+interface Props {
+  invoice: InvoiceExpenses;
+  setInvoice: (invoice: InvoiceExpenses) => void;
+  expenses: Expense[];
+  setExpenses: (expenses: Expense[]) => void;
+  amount: any;
+  setAmount: (amount: any) => void;
+}
+
 export default function Form({
+  invoice,
+  setInvoice,
   expenses,
   setExpenses,
   amount,
@@ -40,6 +45,7 @@ export default function Form({
   const [error, setError] = useState<Error>({
     category: null,
     description: null,
+    price: null,
     amount: null,
   });
 
@@ -51,37 +57,64 @@ export default function Form({
       for (let i: number = 1; i <= amount; i++) {
         allExpenses.push({
           ...expense,
-          id: createUniqueId(expense.date, Math.floor(Number(expense.price)), null),
+          id: createUniqueId(
+            expense.date,
+            Math.floor(Number(expense.price)),
+            null
+          ),
         });
       }
       setExpenses([...expenses, ...allExpenses]);
+      setExpense(initialState);
+      setAmount("");
     }
   }
 
-  function createUniqueId(dateStr: string, price: number, existingIds: number[] | null): number {
+  function createUniqueId(
+    dateStr: string,
+    price: number,
+    existingIds: number[] | null
+  ): number {
     const date = new Date(dateStr);
-    const formattedDate = Number(`${date.getFullYear()}${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}`);
-    let productId = Number(`${formattedDate}${price}${Math.floor(Math.random() * 1000000)}`);
-    if(existingIds !== null){
+    const formattedDate = Number(
+      `${date.getFullYear()}${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}`
+    );
+    let productId = Number(
+      `${formattedDate}${price}${Math.floor(Math.random() * 1000000)}`
+    );
+    if (existingIds !== null) {
       while (existingIds.includes(productId)) {
-        productId = Number(`${formattedDate}${price}${Math.floor(Math.random() * 1000000)}`);
+        productId = Number(
+          `${formattedDate}${price}${Math.floor(Math.random() * 1000000)}`
+        );
       }
     }
     return productId;
   }
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    setExpense({ ...expense, [event.target.name]: event.target.value });
+  function handleInvoiceChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void {
+    setInvoice({ ...invoice, [event.target.name]: event.target.value });
   }
 
   function handleChangeSelect(
     event: React.ChangeEvent<HTMLSelectElement>
   ): void {
-    if (event.target.value !== "0") {
-      setExpense({ ...expense, [event.target.name]: event.target.value });
-    }
+    setInvoice({ ...invoice, [event.target.name]: event.target.value });
+    setError({ ...error, [event.target.name]: null });
+  }
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
+    setExpense({ ...expense, [event.target.name]: event.target.value });
+    setError({ ...error, [event.target.name]: null });
+  }
+
+  function handleAmount(event: React.ChangeEvent<HTMLInputElement>): void {
+    setAmount(event.target.value);
+    setError({ ...error, amount: null });
   }
 
   function handleVerification(): boolean {
@@ -89,7 +122,7 @@ export default function Form({
     let errObj = { ...error };
 
     /* Category */
-    if (expense.category === "0") {
+    if (invoice.category === "0") {
       errObj.category = "Select an option";
       errors++;
     } else {
@@ -102,6 +135,14 @@ export default function Form({
       errors++;
     } else {
       errObj.description = null;
+    }
+
+    /* Unit cost */
+    if (expense.price === "") {
+      errObj.price = "Add cost";
+      errors++;
+    } else {
+      errObj.price = null;
     }
 
     /* Amount */
@@ -129,9 +170,9 @@ export default function Form({
           type="date"
           id="date"
           name="date"
-          value={expense.date}
+          value={invoice.date}
           max={maxDate}
-          onChange={handleChange}
+          onChange={handleInvoiceChange}
         />
         <label className="form-label" htmlFor="date">
           Date of Expenses:
@@ -143,7 +184,7 @@ export default function Form({
           className={`form-select ${error.category ? "is-invalid" : null}`}
           id="category"
           name="category"
-          value={expense.category}
+          value={invoice.category}
           onChange={handleChangeSelect}
         >
           <option value="0">Select category</option>
@@ -159,6 +200,7 @@ export default function Form({
         {!error.category ? null : <small>{error.category}</small>}
       </div>
 
+      <h4>Expense</h4>
       <div className="mb-3 form-floating">
         <input
           className={`form-control ${error.description ? "is-invalid" : null}`}
@@ -186,6 +228,7 @@ export default function Form({
         <label className="form-label" htmlFor="price">
           Unit cost:
         </label>
+        {!error.price ? null : <small>{error.price}</small>}
       </div>
 
       <div className="mb-3 form-floating">
@@ -195,7 +238,7 @@ export default function Form({
           id="amount"
           name="amount"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={handleAmount}
         />
         <label className="form-label" htmlFor="amount">
           Number of Expenses:

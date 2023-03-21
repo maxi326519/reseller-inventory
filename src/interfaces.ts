@@ -14,6 +14,7 @@ export interface Item {
 
 export interface Invoice {
   id: number;
+  type: InvoiceType;
   date: string;
   items: number[];
   form: string;
@@ -23,16 +24,22 @@ export interface Invoice {
   imageRef: string;
 }
 
-export interface InvoiceExpense {
+export interface InvoiceExpenses {
   id: number;
+  type: InvoiceType;
   date: string;
+  category: string;
   items: number[];
-  form: string;
-  source: string;
   total: number;
   image: string;
   imageRef: string;
 }
+
+export enum InvoiceType {
+  Purchase,
+  Expenses,
+}
+
 export interface Expense {
   id: number;
   date: string;

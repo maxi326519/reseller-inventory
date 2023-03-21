@@ -32,6 +32,7 @@ import {
   Sale,
   RootState,
   YearReport,
+  InvoiceExpenses,
 } from "../../interfaces";
 
 export const LOGIN = "LOGIN";
@@ -141,7 +142,7 @@ export function postItems(
 }
 
 export function postInvoice(
-  invoice: Invoice,
+  invoice: Invoice | InvoiceExpenses,
   image: File | null
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
@@ -169,7 +170,7 @@ export function postInvoice(
       }
 
       // New object with all data
-      const newInvoice: Invoice = {
+      const newInvoice: Invoice | InvoiceExpenses = {
         ...invoice,
         image: imageUrl,
         imageRef: dir,
