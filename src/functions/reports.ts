@@ -23,7 +23,7 @@ export function calculeReports(
     let dataDate = d.date.toDate().getFullYear();
     /* If exist any report with the date of the data */
     if (reports.some((r) => Number(r.year) === Number(dataDate)))
-      years.push(dataDate);
+      years.push(dataDate.toString());
     else missingYears.push(dataDate);
   });
 
@@ -32,11 +32,8 @@ export function calculeReports(
     return arr.indexOf(element) === index && !(element in arr.slice(index + 1));
   });
 
-  console.log(missingYears);
-
   /* Create missing reports  */
   newReports = [...reports, ...missingYears.map((y) => reportGenerator(y))];
-
   /* Update reports */
   newReports = newReports.map((r) => {
     /* If matching with expeneses year */
@@ -47,6 +44,9 @@ export function calculeReports(
           /* Search maching date */
           let match = data.filter((d: Expense) => {
             const date = d.date.toDate();
+            console.log(date);
+            console.log(date.getFullYear());
+            console.log(date.getMonth());
             if (
               date.getFullYear() === Number(r.year) &&
               date.getMonth() === Number(month.month) - 1

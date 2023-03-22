@@ -97,7 +97,6 @@ export default function AddSale({
   const [errors, setErrors] = useState<Array<Errors | null>>([]);
 
   useEffect(() => {
-    console.log(itemSelected[0]);
     setSelected(itemSelected[0]);
   }, [itemSelected]);
 
@@ -116,8 +115,6 @@ export default function AddSale({
     if (handleValidations()) {
       dispatch(loading());
       const newData = convertData(sales, other, shipment);
-      console.log("Sales", newData.sales);
-      console.log("Expenses", newData.expenses);
       dispatch<any>(postSales(newData.sales))
         .then(() => {
           dispatch<any>(postExpenses(newData.expenses))
@@ -264,14 +261,12 @@ export default function AddSale({
         validation.expenses.shipLabel = "Add ship cost";
         empty = false;
       }
-      console.log(validation.expenses);
 
       /* EBAY FEES */
       if (shipment[i].ebayFees === "") {
         validation.expenses.ebayFees = "Add ebay cost";
         empty = false;
       }
-      console.log(validation.expenses);
 
       /* ADS FEE */
       if (other[i].adsFee.check === true && other[i].adsFee.cost === "") {
@@ -370,7 +365,6 @@ export default function AddSale({
         };
       } else {
         error.push(sale.id);
-        console.log(`Error to post ${sale.id}`);
       }
     });
 

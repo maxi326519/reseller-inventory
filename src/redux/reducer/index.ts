@@ -77,7 +77,7 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
     case POST_EXPENSES:
       return {
         ...state,
-        expenses: [...state.expenses, action.payload],
+        expenses: [...state.expenses, ...action.payload],
       };
 
     case LOADING:

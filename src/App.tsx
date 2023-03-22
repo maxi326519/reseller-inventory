@@ -39,7 +39,6 @@ function App() {
       if (auth.currentUser) {
         const year = new Date().getFullYear();
         const month = new Date().getMonth() + 1;
-        console.log(year, month);
         Promise.all([
           dispatch<any>(getUserData()),
           dispatch<any>(getItems()),
