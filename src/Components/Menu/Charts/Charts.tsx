@@ -93,7 +93,8 @@ export default function Charts() {
   }, [reports]);
 
   function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    const selected: string = event.target.value;
+    const selected = event.target.value;
+    setYear(selected);
     setData(yearsData.find((y: any) => y.year.toString() === selected).data);
   }
 
