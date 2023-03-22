@@ -10,6 +10,7 @@ import {
   getReports,
   getExpenses,
   getSales,
+  getItemsByDate,
 } from "./redux/actions";
 import { RootState } from "./interfaces";
 import { getAuth } from "firebase/auth";
@@ -42,6 +43,7 @@ function App() {
         Promise.all([
           dispatch<any>(getUserData()),
           dispatch<any>(getItems()),
+          dispatch<any>(getItemsByDate(year, month)),
           dispatch<any>(getExpenses(year, month)),
           dispatch<any>(getSales(year, month)),
           dispatch<any>(getInvoices(year, `0${month}`.slice(-2))),

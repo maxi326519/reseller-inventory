@@ -344,8 +344,8 @@ export function getItems(): ThunkAction<
 
       let newItems: Array<any> = [];
       const itemRef = collection(db, "Users", auth.currentUser.uid, "Items");
-      const newQuery = query(itemRef, where("state", "==", "In Stock"));
-      const response = await getDocs(newQuery);
+/*       const newQuery = query(itemRef, where("state", "==", "In Stock")); */
+      const response = await getDocs(itemRef);
 
       response.forEach((doc) => {
         newItems.push(doc.data());
@@ -371,11 +371,11 @@ export function getItemsByDate(
         throw new Error("unauthenticated user");
       }
 
-      const expensesRef = collection(
+      const itemsRef = collection(
         db,
         "Users",
         auth.currentUser.uid,
-        "Expenses"
+        "Items"
       );
       // Date range
       let startDate: Date;
@@ -393,21 +393,21 @@ export function getItemsByDate(
       // Query and get docs
       const snapshot = await getDocs(
         query(
-          expensesRef,
+          itemsRef,
           where("date", ">=", startDate),
           where("date", "<=", endDate)
         )
       );
 
       // Get data
-      let expenses: any = [];
+      let items: any = [];
       snapshot.forEach((doc: any) => {
-        expenses.push(doc.data());
+        items.push(doc.data());
       });
 
       dispatch({
-        type: GET_EXPENSES,
-        payload: expenses,
+        type: GET_ITEMS,
+        payload: items,
       });
     } catch (e: any) {
       throw new Error(e);
@@ -670,7 +670,7 @@ export function updateReportsdItems(
             auth.currentUser.uid,
             "Reports"
           );
-          const yearReportRef = doc(reportRef, year);
+          const yearReportRef = doc(reportRef, year.toString());
           setDoc(yearReportRef, { ...updatedReports[i] });
         }
       }
