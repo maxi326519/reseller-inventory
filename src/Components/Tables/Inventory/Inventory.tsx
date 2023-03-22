@@ -54,7 +54,7 @@ const initialSale: Sale = {
 
 const initialOtherExpenses: OtherExpenses = {
   saleId: 0,
-  adsFee: { check: false,  cost: "" },
+  adsFee: { check: false, cost: "" },
   other: { check: false, description: "", cost: "" },
 };
 
@@ -86,9 +86,11 @@ export default function Inventory() {
         if (i.state === "Sold") return false;
         if (i.state === "Expired") return false;
         if (search === "") return true;
-        if (i.id.toString().toLowerCase().includes(search)) return true;
-        if (i.date.toLowerCase().includes(search)) return true;
-        if (i.description.toLowerCase().includes(search)) return true;
+        if (i.id.toString().toLowerCase().includes(search.toLowerCase()))
+          return true;
+        if (i.date.toLowerCase().includes(search.toLowerCase())) return true;
+        if (i.description.toLowerCase().includes(search.toLowerCase()))
+          return true;
         return false;
       })
     );
