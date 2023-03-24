@@ -13,6 +13,7 @@ import {
   GET_INVOICE,
   GET_REPORTS,
   GET_EXPENSES,
+  GET_SALES,
   UPDATE_REPORTS,
   DELETE_INVOICE,
   EXPIRED_ITEMS,
@@ -120,6 +121,12 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
       return {
         ...state,
         expenses: [...action.payload],
+      };
+
+    case GET_SALES:
+      return {
+        ...state,
+        sales: [...action.payload],
       };
 
     case UPDATE_REPORTS:
