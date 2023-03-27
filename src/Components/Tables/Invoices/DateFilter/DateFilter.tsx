@@ -32,8 +32,8 @@ interface Porps {
 export default function DateFilter({ years, handleFilterDate }: Porps) {
   const [days, setDays] = useState<string[] | number[]>([]);
   const [filter, setFilter] = useState<Filter>({
-    year: new Date().toLocaleDateString().split("/")[2],
-    month: `0${new Date().toLocaleDateString().split("/")[1]}`.slice(-2),
+    year: new Date().getFullYear(),
+    month: `0${new Date().getMonth()}`.slice(-2),
     day: "00",
   });
 
@@ -81,7 +81,7 @@ export default function DateFilter({ years, handleFilterDate }: Porps) {
               </option>
             ))
           ) : (
-            <option>{new Date().toLocaleDateString().split("/")[2]}</option>
+            <option>{new Date().getFullYear()}</option>
           )}
         </select>
         <label htmlFor="year">Year</label>

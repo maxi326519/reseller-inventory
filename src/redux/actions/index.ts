@@ -532,7 +532,7 @@ export function getSales(
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
-
+      console.log(year, month);
       const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
 
       // Date range

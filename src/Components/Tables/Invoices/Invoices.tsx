@@ -138,10 +138,14 @@ export default function Invoices() {
     });
   }
 
+
+
   function handleFilterDate(date: Filter) {
     const year = date.year;
     const month = date.month;
     const day = date.day;
+
+    console.log(year, month);
 
     if (month !== "00") {
       dispatch(loading());
