@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Item, Invoice, InvoiceType } from "../../../interfaces";
 import { useDispatch } from "react-redux";
+import { Timestamp } from "@firebase/firestore";
 import {
   postItems,
   postInvoice,
@@ -27,7 +28,7 @@ export default function NewPurchase() {
   const initialState: Invoice = {
     id: generateInvoiceId(new Date().toLocaleDateString()),
     type: InvoiceType.Purchase,
-    date: new Date().toISOString().split("T")[0],
+    date: Timestamp.fromDate(new Date()),
     items: [],
     form: "Cash",
     source: "0",
@@ -86,7 +87,7 @@ export default function NewPurchase() {
               dispatch<any>(
                 postItems(
                   items.map((item) => {
-                    return { ...item, date: invoice.date };
+                    return { ...item, date: invoice.date.toDate().toISOString().split("T")[0] };
                   })
                 )
               ).then(() => {

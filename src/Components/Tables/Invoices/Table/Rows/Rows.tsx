@@ -71,7 +71,7 @@ export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
       }`}
     >
       <span>{invoice.id}</span>
-      <span>{changeDateFormat(invoice.date)}</span>
+      <span>{changeDateFormat(invoice.date.toDate().toISOString().split("T")[0])}</span>
       <span>{invoice.items.length}</span>
       <span>{invoice.total}</span>
       <span>

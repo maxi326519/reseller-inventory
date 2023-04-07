@@ -59,11 +59,11 @@ export default function Form({
         allExpenses.push({
           ...expense,
           id: createUniqueId(
-            invoice.date,
+            invoice.date.toDate().toISOString().split("T")[0],
             Math.floor(Number(expense.price)),
             null
           ),
-          date: Timestamp.fromDate(new Date(invoice.date)),
+          date: invoice.date,
         });
       }
       setExpenses([...expenses, ...allExpenses]);
@@ -173,7 +173,7 @@ export default function Form({
           type="date"
           id="date"
           name="date"
-          value={invoice.date}
+          value={invoice.date.toDate().toISOString()}
           max={maxDate}
           onChange={handleInvoiceChange}
         />

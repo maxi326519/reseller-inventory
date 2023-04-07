@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { Timestamp } from "@firebase/firestore";
 import {
   Expense,
   InvoiceExpenses,
@@ -28,7 +29,7 @@ export default function AddBusinessExpense() {
   const initialState: InvoiceExpenses = {
     id: generateInvoiceId(new Date().toLocaleDateString()),
     type: InvoiceType.Expenses,
-    date: new Date().toISOString().split("T")[0],
+    date: Timestamp.fromDate(new Date()),
     category: "0",
     items: [],
     total: 0,

@@ -149,7 +149,11 @@ export function postInvoice(
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
       // Date destructuring
-      const date: string[] = invoice.date.split("-");
+      const date: string[] = invoice.date
+        .toDate()
+        .toISOString()
+        .split("T")[0]
+        .split("-");
       const year: string = date[0];
       const month: string = date[1];
 
@@ -182,9 +186,7 @@ export function postInvoice(
         auth.currentUser.uid,
         "Invoices"
       );
-      const yearRef = doc(invoiceRef, year);
-      const monthRef = collection(yearRef, month);
-      await setDoc(doc(monthRef, invoice.id.toString()), newInvoice);
+      await setDoc(doc(invoiceRef, invoice.id.toString()), newInvoice);
 
       dispatch({
         type: POST_INVOICE,
@@ -344,7 +346,7 @@ export function getItems(): ThunkAction<
 
       let newItems: Array<any> = [];
       const itemRef = collection(db, "Users", auth.currentUser.uid, "Items");
-/*       const newQuery = query(itemRef, where("state", "==", "In Stock")); */
+      /*       const newQuery = query(itemRef, where("state", "==", "In Stock")); */
       const response = await getDocs(itemRef);
 
       response.forEach((doc) => {
@@ -371,12 +373,7 @@ export function getItemsByDate(
         throw new Error("unauthenticated user");
       }
 
-      const itemsRef = collection(
-        db,
-        "Users",
-        auth.currentUser.uid,
-        "Items"
-      );
+      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
       // Date range
       let startDate: Date;
       let endDate: Date;
@@ -423,7 +420,6 @@ export function getInvoices(
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
-      let newInvoices: Array<any> = [];
       const invoiceRef = collection(
         db,
         "Users",
@@ -431,39 +427,37 @@ export function getInvoices(
         "Invoices"
       );
 
-      if (year && month) {
-        const yearRef = doc(invoiceRef, year.toString());
-        const query = await getDocs(collection(yearRef, month.toString()));
+      // Date range
+      let startDate: Date;
+      let endDate: Date;
 
-        query.forEach((doc) => {
-          newInvoices.push(doc.data());
-        });
-      } else if (year && !month) {
-        const yearRef = doc(invoiceRef, year.toString());
-        const monthQuerys = [];
-
-        for (let i = 0; i < 12; i++) {
-          const month = await getDocs(
-            collection(yearRef, `0${i + 1}`.slice(-2))
-          );
-          monthQuerys.push(month);
-        }
-
-        monthQuerys
-          .filter((month) => {
-            if (month.empty) return false;
-            return true;
-          })
-          .forEach((month) => {
-            month.forEach((doc) => {
-              newInvoices.push(doc.data());
-            });
-          });
+      // Per year or month
+      if (month !== null) {
+        startDate = startOfMonth(new Date(Number(year), Number(month) - 1));
+        endDate = endOfMonth(new Date(Number(year), Number(month) - 1));
+      } else {
+        startDate = startOfYear(new Date(Number(year), 0));
+        endDate = endOfYear(new Date(Number(year), 11));
       }
+
+      // Query and get docs
+      const snapshot = await getDocs(
+        query(
+          invoiceRef,
+          where("date", ">=", startDate),
+          where("date", "<=", endDate)
+        )
+      );
+
+      // Get data
+      let invoices: any = [];
+      snapshot.forEach((doc: any) => {
+        invoices.push(doc.data());
+      });
 
       dispatch({
         type: GET_INVOICE,
-        payload: newInvoices,
+        payload: invoices,
       });
     } catch (e: any) {
       throw new Error(e);
@@ -736,10 +730,6 @@ export function deleteInvoice(
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
-      const dateArr = invoice.date.split("-");
-      const year = dateArr[0];
-      const month = dateArr[1];
-
       const invoiceRef = collection(
         db,
         "Users",
@@ -750,9 +740,7 @@ export function deleteInvoice(
       const batch = writeBatch(db);
 
       // Delete invoice
-      const yearRef = doc(invoiceRef, year);
-      const monthRef = collection(yearRef, month);
-      batch.delete(doc(monthRef, invoice.id.toString()));
+      batch.delete(doc(invoiceRef, invoice.id.toString()));
 
       // Delete items
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");

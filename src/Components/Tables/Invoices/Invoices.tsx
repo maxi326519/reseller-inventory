@@ -53,11 +53,10 @@ export default function Invoices() {
     invoices.forEach((invoice): invoice is Invoice => "form" in invoice);
     setRows(
       invoices.filter((i) => {
-        if (dateFilter !== "" && i.date !== dateFilter) return false;
+        if (dateFilter !== "" && i.date.toDate().toISOString().split("T")[0] !== dateFilter) return false;
         if (i.type !== invoiceType) return false;
         if (search === "") return true;
         if (i.id.toString().toLowerCase().includes(search)) return true;
-        if (i.date.toLowerCase().includes(search)) return true;
         if (i.type !== InvoiceType.Purchase) {
           const invoice = i as Invoice;
           if (invoice.form.toLowerCase().includes(search)) return true;
@@ -99,8 +98,6 @@ export default function Invoices() {
           console.log(expense.id);
           return showInvoice.items.some((id) => id === expense.id);
         });
-        console.log(expenses);
-        console.log(expensesFilter);
         setItemsList(expensesFilter);
         setImage(showInvoice.image);
         setClose(!close);

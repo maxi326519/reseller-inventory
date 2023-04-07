@@ -17,7 +17,7 @@ export interface Item {
 export interface Invoice {
   id: number;
   type: InvoiceType;
-  date: string;
+  date: Timestamp;
   items: number[];
   form: string;
   source: string;
@@ -29,7 +29,7 @@ export interface Invoice {
 export interface InvoiceExpenses {
   id: number;
   type: InvoiceType;
-  date: string;
+  date: Timestamp;
   category: string;
   items: number[];
   total: number;

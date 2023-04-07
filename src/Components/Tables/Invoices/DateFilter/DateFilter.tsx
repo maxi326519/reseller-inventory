@@ -33,7 +33,7 @@ export default function DateFilter({ years, handleFilterDate }: Porps) {
   const [days, setDays] = useState<string[] | number[]>([]);
   const [filter, setFilter] = useState<Filter>({
     year: new Date().getFullYear(),
-    month: `0${new Date().getMonth()}`.slice(-2),
+    month: "00",
     day: "00",
   });
 

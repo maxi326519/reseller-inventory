@@ -46,7 +46,7 @@ function App() {
           dispatch<any>(getItemsByDate(year, month)),
           dispatch<any>(getExpenses(year, month)),
           dispatch<any>(getSales(year, month)),
-          dispatch<any>(getInvoices(year, `0${month}`.slice(-2))),
+          dispatch<any>(getInvoices(year, null)),
           dispatch<any>(getReports()),
         ])
           .then(() => {

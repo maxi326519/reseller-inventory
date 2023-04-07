@@ -25,9 +25,9 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
   const sources: string[] = useSelector(
     (state: RootState) => state.user.sources
   );
-  const initialState = {
+  const initialState: Item = {
     id: 0,
-    date: invoice.date,
+    date: invoice.date.toDate().toISOString().split("T")[0],
     invoiceId: invoice.id,
     state: "In Stock",
     cost: "",
@@ -53,7 +53,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
         allItems.push({
           ...newItem,
           id: createUniqueId(
-            invoice.date,
+            invoice.date.toDate().toISOString().split("T")[0],
             Math.floor(Number(newItem.cost)),
             items.map((i) => i.id)
           ),
@@ -171,7 +171,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
             id="date"
             name="date"
             max={maxDate}
-            value={invoice.date}
+            value={invoice.date.toDate().toISOString().split("T")[0]}
             onChange={handleInvoice}
           />
           <label className="form-label" htmlFor="date">
