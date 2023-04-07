@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import swal from "sweetalert";
 import { RootState } from "../../../../interfaces";
-import { postSources, loading, closeLoading } from "../../../../redux/actions";
+import { postSources } from "../../../../redux/actions/user";
+import { loading, closeLoading } from "../../../../redux/actions/loading";
+import swal from "sweetalert";
 
 import styles from "./AddSource.module.css";
 
@@ -60,11 +61,11 @@ export default function AddSource({ handleClose }: Props) {
     if (sourcesList.length !== sources.length) {
       setValidation(true);
       return true;
-    }else{
+    } else {
       if (sources.length <= 0 && sourcesList.length <= 0) {
         setValidation(false);
         return false;
-      }if(sources.every((value, index) => value === sourcesList[index])){
+      } if (sources.every((value, index) => value === sourcesList[index])) {
         setValidation(false);
         return false;
       }

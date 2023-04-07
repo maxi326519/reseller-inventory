@@ -7,7 +7,7 @@ export interface User {
 
 export interface Item {
   id: number;
-  date: string;
+  date: Timestamp;
   invoiceId: number;
   state: string;
   cost: number | string;
@@ -48,6 +48,7 @@ export interface Expense {
   price: number | string;
   category: string;
   description: string;
+  invoiceId: number;
 }
 
 export interface Sale {
@@ -60,7 +61,7 @@ export interface Sale {
   expenses: ExpenseRef[];
 }
 
-interface ExpenseRef{
+interface ExpenseRef {
   id: number;
   cost: number;
 }
@@ -71,7 +72,7 @@ export interface Shipment {
 }
 
 /* REPORTS */
-export interface YearReport{
+export interface YearReport {
   year: string;
   month: MonthReport[];
 }
@@ -86,11 +87,11 @@ export interface MonthReport {
 
 export interface ReportItem {
   id: number;
-  type: string,
+  type: string;
   amount: number;
 }
 
-export interface YearTaxesData{
+export interface YearTaxesData {
   year: number;
   month: MonthTaxesData[];
 }
@@ -101,26 +102,32 @@ export interface MonthTaxesData {
     name: string;
   };
   sales: {
-    total: number,
-    sales: number,
-    shipment: number,
-  },
+    total: number;
+    sales: number;
+    shipment: number;
+  };
   expenses: {
-    total: number,
-    COGS: number,
-    shipLabel: number,
-    ebayFees: number,
-    adsFee: number,
-    otherExpense: number,
-  }
+    total: number;
+    COGS: number;
+    shipLabel: number;
+    ebayFees: number;
+    adsFee: number;
+    otherExpense: number;
+  };
 }
 
 export interface RootState {
   user: User;
   items: Item[];
-  invoices:  Array<Invoice | InvoiceExpenses>;
-  sales: Sale[];
-  expenses: Expense[];
+  invoices: {
+    data: Array<Invoice | InvoiceExpenses>;
+    details: Array<Item> | Array<Expense>;
+  };
+  sales: {
+    items: Item[];
+    sales: Sale[];
+    expenses: Expense[];
+  };
   reports: YearReport[];
   loading: boolean;
 }

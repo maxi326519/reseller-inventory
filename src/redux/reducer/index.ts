@@ -1,140 +1,197 @@
-import { RootState, Sale } from "../../interfaces";
+import { Item, RootState, Sale } from "../../interfaces";
 import { AnyAction } from "redux";
+import { LOADING, CLOSE_LOADING } from "../actions/loading";
+import { POST_SOURCES, POST_CATEGORIES, GET_USER_DATA } from "../actions/user";
 import {
-  LOADING,
-  CLOSE_LOADING,
-  POST_SOURCES,
   POST_ITEMS,
-  POST_INVOICE,
-  POST_CATEGORIES,
-  POST_SALE,
-  GET_USER_DATA,
   GET_ITEMS,
-  GET_INVOICE,
-  GET_REPORTS,
-  GET_EXPENSES,
-  GET_SALES,
-  UPDATE_REPORTS,
-  DELETE_INVOICE,
   EXPIRED_ITEMS,
   RESTORE_ITEMS,
-  POST_EXPENSES,
-} from "../actions";
+} from "../actions/items";
+import {
+  POST_INVOICE,
+  GET_INVOICE,
+  DELETE_INVOICE,
+  GET_INVOICE_DETAILS,
+} from "../actions/invoices";
+import { POST_SALE, GET_SALES } from "../actions/sales";
+import { POST_EXPENSES, GET_EXPENSES } from "../actions/expenses";
+import {
+  GET_REPORTS,
+  GET_SOLD_REPORT_DATA,
+  UPDATE_REPORTS,
+} from "../actions/reports";
 
 const initialState: RootState = {
   user: {
     categories: ["General"],
     sources: [],
   },
-  invoices: [],
   items: [],
-  sales: [],
-  expenses: [],
+  invoices: {
+    data: [],
+    details: [],
+  },
+  sales: {
+    items: [],
+    sales: [],
+    expenses: [],
+  },
   reports: [],
   loading: false,
 };
 
 export const Reducer = (state: RootState = initialState, action: AnyAction) => {
   switch (action.type) {
-    case POST_CATEGORIES:
-      return {
-        ...state,
-        user: { ...state.user, categories: action.payload },
-      };
-
-    case POST_SOURCES:
-      return {
-        ...state,
-        user: { ...state.user, sources: action.payload },
-      };
-
-    case POST_ITEMS:
-      return {
-        ...state,
-        items: [...state.items, ...action.payload],
-      };
-
-    case POST_INVOICE:
-      return {
-        ...state,
-        invoices: [...state.invoices, action.payload],
-      };
-
-    case POST_SALE:
-      return {
-        ...state,
-        sales: [...state.sales, ...action.payload],
-        items: state.items.map((item) => {
-          if (action.payload.some((sale: Sale) => sale.productId === item.id)) {
-            return {
-              ...item,
-              state: "Sold",
-            };
-          }
-          return item;
-        }),
-      };
-
-    case POST_EXPENSES:
-      return {
-        ...state,
-        expenses: [...state.expenses, ...action.payload],
-      };
-
+    /* LOADING */
     case LOADING:
       return {
         ...state,
         loading: true,
       };
-
     case CLOSE_LOADING:
       return {
         ...state,
         loading: false,
       };
 
+    /* POST */
+    case POST_CATEGORIES:
+      return {
+        ...state,
+        user: { ...state.user, categories: action.payload },
+      };
+    case POST_SOURCES:
+      return {
+        ...state,
+        user: { ...state.user, sources: action.payload },
+      };
+    case POST_ITEMS:
+      return {
+        ...state,
+        items: [...state.items, ...action.payload],
+      };
+    case POST_INVOICE:
+      return {
+        ...state,
+        invoices: {
+          ...state.invoices,
+          data: [...state.invoices.data, action.payload],
+        },
+      };
+    case POST_SALE:
+      let stockItems: Item[] = [];
+      let soldItems: Item[] = [];
+
+      state.items.forEach((item) => {
+        if (action.payload.some((sale: Sale) => sale.productId === item.id)) {
+          soldItems.push({
+            ...item,
+            state: "Sold",
+          });
+        } else {
+          stockItems.push({
+            ...item,
+            state: "Sold",
+          });
+        }
+      });
+
+      return {
+        ...state,
+        items: stockItems,
+        sales: {
+          items: soldItems,
+          sales: [...state.sales.sales, ...action.payload],
+          expenses: [],
+        },
+      };
+
+    /* GET */
     case GET_USER_DATA:
       return {
         ...state,
         user: { ...state.user, ...action.payload },
       };
-
     case GET_ITEMS:
       return {
         ...state,
         items: action.payload,
       };
-
     case GET_INVOICE:
       return {
         ...state,
-        invoices: action.payload,
+        invoices: {
+          ...state.invoices,
+          data: action.payload,
+        },
       };
-
+    case GET_INVOICE_DETAILS:
+      return {
+        ...state,
+        invoices: {
+          ...state.invoices,
+          details: action.payload,
+        },
+      };
     case GET_REPORTS:
       return {
         ...state,
         reports: action.payload,
       };
-
+    case GET_SOLD_REPORT_DATA:
+      return {
+        ...state,
+        sales: {
+          items: action.payload.items,
+          sales: action.payload.sales,
+          expenses: [],
+        },
+      }
     case GET_EXPENSES:
       return {
         ...state,
         expenses: [...action.payload],
       };
-
     case GET_SALES:
       return {
         ...state,
         sales: [...action.payload],
       };
 
+    /* UPDATES */
     case UPDATE_REPORTS:
       return {
         ...state,
         reports: action.payload,
       };
 
+    /* DELETE */
+    case DELETE_INVOICE:
+      return {
+        ...state,
+        invoices: {
+          data: state.invoices.data.filter(
+            (invoice) => invoice.id !== action.payload.id
+          ),
+          details: [],
+        },
+        items: state.items.filter(
+          (item) => !action.payload.items.some((id: number) => id === item.id)
+        ),
+        sales: {
+          items: state.sales.items.filter(
+            (item) => !action.payload.items.some((id: number) => id === item.id)
+          ),
+          sales: state.sales.sales.filter(
+            (sale) =>
+              !action.payload.items.some((id: number) => id === sale.productId)
+          ),
+          expenses: [],
+        },
+      };
+
+    /* OTHER */
     case EXPIRED_ITEMS:
       return {
         ...state,
@@ -161,25 +218,6 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
           }
           return item;
         }),
-      };
-
-    case DELETE_INVOICE:
-      return {
-        ...state,
-        invoices: state.invoices.filter(
-          (invoice) => invoice.id !== action.payload.id
-        ),
-        items: state.items.filter(
-          (item) => !action.payload.items.some((id: number) => id === item.id)
-        ),
-        sales: state.sales.filter(
-          (sale) =>
-            !action.payload.items.some((id: number) => id === sale.productId)
-        ),
-        expenses: state.expenses.filter(
-          (expense) =>
-            !action.payload.items.some((id: number) => id === expense.id)
-        ),
       };
     default:
       return state;

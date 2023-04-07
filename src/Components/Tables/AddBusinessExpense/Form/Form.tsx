@@ -12,6 +12,7 @@ const initialState: Expense = {
   category: "0",
   description: "",
   price: "",
+  invoiceId: 0,
 };
 
 interface Error {
@@ -64,6 +65,7 @@ export default function Form({
             null
           ),
           date: invoice.date,
+          invoiceId: invoice.id
         });
       }
       setExpenses([...expenses, ...allExpenses]);
@@ -99,7 +101,11 @@ export default function Form({
   function handleInvoiceChange(
     event: React.ChangeEvent<HTMLInputElement>
   ): void {
-    setInvoice({ ...invoice, [event.target.name]: event.target.value });
+    if (event.target.name === "date") {
+      setInvoice({ ...invoice, date: Timestamp.fromDate(new Date(event.target.value)) });
+    } else {
+      setInvoice({ ...invoice, [event.target.name]: event.target.value });
+    }
   }
 
   function handleChangeSelect(
@@ -173,7 +179,7 @@ export default function Form({
           type="date"
           id="date"
           name="date"
-          value={invoice.date.toDate().toISOString()}
+          value={invoice.date.toDate().toISOString().split("T")[0]}
           max={maxDate}
           onChange={handleInvoiceChange}
         />

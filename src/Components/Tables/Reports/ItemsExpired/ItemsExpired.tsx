@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Item, RootState } from "../../../../interfaces";
 import { getFirstAndLastDayOfMonth } from "../../../../functions/date";
-import { closeLoading, loading, restoreItems } from "../../../../redux/actions";
+import { closeLoading, loading } from "../../../../redux/actions/loading";
+import { restoreItems } from "../../../../redux/actions/items";
 
 import Table from "./Table/Table";
 

@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  closeLoading,
-  expiredItems,
-  getItems,
-  loading,
-  postExpenses,
-  updateReports,
-} from "../../../redux/actions";
+import { Timestamp } from "firebase/firestore";
+import { closeLoading, loading } from "../../../redux/actions/loading";
+import { postExpenses } from "../../../redux/actions/expenses";
+import { updateReports } from "../../../redux/actions/reports";
+import { expiredItems, getStockItems } from "../../../redux/actions/items"
 import { RootState, Item, Sale } from "../../../interfaces";
+import { Link } from "react-router-dom";
 
 import reload from "../../../assets/svg/reload.svg";
 
@@ -18,7 +15,6 @@ import AddSale from "./AddSale/AddSale";
 
 import style from "./Inventory.module.css";
 import swal from "sweetalert";
-import { Timestamp } from "firebase/firestore";
 
 interface OtherExpenses {
   saleId: number;
@@ -115,7 +111,7 @@ export default function Inventory() {
     }).then((response) => {
       if (response) {
         dispatch(loading());
-        dispatch<any>(getItems())
+        dispatch<any>(getStockItems())
           .then(() => {
             dispatch(closeLoading());
           })
@@ -154,6 +150,7 @@ export default function Inventory() {
                   price: item.cost,
                   category: "Expired",
                   description: "Expired item expense",
+                  invoiceId: 0,
                 };
               });
 

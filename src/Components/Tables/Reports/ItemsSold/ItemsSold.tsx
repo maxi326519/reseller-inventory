@@ -1,23 +1,20 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Timestamp } from "firebase/firestore";
 import { Item, RootState, Sale, YearReport } from "../../../../interfaces";
 import { getFirstAndLastDayOfMonth } from "../../../../functions/date";
+import { closeLoading, loading } from "../../../../redux/actions/loading";
+import { restoreItems } from "../../../../redux/actions/items";
+import { postExpenses } from "../../../../redux/actions/expenses"
+import { updateReports } from "../../../../redux/actions/reports"
 
 import DataFilter from "./DateFilter/DateFilter";
 import Table from "./Table/Table";
-import Excel from "./Excel/Excel.jsx";
-
-import styles from "./ItemsSold.module.css";
 import Refound from "./Refound/Refound";
+
+import Excel from "./Excel/Excel.jsx";
+import styles from "./ItemsSold.module.css";
 import swal from "sweetalert";
-import {
-  closeLoading,
-  loading,
-  postExpenses,
-  restoreItems,
-  updateReports,
-} from "../../../../redux/actions";
-import { Timestamp } from "firebase/firestore";
 
 interface Dates {
   firstDay: string;
@@ -118,7 +115,16 @@ export default function ItemsSold() {
       });
   }
 
-  function handleFilterPerDate() {}
+  function handleFilterPerDate(dateFilter: any) {
+    const year = dateFilter.year.toString();
+    let month = dateFilter.month === "00" ? null : dateFilter.month;
+
+    console.log(year, month);
+
+    /*     Promise.all(
+          dispatch<any>(getExpenses(year, month))
+        ) */
+  }
 
   return (
     <div className={styles.itemsSold}>

@@ -1,21 +1,18 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Timestamp } from "firebase/firestore";
 import { Item, Sale, RootState, Expense } from "../../../../interfaces";
+import { loading, closeLoading } from "../../../../redux/actions/loading";
+import { postSales } from "../../../../redux/actions/sales"
+import { postExpenses } from "../../../../redux/actions/expenses"
+import { updateReports } from "../../../../redux/actions/reports"
 import swal from "sweetalert";
-import {
-  postSales,
-  loading,
-  closeLoading,
-  postExpenses,
-  updateReports,
-} from "../../../../redux/actions";
 
 import ItemRow from "./ItemRow/ItemRow";
 import SaleData from "./SaleData/SaleData";
 
 import styles from "./AddSale.module.css";
 import "../../../../animation.css";
-import { Timestamp } from "firebase/firestore";
 
 interface OtherExpenses {
   saleId: number;

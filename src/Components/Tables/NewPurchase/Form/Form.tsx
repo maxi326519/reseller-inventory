@@ -3,6 +3,7 @@ import { Invoice, Item, RootState } from "../../../../interfaces";
 
 import styles from "../../Tables.module.css";
 import { useSelector } from "react-redux";
+import { Timestamp } from "@firebase/firestore";
 
 interface Props {
   invoice: Invoice;
@@ -71,8 +72,12 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
   }
 
   function handleInvoice(event: React.ChangeEvent<HTMLInputElement>): void {
-    setInvoice({ ...invoice, [event.target.name]: event.target.value });
-    setError({ ...error, [event.target.name]: null });
+    if (event.target.name === "date") {
+      setInvoice({ ...invoice, date: Timestamp.fromDate(new Date(event.target.value)) });
+    } else {
+      setInvoice({ ...invoice, [event.target.name]: event.target.value });
+      setError({ ...error, [event.target.name]: null });
+    }
   }
 
   function handleInvoiceSelect(
@@ -170,8 +175,8 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
             type="date"
             id="date"
             name="date"
-            max={maxDate}
             value={invoice.date.toDate().toISOString().split("T")[0]}
+            max={maxDate}
             onChange={handleInvoice}
           />
           <label className="form-label" htmlFor="date">
@@ -223,9 +228,8 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
         <div className="form-floating mb-3">
           <input
             id="description"
-            className={`form-control ${
-              error.description ? "is-invalid" : null
-            }`}
+            className={`form-control ${error.description ? "is-invalid" : null
+              }`}
             name="description"
             type="text"
             value={newItem.description}

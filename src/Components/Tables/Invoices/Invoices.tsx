@@ -9,18 +9,14 @@ import {
   InvoiceExpenses,
   Expense,
 } from "../../../interfaces";
-import {
-  loading,
-  closeLoading,
-  getItems,
-  getInvoices,
-  getExpenses,
-} from "../../../redux/actions";
+import { loading, closeLoading } from "../../../redux/actions/loading";
+import { getInvoiceDetails, getInvoices } from "../../../redux/actions/invoices";
+import { getExpenses } from "../../../redux/actions/expenses";
 import swal from "sweetalert";
-import reload from "../../../assets/svg/reload.svg";
 
 import Table from "./Table/Table";
 import DateFilter from "./DateFilter/DateFilter";
+import reload from "../../../assets/svg/reload.svg";
 import Details from "./Details/Details";
 
 import styles from "../Tables.module.css";
@@ -35,16 +31,15 @@ interface Filter {
 export default function Invoices() {
   const dispatch = useDispatch();
   const reports = useSelector((state: RootState) => state.reports);
-  const invoices = useSelector((state: RootState) => state.invoices);
-  const items = useSelector((state: RootState) => state.items);
-  const expenses = useSelector((state: RootState) => state.expenses);
-  const [itemsList, setItemsList] = useState<Item[] | Expense[]>([]);
+  const invoices = useSelector((state: RootState) => state.invoices.data);
+  const details = useSelector((state: RootState) => state.invoices.details);
   const [image, setImage] = useState<string>("");
   const [close, setClose] = useState(false);
   const [rows, setRows] = useState<Array<Invoice | InvoiceExpenses>>([]);
   const [search, setSearch] = useState<string>("");
-  const [dateFilter, setDateFilter] = useState<string>("");
   const [total, setTotal] = useState(0);
+  const [dayFilter, setDayFilter] = useState<string>("");
+  const [dateFilter, setDateFilter] = useState<any>();
   const [invoiceType, setInvoiceType] = useState<InvoiceType>(
     InvoiceType.Purchase
   );
@@ -53,7 +48,7 @@ export default function Invoices() {
     invoices.forEach((invoice): invoice is Invoice => "form" in invoice);
     setRows(
       invoices.filter((i) => {
-        if (dateFilter !== "" && i.date.toDate().toISOString().split("T")[0] !== dateFilter) return false;
+        if (dayFilter !== "" && i.date.toDate().toISOString().split("T")[0] !== dayFilter) return false;
         if (i.type !== invoiceType) return false;
         if (search === "") return true;
         if (i.id.toString().toLowerCase().includes(search)) return true;
@@ -65,7 +60,7 @@ export default function Invoices() {
         return false;
       })
     );
-  }, [search, invoices, dateFilter, invoiceType]);
+  }, [search, invoices, dayFilter, invoiceType]);
 
   useEffect(() => {
     let total = 0;
@@ -85,29 +80,15 @@ export default function Invoices() {
 
   function handleDetails(invoiceID: number) {
     const showInvoice = invoices.find((i) => i.id === invoiceID);
-
     if (showInvoice) {
-      if (invoiceType === InvoiceType.Purchase) {
-        setItemsList(
-          items.filter((item) => showInvoice.items.some((id) => id === item.id))
-        );
-        setImage(showInvoice.image);
-        setClose(!close);
-      } else if (invoiceType === InvoiceType.Expenses) {
-        const expensesFilter = expenses.filter((expense) => {
-          console.log(expense.id);
-          return showInvoice.items.some((id) => id === expense.id);
-        });
-        setItemsList(expensesFilter);
-        setImage(showInvoice.image);
-        setClose(!close);
-      }
+      dispatch<any>(getInvoiceDetails(showInvoice.type === InvoiceType.Purchase, showInvoice.id));
+      setImage(showInvoice.image);
+      setClose(!close);
     }
   }
 
   function handleClose() {
     setClose(!close);
-    setItemsList([]);
   }
 
   function handleReload() {
@@ -119,7 +100,7 @@ export default function Invoices() {
     }).then((response) => {
       if (response) {
         dispatch(loading());
-        dispatch<any>(getItems())
+        dispatch<any>(getInvoices(dateFilter.year, dateFilter.month))
           .then(() => {
             dispatch(closeLoading());
           })
@@ -135,23 +116,21 @@ export default function Invoices() {
     });
   }
 
-
-
   function handleFilterDate(date: Filter) {
     const year = date.year;
     const month = date.month;
     const day = date.day;
 
-    console.log(year, month);
+    setDateFilter(date);
 
     if (month !== "00") {
       dispatch(loading());
       dispatch<any>(getInvoices(year, month))
         .then(() => {
           if (day !== "00") {
-            setDateFilter(`${year}-${month}-${day}`);
+            setDayFilter(`${year}-${month}-${day}`);
           } else {
-            setDateFilter("");
+            setDayFilter("");
           }
           dispatch<any>(getExpenses(Number(year), Number(month))).then(() => {
             dispatch(closeLoading());
@@ -167,7 +146,7 @@ export default function Invoices() {
           );
         });
     } else if (date.month === "00") {
-      setDateFilter("");
+      setDayFilter("");
       dispatch(loading());
       dispatch<any>(getInvoices(year, null))
         .then(() => {
@@ -193,7 +172,7 @@ export default function Invoices() {
         <Details
           handleClose={handleClose}
           invoiceType={invoiceType}
-          itemsList={itemsList}
+          itemsList={details}
           image={image}
         />
       ) : null}

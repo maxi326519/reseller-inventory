@@ -8,13 +8,10 @@ import {
   RootState,
   InvoiceType,
 } from "../../../interfaces";
-import {
-  closeLoading,
-  loading,
-  postExpenses,
-  postInvoice,
-  updateReports,
-} from "../../../redux/actions";
+import { closeLoading, loading } from "../../../redux/actions/loading";
+import { postInvoice } from "../../../redux/actions/invoices";
+import { postExpenses } from "../../../redux/actions/expenses";
+import { updateReports } from "../../../redux/actions/reports";
 
 import Form from "./Form/Form";
 import Table from "./Table/Table";

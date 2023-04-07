@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import swal from "sweetalert";
 import { RootState } from "../../../../interfaces";
-import {
-  postCategories,
-  loading,
-  closeLoading,
-} from "../../../../redux/actions";
+import { postCategories } from "../../../../redux/actions/user";
+import { loading, closeLoading } from "../../../../redux/actions/loading";
+import swal from "sweetalert";
 
 import styles from "./Categories.module.css";
 

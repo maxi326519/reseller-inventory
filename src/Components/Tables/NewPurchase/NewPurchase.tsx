@@ -3,12 +3,9 @@ import { Link } from "react-router-dom";
 import { Item, Invoice, InvoiceType } from "../../../interfaces";
 import { useDispatch } from "react-redux";
 import { Timestamp } from "@firebase/firestore";
-import {
-  postItems,
-  postInvoice,
-  loading,
-  closeLoading,
-} from "../../../redux/actions/";
+import { loading, closeLoading } from "../../../redux/actions/loading";
+import { postItems } from "../../../redux/actions/items";
+import { postInvoice } from "../../../redux/actions/invoices";
 import swal from "sweetalert";
 
 import Form from "./Form/Form";

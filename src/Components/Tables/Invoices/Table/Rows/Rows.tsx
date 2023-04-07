@@ -5,16 +5,13 @@ import {
   RootState,
 } from "../../../../../interfaces";
 import changeDateFormat from "../../../../../functions/changeDateFormat";
-import {
-  closeLoading,
-  deleteInvoice,
-  loading,
-  updateReportsdItems,
-} from "../../../../../redux/actions";
-
-import styles from "../Table.module.css";
+import { closeLoading, loading } from "../../../../../redux/actions/loading";
+import { updateReportsItems } from "../../../../../redux/actions/reports";
+import { deleteInvoice } from "../../../../../redux/actions/invoices";
 import { useDispatch, useSelector } from "react-redux";
 import swal from "sweetalert";
+
+import styles from "../Table.module.css";
 
 interface Props {
   invoice: Invoice | InvoiceExpenses;
@@ -40,7 +37,7 @@ export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
         dispatch(loading());
         dispatch<any>(deleteInvoice(invoice))
           .then(() => {
-            dispatch<any>(updateReportsdItems(invoice.items, reports))
+            dispatch<any>(updateReportsItems(invoice.items, reports))
               .then(() => {
                 swal("Deleted", "Invoice deleted successfully", "success");
                 dispatch(closeLoading());
@@ -66,9 +63,8 @@ export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
 
   return (
     <div
-      className={`${styles.rows} ${
-        invoiceType === InvoiceType.Expenses ? styles.expenses : null
-      }`}
+      className={`${styles.rows} ${invoiceType === InvoiceType.Expenses ? styles.expenses : null
+        }`}
     >
       <span>{invoice.id}</span>
       <span>{changeDateFormat(invoice.date.toDate().toISOString().split("T")[0])}</span>
@@ -79,9 +75,9 @@ export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
           ? (invoice as Invoice).form
           : (invoice as InvoiceExpenses).category}
       </span>
-          {invoiceType === InvoiceType.Purchase ? (
-            <span>{(invoice as Invoice).source}</span>
-          ) : null}
+      {invoiceType === InvoiceType.Purchase ? (
+        <span>{(invoice as Invoice).source}</span>
+      ) : null}
       <button
         className="btn btn-primary"
         type="button"
