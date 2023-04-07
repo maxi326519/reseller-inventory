@@ -21,16 +21,21 @@ interface Dates {
   lastDay: string;
 }
 
+interface Rows {
+  item: Item | undefined,
+  sale: Sale,
+}
+
 const initialDates: Dates = getFirstAndLastDayOfMonth(new Date());
 
 export default function ItemsSold() {
   const dispatch = useDispatch();
-  const sales: Sale[] = useSelector((state: RootState) => state.sales);
-  const items: Item[] = useSelector((state: RootState) => state.items);
+  const sales: Sale[] = useSelector((state: RootState) => state.sales.sales);
+  const items: Item[] = useSelector((state: RootState) => state.sales.items);
   const reports: YearReport[] = useSelector(
     (state: RootState) => state.reports
   );
-  const [itemsSold, setItemSold] = useState<any[]>([]);
+  const [rows, setRows] = useState<Rows[]>([]);
   const [dates, setDates] = useState(initialDates);
   const [total, setTotal] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
@@ -38,28 +43,15 @@ export default function ItemsSold() {
   const [refoundSelected, setRefoundSelected] = useState<number>();
 
   useEffect(() => {
-    const itemsSold = items.filter((s: Item) => s.state === "Sold")
-    const newItemsList = itemsSold.map((item) => {
-      const sale: Sale | undefined = sales.find((s) => s.id === item.id);
-      return {
-        ...item,
-        ...sale,
-      };
-    });
-    console.log(newItemsList);
-    setItemSold(newItemsList);
-  }, [items, sales, dates]);
+    const rows: Rows[] = sales.map((sale: Sale): Rows => ({
+      item: items.find((i: Item) => i.id === sale.productId),
+      sale
+    }));
 
-  useEffect(() => {
-    let total = 0;
-    let totaltems = 0;
-    itemsSold.forEach((item) => {
-      total += Number(item.cost);
-      totaltems++;
-    });
-    setTotal(total);
-    setTotalItems(totaltems);
-  }, [itemsSold]);
+    console.log(rows);
+
+    setRows(rows);
+  }, [items, sales, dates]);
 
   function handleRefoundSelected(id: number) {
     setRefoundSelected(id);
@@ -79,6 +71,7 @@ export default function ItemsSold() {
         price: amount,
         category: "Refound",
         description: "Refound expense",
+        invoiceId: 0,
       },
     ];
 
@@ -133,7 +126,7 @@ export default function ItemsSold() {
       ) : null}
       <div className={styles.controls}>
         <DataFilter years={[2023]} handleFilterPerDate={handleFilterPerDate} />
-        <Excel sales={itemsSold} />
+        {/*         <Excel sales={itemsSold} /> */}
         <span className={styles.total}>Total items: {totalItems}</span>
         <span className={styles.total}>
           Total cost: ${Number(total).toFixed(2)}
@@ -141,8 +134,7 @@ export default function ItemsSold() {
         <span className={styles.total}>Order total: 0</span>
       </div>
       <Table
-        items={itemsSold}
-        sales={sales}
+        rows={rows}
         handleClose={handleClose}
         handleRefoundSelected={handleRefoundSelected}
       />

@@ -84,7 +84,7 @@ export default function NewPurchase() {
               dispatch<any>(
                 postItems(
                   items.map((item) => {
-                    return { ...item, date: invoice.date.toDate().toISOString().split("T")[0] };
+                    return { ...item, date: invoice.date };
                   })
                 )
               ).then(() => {

@@ -13,7 +13,7 @@ import {
   where,
   query,
 } from "firebase/firestore";
-import { Expense, Sale, RootState, YearReport } from "../../../interfaces";
+import { Expense, Sale, RootState, YearReport, Item } from "../../../interfaces";
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
 
 export const GET_REPORTS = "GET_REPORTS";
@@ -106,9 +106,9 @@ export function getSoldReportData(
       });
 
       const data = {
-        items,
-        sales
-      }
+        items: items.filter((i: Item) => i.state === "Sold" ),
+        sales,
+      };
 
       dispatch({
         type: GET_SOLD_REPORT_DATA,

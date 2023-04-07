@@ -2,12 +2,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  Item,
   Invoice,
   RootState,
   InvoiceType,
   InvoiceExpenses,
-  Expense,
 } from "../../../interfaces";
 import { loading, closeLoading } from "../../../redux/actions/loading";
 import { getInvoiceDetails, getInvoices } from "../../../redux/actions/invoices";

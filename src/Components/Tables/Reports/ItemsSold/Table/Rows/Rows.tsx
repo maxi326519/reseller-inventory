@@ -2,15 +2,18 @@ import { useEffect } from "react";
 
 import styles from "../Table.module.css";
 import changeDateFormat from "../../../../../../functions/changeDateFormat";
+import { Item, Sale } from "../../../../../../interfaces";
 
 interface Props {
-  item: any;
+  item: Item | undefined;
+  sale: Sale;
   handleClose: () => void;
   handleRefoundSelected: (id: number) => void;
 }
 
 export default function Rows({
   item,
+  sale,
   handleClose,
   handleRefoundSelected,
 }: Props) {
@@ -19,25 +22,21 @@ export default function Rows({
   }, []);
 
   function handleClick() {
-    handleRefoundSelected(item?.id);
-    handleClose();
+    if(item){
+      handleRefoundSelected(item.id);
+      handleClose();
+    }
   }
 
   return (
     <div key={item?.id} className={styles.rows}>
       <span>{item?.invoiceId}</span>
       <span>{item?.id}</span>
-      <span>
-        {item.productId
-          ? changeDateFormat(
-              new Date(item?.date.toDate()).toISOString().split("T")[0]
-            )
-          : null}
-      </span>
+      <span>{changeDateFormat(new Date(sale.date.toDate()).toISOString().split("T")[0])}</span>
       <span>{item?.cost}</span>
-      <span>{item?.price}</span>
-      <span>{item?.shipment?.amount !== "" ? item?.shipment?.amount : 0}</span>
-      <span>{item?.description}</span>
+      <span>{sale.price}</span>
+      <span>{sale.shipment.amount !== "" ? sale.shipment.amount : 0}</span>
+      <span>{item?. description}</span>
       <button className="btn btn-success" type="button" onClick={handleClick}>
         Refound
       </button>

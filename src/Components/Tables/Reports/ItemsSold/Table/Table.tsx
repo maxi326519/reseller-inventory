@@ -5,16 +5,19 @@ import Rows from "./Rows/Rows";
 
 import styles from "./Table.module.css";
 
+interface Rows {
+  item: Item | undefined,
+  sale: Sale,
+}
+
 interface Props {
-  items: Item[];
-  sales: Sale[];
+  rows: Rows[];
   handleClose: () => void;
   handleRefoundSelected: (id: number) => void;
 }
 
 export default function Table({
-  items,
-  sales,
+  rows,
   handleClose,
   handleRefoundSelected,
 }: Props) {
@@ -32,11 +35,12 @@ export default function Table({
         <span>Refound</span>
       </div>
       <div className={styles.data}>
-        {items.map((item: any) => {
+        {rows.map((row: Rows) => {
           return (
             <Rows
-              key={item.id}
-              item={item}
+              key={row.sale.id}
+              item={row.item}
+              sale={row.sale}
               handleClose={handleClose}
               handleRefoundSelected={handleRefoundSelected}
             />

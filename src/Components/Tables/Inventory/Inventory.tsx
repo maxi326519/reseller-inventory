@@ -84,7 +84,6 @@ export default function Inventory() {
         if (search === "") return true;
         if (i.id.toString().toLowerCase().includes(search.toLowerCase()))
           return true;
-        if (i.date.toLowerCase().includes(search.toLowerCase())) return true;
         if (i.description.toLowerCase().includes(search.toLowerCase()))
           return true;
         return false;

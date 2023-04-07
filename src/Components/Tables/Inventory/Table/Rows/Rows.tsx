@@ -28,7 +28,7 @@ export default function Rows({ item, itemSelected, handleSelected }: Props) {
         />
       </div>
       <span>{item.id}</span>
-      <span>{changeDateFormat(item.date)}</span>
+      <span>{changeDateFormat(item.date.toDate().toISOString().split("T")[0])}</span>
       <span>{item.description}</span>
       <span>{item.cost}</span>
     </div>
