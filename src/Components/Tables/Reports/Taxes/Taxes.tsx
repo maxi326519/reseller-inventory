@@ -38,9 +38,9 @@ export default function Taxes() {
   const [taxesYear, setTaxesYear] = useState<number[]>([]); // Taxes year list
   const [TaxesYearIndex, setTaxesYearIndex] = useState<number | null>(null); // Selected YearTaxesData Index
   const [totals, setTotals] = useState({
-    totalSales: 0,
-    totalExpenses: 0,
-    totalProfit: 0,
+    Sales: 0,
+    Expenses: 0,
+    Profit: 0,
   });
 
   /* Update Taxes data */
@@ -68,11 +68,24 @@ export default function Taxes() {
 
   /* Calculate Totals */
   useEffect(() => {
-/*     if(){
+    if (taxesData !== null && TaxesYearIndex !== null) {
+      let sales = 0;
+      let expenses = 0;
 
-    } */
+      taxesData[TaxesYearIndex].month.forEach((month) => {
+        sales += Number(month.sales.total);
+        expenses += Number(month.expenses.total);
+      });
 
-  }, [TaxesYearIndex]);
+      console.log(sales);
+      console.log(expenses);
+      setTotals({
+        Sales: sales,
+        Expenses: expenses,
+        Profit: Number(sales) - Number(expenses),
+      })
+    }
+  }, [taxesData, TaxesYearIndex]);
 
   const handleYearSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     if (taxesData === null) return false;
@@ -99,9 +112,9 @@ export default function Taxes() {
         {/*         <Excel taxes={taxes} /> */}
       </div>
       <div className={styles.head}>
-        <span>{`Total Sales and Shipment: ${null}`}</span>
-        <span>{`Total Expenses: ${null}`}</span>
-        <span>{`Total Profit: ${null}`}</span>
+        <span>{`Total Sales and Shipment: ${totals.Sales}`}</span>
+        <span>{`Total Expenses: ${totals.Expenses}`}</span>
+        <span>{`Total Profit: ${totals.Profit}`}</span>
       </div>
       <div className={styles.scroll}>
         {TaxesYearIndex !== null && taxesData

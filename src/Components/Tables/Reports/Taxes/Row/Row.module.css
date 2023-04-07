@@ -14,11 +14,16 @@
 }
 
 .sales{
+  display: flex;
+  flex-direction: column;
   flex-grow: 1; 
   padding: 20px;
 }
 
 .expenses{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr 1fr;
   flex-grow: 1; 
   padding: 20px;
 }

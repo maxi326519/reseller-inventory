@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Item, RootState, YearReport } from "../../../../interfaces";
+import { Item, RootState, Sale, YearReport } from "../../../../interfaces";
 import { getFirstAndLastDayOfMonth } from "../../../../functions/date";
 
+import DataFilter from "./DateFilter/DateFilter";
 import Table from "./Table/Table";
 import Excel from "./Excel/Excel.jsx";
 
@@ -27,11 +28,12 @@ const initialDates: Dates = getFirstAndLastDayOfMonth(new Date());
 
 export default function ItemsSold() {
   const dispatch = useDispatch();
+  const sales: Sale[] = useSelector((state: RootState) => state.sales);
   const items: Item[] = useSelector((state: RootState) => state.items);
   const reports: YearReport[] = useSelector(
     (state: RootState) => state.reports
   );
-  const [itemsSold, setItemSold] = useState<Item[]>([]);
+  const [itemsSold, setItemSold] = useState<any[]>([]);
   const [dates, setDates] = useState(initialDates);
   const [total, setTotal] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
@@ -39,14 +41,17 @@ export default function ItemsSold() {
   const [refoundSelected, setRefoundSelected] = useState<number>();
 
   useEffect(() => {
-    setItemSold(
-      filterAndSortItems(
-        dates.firstDay,
-        dates.lastDay,
-        items.filter((i) => i.state === "Sold")
-      )
-    );
-  }, [items, dates]);
+    const itemsSold = items.filter((s: Item) => s.state === "Sold")
+    const newItemsList = itemsSold.map((item) => {
+      const sale: Sale | undefined = sales.find((s) => s.id === item.id);
+      return {
+        ...item,
+        ...sale,
+      };
+    });
+    console.log(newItemsList);
+    setItemSold(newItemsList);
+  }, [items, sales, dates]);
 
   useEffect(() => {
     let total = 0;
@@ -59,36 +64,6 @@ export default function ItemsSold() {
     setTotalItems(totaltems);
   }, [itemsSold]);
 
-  function filterAndSortItems(
-    dateFrom: string,
-    dateTo: string,
-    items: Item[]
-  ): Item[] {
-    const fromDate = new Date(dateFrom);
-    const toDate = new Date(dateTo);
-
-    // Filtrar los elementos que estén dentro del rango de fechas
-    const filteredItems = items.filter((item) => {
-      const itemDate = new Date(item.date);
-      return itemDate >= fromDate && itemDate <= toDate;
-    });
-
-    // Ordenar los elementos por fecha de mayor a menor
-    filteredItems.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      return dateB.getTime() - dateA.getTime();
-    });
-
-    return filteredItems;
-  }
-
-  function handleChangeDate(event: React.ChangeEvent<HTMLInputElement>) {
-    const name = event.target.name;
-    const value = event.target.value;
-    setDates({ ...dates, [name]: value });
-  }
-
   function handleRefoundSelected(id: number) {
     setRefoundSelected(id);
   }
@@ -99,8 +74,6 @@ export default function ItemsSold() {
   }
 
   function handleRefound(amount: number) {
-    console.log(amount);
-    console.log(refoundSelected);
     if (refoundSelected === undefined) return false;
     const newExpense = [
       {
@@ -141,9 +114,11 @@ export default function ItemsSold() {
       .catch((err: any) => {
         swal("Error", "Error to refound item, try again later", "error");
         dispatch(closeLoading());
-        console.log(err); 
+        console.log(err);
       });
   }
+
+  function handleFilterPerDate() {}
 
   return (
     <div className={styles.itemsSold}>
@@ -151,32 +126,7 @@ export default function ItemsSold() {
         <Refound handleClose={handleClose} handleSubmit={handleRefound} />
       ) : null}
       <div className={styles.controls}>
-        <div className="form-floating">
-          <input
-            className="form-control"
-            id="formDate"
-            name="firstDay"
-            type="date"
-            value={dates.firstDay}
-            onChange={handleChangeDate}
-          />
-          <label className="form-label" htmlFor="formDate">
-            From:
-          </label>
-        </div>
-        <div className="form-floating">
-          <input
-            className="form-control"
-            id="toDate"
-            name="lastDay"
-            type="date"
-            value={dates.lastDay}
-            onChange={handleChangeDate}
-          />
-          <label className="form-label" htmlFor="toDate">
-            From:
-          </label>
-        </div>
+        <DataFilter years={[2023]} handleFilterPerDate={handleFilterPerDate} />
         <Excel sales={itemsSold} />
         <span className={styles.total}>Total items: {totalItems}</span>
         <span className={styles.total}>
@@ -186,6 +136,7 @@ export default function ItemsSold() {
       </div>
       <Table
         items={itemsSold}
+        sales={sales}
         handleClose={handleClose}
         handleRefoundSelected={handleRefoundSelected}
       />

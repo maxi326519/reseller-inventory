@@ -33,10 +33,10 @@ export function createOrUpdateYearTaxesData(
     monthReport.sales.forEach((item) => {
       switch (item.type) {
         case "Sale":
-          monthTaxesData.sales.sales += item.amount;
+          monthTaxesData.sales.sales += Number(item.amount);
           break;
         case "Shipment":
-          monthTaxesData.sales.shipment += item.amount;
+          monthTaxesData.sales.shipment += Number(item.amount);
           break;
         default:
           // Do nothing for other types of sales items
@@ -46,19 +46,19 @@ export function createOrUpdateYearTaxesData(
     monthReport.expenses.forEach((item) => {
       switch (item.type) {
         case "Sale":
-          monthTaxesData.expenses.COGS += item.amount;
+          monthTaxesData.expenses.COGS += Number(item.amount);
           break;
         case "Ship Label":
-          monthTaxesData.expenses.shipLabel += item.amount;
+          monthTaxesData.expenses.shipLabel += Number(item.amount);
           break;
         case "Ebay Fees":
-          monthTaxesData.expenses.ebayFees += item.amount;
+          monthTaxesData.expenses.ebayFees += Number(item.amount);
           break;
         case "Ads Fee":
-          monthTaxesData.expenses.adsFee += item.amount;
+          monthTaxesData.expenses.adsFee += Number(item.amount);
           break;
         case "Other":
-          monthTaxesData.expenses.otherExpense += item.amount;
+          monthTaxesData.expenses.otherExpense += Number(item.amount);
           break;
         default:
           // Do nothing for other types of expense items
