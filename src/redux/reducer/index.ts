@@ -103,7 +103,7 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
         sales: {
           items: soldItems,
           sales: [...state.sales.sales, ...action.payload],
-          expenses: [],
+          expenses: state.sales.expenses,
         },
       };
 
@@ -145,9 +145,9 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
         sales: {
           items: action.payload.items,
           sales: action.payload.sales,
-          expenses: [],
+          expenses: action.payload.expenses,
         },
-      }
+      };
     case GET_EXPENSES:
       return {
         ...state,

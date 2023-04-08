@@ -21,7 +21,7 @@ export default function Row({ taxesMonth }: Props) {
         <span>Other Expenses: {taxesMonth.expenses.otherExpense}</span>
         <span>Ebya Fees: {taxesMonth.expenses.ebayFees}</span>
         <span>COGS: {taxesMonth.expenses.COGS}</span>
-        <button className="btn btn-outline-primary">View details</button>
+        <button className="btn btn-outline-primary" onClick={() => console.log(taxesMonth.expenses.otherCategories)}>View details</button>
       </div>
     </div>
   );

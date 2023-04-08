@@ -28,6 +28,7 @@ export function createOrUpdateYearTaxesData(
         ebayFees: 0,
         adsFee: 0,
         otherExpense: 0,
+        otherCategories: []
       },
     };
     monthReport.sales.forEach((item) => {
@@ -61,7 +62,8 @@ export function createOrUpdateYearTaxesData(
           monthTaxesData.expenses.otherExpense += Number(item.amount);
           break;
         default:
-          // Do nothing for other types of expense items
+          const updatedOtherCategories = updateOtherCategoryList(monthTaxesData.expenses.otherCategories, item.type, Number(item.amount));
+          monthTaxesData.expenses.otherCategories = updatedOtherCategories;
           break;
       }
     });
@@ -75,7 +77,20 @@ export function createOrUpdateYearTaxesData(
   return currentYearTaxesData;
 }
 
-function generateYearTaxesData(year: number) {
+function updateOtherCategoryList(list: Array<{category: string, total: number}>, category: string, amount: number): Array<{category: string, total: number}> {
+  const camelCaseCategory = category.replace(/\W+(.)/g, (match, char) => char.toUpperCase());
+  const matchingCategory = list.find(item => item.category === camelCaseCategory);
+  
+  if (matchingCategory) {
+    matchingCategory.total += amount;
+  } else {
+    list.push({ category: camelCaseCategory, total: amount });
+  }
+  
+  return list;
+}
+
+function generateYearTaxesData(year: number): YearTaxesData {
   return {
     year: year,
     month: Array.from({ length: 12 }, (_, i) => ({
@@ -95,6 +110,7 @@ function generateYearTaxesData(year: number) {
         ebayFees: 0,
         adsFee: 0,
         otherExpense: 0,
+        otherCategories: []
       },
     })),
   };

@@ -14,12 +14,14 @@ interface Props {
   rows: Rows[];
   handleClose: () => void;
   handleRefoundSelected: (id: number) => void;
+  handleShowExpensesDetails: (productId: number) => void;
 }
 
 export default function Table({
   rows,
   handleClose,
   handleRefoundSelected,
+  handleShowExpensesDetails
 }: Props) {
 
   return (
@@ -43,6 +45,7 @@ export default function Table({
               sale={row.sale}
               handleClose={handleClose}
               handleRefoundSelected={handleRefoundSelected}
+              handleShowExpensesDetails={handleShowExpensesDetails}
             />
           );
         })}

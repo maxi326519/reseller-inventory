@@ -9,6 +9,7 @@ interface Props {
   sale: Sale;
   handleClose: () => void;
   handleRefoundSelected: (id: number) => void;
+  handleShowExpensesDetails: (productId: number) => void;
 }
 
 export default function Rows({
@@ -16,13 +17,14 @@ export default function Rows({
   sale,
   handleClose,
   handleRefoundSelected,
+  handleShowExpensesDetails
 }: Props) {
   useEffect(() => {
     console.log(item);
   }, []);
 
   function handleClick() {
-    if(item){
+    if (item) {
       handleRefoundSelected(item.id);
       handleClose();
     }
@@ -36,10 +38,11 @@ export default function Rows({
       <span>{item?.cost}</span>
       <span>{sale.price}</span>
       <span>{sale.shipment.amount !== "" ? sale.shipment.amount : 0}</span>
-      <span>{item?. description}</span>
+      <span>{item?.description}</span>
       <button className="btn btn-success" type="button" onClick={handleClick}>
         Refound
       </button>
+      <button type="button" onClick={() => handleShowExpensesDetails(sale.productId)}>Expenses</button>
     </div>
   );
 }

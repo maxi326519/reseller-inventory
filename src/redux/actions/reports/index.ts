@@ -67,6 +67,7 @@ export function getSoldReportData(
       let endDate: Date;
       const itemsRef = collection(db, "Users", uid, "Items");
       const salesRef = collection(db, "Users", uid, "Sales");
+      const expensesRef = collection(db, "Users", uid, "Expenses");
 
       // Per year or month
       if (month !== null) {
@@ -94,6 +95,14 @@ export function getSoldReportData(
         )
       );
 
+      const expensesQuery = await getDocs(
+        query(
+          expensesRef,
+          where("date", ">=", startDate),
+          where("date", "<=", endDate)
+        )
+      );
+
       // Get data to docs
       let items: any = [];
       itemsQuery.forEach((doc: any) => {
@@ -105,9 +114,15 @@ export function getSoldReportData(
         sales.push(doc.data());
       });
 
+      let expenses: any = [];
+      expensesQuery.forEach((doc: any) => {
+        expenses.push(doc.data());
+      });
+
       const data = {
         items: items.filter((i: Item) => i.state === "Sold" ),
         sales,
+        expenses,
       };
 
       dispatch({

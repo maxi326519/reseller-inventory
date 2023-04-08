@@ -29,6 +29,7 @@ const intialMonthTaxesData: MonthTaxesData = {
     ebayFees: 0,
     adsFee: 0,
     otherExpense: 0,
+    otherCategories: [],
   },
 };
 
@@ -119,11 +120,11 @@ export default function Taxes() {
       <div className={styles.scroll}>
         {TaxesYearIndex !== null && taxesData
           ? taxesData[TaxesYearIndex].month.map(
-              (taxesMonth: MonthTaxesData) => {
-                console.log(1);
-                return <Row taxesMonth={taxesMonth} />;
-              }
-            )
+            (taxesMonth: MonthTaxesData) => {
+              console.log(1);
+              return <Row taxesMonth={taxesMonth} />;
+            }
+          )
           : null}
       </div>
     </div>
