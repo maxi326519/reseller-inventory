@@ -176,7 +176,7 @@ export function reportGenerator(year: string): YearReport {
   return reportData;
 }
 
-export function deleteDataAndUpdateTotals(id: number[], reports: YearReport[]) {
+export function deleteDataAndUpdateTotals(id: number[], category: string[] | null, reports: YearReport[]) {
   const updatedReports: YearReport[] = [...reports];
   const editedYears: string[] = [];
 
@@ -186,17 +186,17 @@ export function deleteDataAndUpdateTotals(id: number[], reports: YearReport[]) {
     for (let j = 0; j < yearReport.month.length; j++) {
       const monthReport: MonthReport = yearReport.month[j];
       const sales: ReportItem[] = monthReport.sales.filter(
-        (item) => !id.includes(item.id)
+        (item) => !id.includes(item.id) && !category?.includes(item.type)
       );
       const expenses: ReportItem[] = monthReport.expenses.filter(
         (item) => !id.includes(item.id)
       );
       const totalSales: number = sales.reduce(
-        (total, item) => total + item.amount,
+        (total, item) => total + Number(item.amount),
         0
       );
       const totalExpenses: number = expenses.reduce(
-        (total, item) => total + item.amount,
+        (total, item) => total + Number(item.amount),
         0
       );
 

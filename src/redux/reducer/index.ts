@@ -1,5 +1,5 @@
 import { Item, RootState, Sale } from "../../interfaces";
-import { AnyAction } from "redux";
+import { Reducer, AnyAction } from "redux";
 import { LOADING, CLOSE_LOADING } from "../actions/loading";
 import { POST_SOURCES, POST_CATEGORIES, GET_USER_DATA } from "../actions/user";
 import {
@@ -19,6 +19,7 @@ import { POST_EXPENSES, GET_EXPENSES } from "../actions/expenses";
 import {
   GET_REPORTS,
   GET_SOLD_REPORT_DATA,
+  GET_EXPIRED_ITEMS,
   UPDATE_REPORTS,
 } from "../actions/reports";
 
@@ -36,12 +37,13 @@ const initialState: RootState = {
     items: [],
     sales: [],
     expenses: [],
+    expired: [],
   },
   reports: [],
   loading: false,
 };
 
-export const Reducer = (state: RootState = initialState, action: AnyAction) => {
+export const rootReducer = (state: RootState = initialState, action: AnyAction) => {
   switch (action.type) {
     /* LOADING */
     case LOADING:
@@ -104,6 +106,7 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
           items: soldItems,
           sales: [...state.sales.sales, ...action.payload],
           expenses: state.sales.expenses,
+          expired: state.sales.expired,
         },
       };
 
@@ -117,6 +120,14 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
       return {
         ...state,
         items: action.payload,
+      };
+    case GET_EXPIRED_ITEMS:
+      return {
+        ...state,
+        sales: {
+          ...state.sales,
+          expired: action.payload,
+        },
       };
     case GET_INVOICE:
       return {
@@ -146,6 +157,7 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
           items: action.payload.items,
           sales: action.payload.sales,
           expenses: action.payload.expenses,
+          expired: state.sales.expired,
         },
       };
     case GET_EXPENSES:
@@ -188,6 +200,7 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
               !action.payload.items.some((id: number) => id === sale.productId)
           ),
           expenses: [],
+          expired: state.sales.expired,
         },
       };
 
@@ -195,29 +208,39 @@ export const Reducer = (state: RootState = initialState, action: AnyAction) => {
     case EXPIRED_ITEMS:
       return {
         ...state,
-        items: state.items.map((item) => {
-          if (action.payload.some((id: number) => id === item.id)) {
-            return {
-              ...item,
-              state: "Expired",
-            };
-          }
-          return item;
-        }),
+        items: state.items.filter(
+          (i) => !action.payload.some((itemId: number) => itemId === i.id)
+        ),
+        sales: {
+          ...state.sales,
+          expired: [
+            ...state.sales.expired,
+            ...state.items
+              .filter((i) =>
+                action.payload.some((itemId: number) => itemId === i.id)
+              )
+              .map((i) => ({
+                ...i,
+                state: "Expired",
+              })),
+          ],
+        },
       };
 
     case RESTORE_ITEMS:
       return {
         ...state,
-        items: state.items.map((item) => {
-          if (item.id === action.payload) {
-            return {
-              ...item,
-              state: "In Stock",
-            };
-          }
-          return item;
-        }),
+        items: [
+          ...state.items,
+          {
+            ...state.sales.expired.find((i) => action.payload === i.id),
+            state: "In Stock",
+          },
+        ],
+        sales: {
+          ...state.sales,
+          expired: state.sales.expired.filter((e) => e.id !== action.payload),
+        },
       };
     default:
       return state;

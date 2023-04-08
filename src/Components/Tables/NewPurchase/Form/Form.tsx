@@ -28,7 +28,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
   );
   const initialState: Item = {
     id: 0,
-    date: invoice.date.toDate().toISOString().split("T")[0],
+    date: invoice.date,
     invoiceId: invoice.id,
     state: "In Stock",
     cost: "",

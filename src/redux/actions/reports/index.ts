@@ -13,12 +13,19 @@ import {
   where,
   query,
 } from "firebase/firestore";
-import { Expense, Sale, RootState, YearReport, Item } from "../../../interfaces";
+import {
+  Expense,
+  Sale,
+  RootState,
+  YearReport,
+  Item,
+} from "../../../interfaces";
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
 
 export const GET_REPORTS = "GET_REPORTS";
-export const UPDATE_REPORTS = "UPDATE_REPORTS";
 export const GET_SOLD_REPORT_DATA = "GET_SOLD_REPORT_DATA";
+export const GET_EXPIRED_ITEMS = "GET_EXPIRED_ITEMS";
+export const UPDATE_REPORTS = "UPDATE_REPORTS";
 
 export function getReports(): ThunkAction<
   Promise<void>,
@@ -120,7 +127,7 @@ export function getSoldReportData(
       });
 
       const data = {
-        items: items.filter((i: Item) => i.state === "Sold" ),
+        items: items.filter((i: Item) => i.state === "Sold"),
         sales,
         expenses,
       };
@@ -128,6 +135,53 @@ export function getSoldReportData(
       dispatch({
         type: GET_SOLD_REPORT_DATA,
         payload: data,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function getExpiredItems(
+  year: number,
+  month: number | null
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
+
+      // Date range
+      let startDate: Date;
+      let endDate: Date;
+      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
+
+      // Per year or month
+      if (month !== null) {
+        startDate = startOfMonth(new Date(year, month - 1));
+        endDate = endOfMonth(new Date(year, month - 1));
+      } else {
+        startDate = startOfYear(new Date(year, 0));
+        endDate = endOfYear(new Date(year, 11));
+      }
+
+      // Query and get items docs
+      const itemsQuery = await getDocs(
+        query(
+          itemsRef,
+          where("date", ">=", startDate),
+          where("date", "<=", endDate)
+        )
+      );
+
+      // Get data to docs
+      let items: any = [];
+      itemsQuery.forEach((doc: any) => {
+        items.push(doc.data());
+      });
+
+      dispatch({
+        type: GET_EXPIRED_ITEMS,
+        payload: items.filter((i: Item) => i.state === "Expired"),
       });
     } catch (e: any) {
       throw new Error(e);
@@ -177,12 +231,14 @@ export function updateReports(
 
 export function updateReportsItems(
   dataId: number[],
+  category: string[] | null,
   reports: YearReport[]
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       const { updatedReports, editedYears } = deleteDataAndUpdateTotals(
         dataId,
+        category,
         reports
       );
 

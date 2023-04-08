@@ -315,6 +315,7 @@ export default function AddSale({
           price: Number(shipmentExpenses.shipLabel),
           category: "Ship Label",
           description: "Ship label expense",
+          invoiceId: 0,
         });
         expenses.push({
           id: sale.id,
@@ -322,6 +323,7 @@ export default function AddSale({
           price: Number(shipmentExpenses.ebayFees),
           category: "Ebay Fees",
           description: "Ebay fees expense",
+          invoiceId: 0,
         });
         if (otherExpenses.adsFee.check) {
           expenses.push({
@@ -330,6 +332,7 @@ export default function AddSale({
             price: Number(otherExpenses.adsFee.cost),
             category: "Ads Fee",
             description: "Ads fee expense",
+            invoiceId: 0,
           });
         }
         if (otherExpenses.other.check) {
@@ -339,6 +342,7 @@ export default function AddSale({
             price: Number(otherExpenses.other.cost),
             category: "Other",
             description: otherExpenses.other.description,
+            invoiceId: 0,
           });
         }
         expenses.push({
@@ -347,6 +351,7 @@ export default function AddSale({
           price: sale.cost,
           category: "Sale",
           description: "Sale cost expense",
+          invoiceId: 0,
         });
 
         expenses.forEach((ex) => allExpenses.push(ex));

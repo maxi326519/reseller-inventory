@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { createOrUpdateYearTaxesData } from "../../../../functions/createOrUpdateYearTaxesData";
 import {
   YearTaxesData,
   MonthTaxesData,
   RootState,
 } from "../../../../interfaces";
-import { createOrUpdateYearTaxesData } from "../../../../functions/createOrUpdateYearTaxesData";
 
 import Row from "./Row/Row";
 import Excel from "./Excel/Excel.jsx";
+import Details from "./Details/Details";
 
 import styles from "./Taxes.module.css";
 
@@ -38,6 +39,8 @@ export default function Taxes() {
   const [taxesData, setTaxesData] = useState<YearTaxesData[] | null>(null); // YearTaxesData list
   const [taxesYear, setTaxesYear] = useState<number[]>([]); // Taxes year list
   const [TaxesYearIndex, setTaxesYearIndex] = useState<number | null>(null); // Selected YearTaxesData Index
+  const [otherCategories, setOtherCategories] = useState<any[]>([]);
+  const [otherCategoriesDetails, setOtherCategoriesDetails] = useState<boolean>(false);
   const [totals, setTotals] = useState({
     Sales: 0,
     Expenses: 0,
@@ -95,8 +98,13 @@ export default function Taxes() {
     setTaxesYearIndex(yearIndex);
   };
 
+  function handleShowOtherCategories() {
+    setOtherCategoriesDetails(!otherCategoriesDetails);
+  }
+
   return (
     <div className={styles.container}>
+      {otherCategoriesDetails ? <Details itemsList={otherCategories} handleClose={handleShowOtherCategories}/> : null}
       <div className={styles.controls}>
         <div className="mb-3 form-floating">
           <select id="year" className="form-select" onChange={handleYearSelect}>

@@ -120,18 +120,6 @@ export interface MonthTaxesData {
   };
 }
 
-/* 
-  Necesito una funcion en Typescript que:
-  - Reciba list: OtherCategory, category: string, amount: number
-  - Debera convertir el texto de category a CammelCase (Ej: Shipping Label => shippingLabel)
-  - Guardar esa conversion y el total en un variable del Tipo OtherCategory
-  - Luego revisar "list" y si existe algun objeto con la propiedad category igual a la que acabamos de crear, sumar sus totales y devolver el listado
-  OtherCategory: Array<{
-      category: string,
-      total: number
-    }
-  */
-
 export interface RootState {
   user: User;
   items: Item[];
@@ -143,6 +131,7 @@ export interface RootState {
     items: Item[];
     sales: Sale[];
     expenses: Expense[];
+    expired: Item[];
   };
   reports: YearReport[];
   loading: boolean;

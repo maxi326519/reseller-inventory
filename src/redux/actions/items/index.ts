@@ -12,6 +12,7 @@ import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
 import { Dispatch } from "react";
 import { auth, db } from "../../../firebase";
+import { deleteDataAndUpdateTotals } from "../../../functions/reports";
 
 export const POST_ITEMS = "POST_ITEMS";
 export const GET_ITEMS = "GET_ITEMS";

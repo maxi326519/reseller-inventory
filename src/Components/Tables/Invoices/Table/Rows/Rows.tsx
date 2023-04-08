@@ -37,7 +37,7 @@ export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
         dispatch(loading());
         dispatch<any>(deleteInvoice(invoice))
           .then(() => {
-            dispatch<any>(updateReportsItems(invoice.items, reports))
+            dispatch<any>(updateReportsItems(invoice.items, null, reports))
               .then(() => {
                 swal("Deleted", "Invoice deleted successfully", "success");
                 dispatch(closeLoading());

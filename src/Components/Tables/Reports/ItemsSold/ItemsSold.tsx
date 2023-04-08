@@ -46,13 +46,14 @@ export default function ItemsSold() {
   const [expensesDetails, setExpensesDetails] = useState(false);
   const [refound, setRefound] = useState(false);
   const [refoundSelected, setRefoundSelected] = useState<number>();
+  const [years, setYears] = useState<number[]>([]);
 
   useEffect(() => {
     const rows: Rows[] = sales.map((sale: Sale): Rows => ({
       item: items.find((i: Item) => i.id === sale.productId),
       sale
     }));
-    
+
     let totalCost = 0;
     let orderTotal = 0;
 
@@ -62,8 +63,12 @@ export default function ItemsSold() {
     setTotalItems(rows.length);
     setTotalCost(totalCost);
     setOrderTotal(orderTotal);
-    setRows(rows);
+    setRows(rows.filter((row) => row.item));
   }, [items, sales, dates]);
+
+  useEffect(() => {
+    setYears(reports.map((r) => Number(r.year)));
+  }, [reports])
 
   function handleRefoundSelected(id: number) {
     setRefoundSelected(id);
@@ -149,7 +154,7 @@ export default function ItemsSold() {
       ) : null}
       {expensesDetails ? (<Expenses expenses={expenseSelected} handleClose={handleCloseDetails} />) : null}
       <div className={styles.controls}>
-        <DataFilter years={[2023]} handleFilterPerDate={handleFilterPerDate} />
+        <DataFilter years={years} handleFilterPerDate={handleFilterPerDate} />
         {/*         <Excel sales={itemsSold} /> */}
         <span className={styles.total}>
           Total items: {totalItems}
@@ -159,7 +164,7 @@ export default function ItemsSold() {
         </span>
         <span className={styles.total}>
           Order total: ${Number(orderTotal).toFixed(2)}
-          </span>
+        </span>
       </div>
       <Table
         rows={rows}

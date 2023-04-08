@@ -1,7 +1,7 @@
 import { /* Action, combineReducers, */ applyMiddleware, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk, { /* ThunkMiddleware */ } from "redux-thunk";
-import { Reducer } from "../reducer";
+import { rootReducer } from "../reducer";
 /* import { RootState } from "../../interfaces"; */
 
 /* export interface DispatchActon extends Action {
@@ -11,7 +11,7 @@ import { Reducer } from "../reducer";
 const middleWare = thunk as ThunkMiddleware<RootState, DispatchActon>; */
 
 const store = createStore(
-  Reducer,
+  rootReducer,
   composeWithDevTools(applyMiddleware(thunk))
 );
 
