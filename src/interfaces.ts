@@ -113,11 +113,34 @@ export interface MonthTaxesData {
     ebayFees: number;
     adsFee: number;
     otherExpense: number;
-    otherCategories: Array<{
-      category: string,
-      total: number
-    }>
+    otherCategories: OtherCategories[]
   };
+}
+
+export interface ExportYearTaxesData {
+  salesTotal: number;
+  expensesTotal: number;
+  profitTotal: number;
+  months: ExportMonthTaxes[];
+}
+
+export interface ExportMonthTaxes{
+  month: string;
+  salesTotal: number;
+  sales: number;
+  shipment: number;
+  expensesTotal: number;
+  COGS: number;
+  shipLabel: number;
+  ebayFees: number;
+  adsFee: number;
+  otherExpense: number;
+  otherCategories: OtherCategories[]
+}
+
+export interface OtherCategories {
+  category: string;
+  total: number;
 }
 
 export interface RootState {

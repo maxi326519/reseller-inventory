@@ -1,43 +1,23 @@
-import { useEffect } from "react";
+import { OtherCategories } from "../../../../../../interfaces";
 
 import styles from "./ExpenseData.module.css";
 
 interface Props {
-  item: any;
+  expense: OtherCategories;
 }
 
-export default function ExpenseData({ item }: Props) {
-
-  useEffect(() => {
-    console.log(item);
-  }, [])
+export default function ExpenseData({ expense }: Props) {
 
   return (
-    <div key={item.id} className={styles.inputs}>
-      <div className={styles.inputContainer}>
-        <div className="mb-3 form-floating">
-          <input
-            id="category"
-            className="form-control"
-            value={item.category}
-            disabled
-          />
-          <label htmlFor="category" className="form-label">
-            Category:
-          </label>
+    <div className={styles.container}>
+        <div className={styles.info}>
+          <label className={styles.title}>Category:</label>
+          <label className={styles.data}>{expense.category}</label>
         </div>
-        <div className="mb-3 form-floating">
-          <input
-            id="price"
-            className="form-control"
-            value={item.price}
-            disabled
-          />
-          <label htmlFor="price" className="form-label">
-            Cost:
-          </label>
+        <div className={styles.info}>
+          <label className={styles.title}>Total:</label>
+          <label className={styles.data}>{expense.total}</label>
         </div>
-      </div>
       <hr></hr>
     </div>
   );

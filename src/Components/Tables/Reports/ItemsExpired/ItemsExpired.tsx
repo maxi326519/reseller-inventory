@@ -17,9 +17,17 @@ interface Dates {
   lastDay: string;
 }
 
+interface Props {
+  typeReport: any;
+  handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
 const initialDates: Dates = getFirstAndLastDayOfMonth(new Date());
 
-export default function ItemsExpired() {
+export default function ItemsExpired({
+  typeReport,
+  handleChange,
+}: Props) {
   const dispatch = useDispatch();
   const items: Item[] = useSelector((state: RootState) => state.sales.expired);
   const reports: YearReport[] = useSelector((state: RootState) => state.reports);
@@ -127,6 +135,21 @@ export default function ItemsExpired() {
   return (
     <div className={styles.itemsSold}>
       <div className={styles.controls}>
+        <div className="form-floating">
+          <select
+            className="form-select"
+            id="filter"
+            defaultValue={typeReport}
+            onChange={handleChange}
+          >
+            <option value="1">Items Sold</option>
+            <option value="2">Items Expired</option>
+            <option value="3">Taxes</option>
+          </select>
+          <label className="form-label" htmlFor="filter">
+            Filter by:
+          </label>
+        </div>
         <DateFilter years={years} handleFilterPerDate={handleFilterPerDate} />
         <span className={styles.total}>
           Total cost: ${Number(total).toFixed(2)}

@@ -23,27 +23,10 @@ export default function Reports() {
         </Link>
         <h1>Reports</h1>
       </div>
-      <div className={style.controls}>
-        <div className="form-floating">
-          <select
-            className="form-select"
-            id="filter"
-            defaultValue={typeReport}
-            onChange={handleChange}
-          >
-            <option value="1">Items Sold</option>
-            <option value="2">Items Expired</option>
-            <option value="3">Taxes</option>
-          </select>
-          <label className="form-label" htmlFor="filter">
-            Filter by:
-          </label>
-        </div>
-      </div>
       <div className={style.container}>
-        {typeReport === "1" ? <ItemsSold /> : null}
-        {typeReport === "2" ? <ItemsExpired /> : null}
-        {typeReport === "3" ? <Taxes /> : null}
+        {typeReport === "1" ? <ItemsSold typeReport={typeReport} handleChange={handleChange} /> : null}
+        {typeReport === "2" ? <ItemsExpired typeReport={typeReport} handleChange={handleChange} /> : null}
+        {typeReport === "3" ? <Taxes typeReport={typeReport} handleChange={handleChange} /> : null}
       </div>
     </div>
   );

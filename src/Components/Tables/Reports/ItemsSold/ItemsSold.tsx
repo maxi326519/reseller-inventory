@@ -27,9 +27,17 @@ interface Rows {
   sale: Sale,
 }
 
+interface Props {
+  typeReport: any;
+  handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
 const initialDates: Dates = getFirstAndLastDayOfMonth(new Date());
 
-export default function ItemsSold() {
+export default function ItemsSold({
+  typeReport,
+  handleChange,
+}: Props) {
   const dispatch = useDispatch();
   const sales: Sale[] = useSelector((state: RootState) => state.sales.sales);
   const items: Item[] = useSelector((state: RootState) => state.sales.items);
@@ -154,6 +162,21 @@ export default function ItemsSold() {
       ) : null}
       {expensesDetails ? (<Expenses expenses={expenseSelected} handleClose={handleCloseDetails} />) : null}
       <div className={styles.controls}>
+        <div className="form-floating">
+          <select
+            className="form-select"
+            id="filter"
+            defaultValue={typeReport}
+            onChange={handleChange}
+          >
+            <option value="1">Items Sold</option>
+            <option value="2">Items Expired</option>
+            <option value="3">Taxes</option>
+          </select>
+          <label className="form-label" htmlFor="filter">
+            Filter by:
+          </label>
+        </div>
         <DataFilter years={years} handleFilterPerDate={handleFilterPerDate} />
         {/*         <Excel sales={itemsSold} /> */}
         <span className={styles.total}>

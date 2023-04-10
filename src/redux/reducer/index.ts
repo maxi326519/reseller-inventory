@@ -1,5 +1,5 @@
 import { Item, RootState, Sale } from "../../interfaces";
-import { Reducer, AnyAction } from "redux";
+import { AnyAction } from "redux";
 import { LOADING, CLOSE_LOADING } from "../actions/loading";
 import { POST_SOURCES, POST_CATEGORIES, GET_USER_DATA } from "../actions/user";
 import {
@@ -51,15 +51,15 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
         ...state,
         loading: true,
       };
-    case CLOSE_LOADING:
-      return {
-        ...state,
-        loading: false,
-      };
-
-    /* POST */
-    case POST_CATEGORIES:
-      return {
+      case CLOSE_LOADING:
+        return {
+          ...state,
+          loading: false,
+        };
+        
+        // POST
+        case POST_CATEGORIES:
+          return {
         ...state,
         user: { ...state.user, categories: action.payload },
       };
@@ -109,14 +109,14 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
           expired: state.sales.expired,
         },
       };
-
-    /* GET */
-    case GET_USER_DATA:
+      
+      // GET 
+      case GET_USER_DATA:
       return {
         ...state,
         user: { ...state.user, ...action.payload },
       };
-    case GET_ITEMS:
+      case GET_ITEMS:
       return {
         ...state,
         items: action.payload,
@@ -129,29 +129,29 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
           expired: action.payload,
         },
       };
-    case GET_INVOICE:
-      return {
-        ...state,
-        invoices: {
-          ...state.invoices,
-          data: action.payload,
-        },
-      };
-    case GET_INVOICE_DETAILS:
-      return {
+      case GET_INVOICE:
+        return {
+          ...state,
+          invoices: {
+            ...state.invoices,
+            data: action.payload,
+          },
+        };
+        case GET_INVOICE_DETAILS:
+          return {
         ...state,
         invoices: {
           ...state.invoices,
           details: action.payload,
         },
       };
-    case GET_REPORTS:
-      return {
-        ...state,
-        reports: action.payload,
-      };
-    case GET_SOLD_REPORT_DATA:
-      return {
+      case GET_REPORTS:
+        return {
+          ...state,
+          reports: action.payload,
+        };
+        case GET_SOLD_REPORT_DATA:
+          return {
         ...state,
         sales: {
           items: action.payload.items,
@@ -160,25 +160,20 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
           expired: state.sales.expired,
         },
       };
-    case GET_EXPENSES:
-      return {
-        ...state,
-        expenses: [...action.payload],
-      };
-    case GET_SALES:
-      return {
-        ...state,
-        sales: [...action.payload],
-      };
+      case GET_EXPENSES:
+        return {
+          ...state,
+          expenses: [...action.payload],
+        };
 
-    /* UPDATES */
+    // UPDATES
     case UPDATE_REPORTS:
       return {
         ...state,
         reports: action.payload,
       };
 
-    /* DELETE */
+    // DELETE
     case DELETE_INVOICE:
       return {
         ...state,
@@ -204,7 +199,7 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
         },
       };
 
-    /* OTHER */
+    // OTHER
     case EXPIRED_ITEMS:
       return {
         ...state,
