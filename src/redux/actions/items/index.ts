@@ -12,12 +12,10 @@ import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
 import { Dispatch } from "react";
 import { auth, db } from "../../../firebase";
-import { deleteDataAndUpdateTotals } from "../../../functions/reports";
 
 export const POST_ITEMS = "POST_ITEMS";
 export const GET_ITEMS = "GET_ITEMS";
 export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
-export const RESTORE_ITEMS = "RESTORE_ITEMS";
 export const REFOUND_ITEMS = "REFOUND_ITEMS";
 
 export function postItems(
@@ -101,18 +99,18 @@ export function expiredItems(
   };
 }
 
-export function restoreItems(
-  itemsID: number
+export function refoundItems(
+  itemID: number
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
-      await updateDoc(doc(itemsRef, itemsID.toString()), { state: "In Stock" });
+      await updateDoc(doc(itemsRef, itemID.toString()), { state: "In Stock" });
 
       dispatch({
-        type: RESTORE_ITEMS,
-        payload: itemsID,
+        type: REFOUND_ITEMS,
+        payload: itemID,
       });
     } catch (e: any) {
       throw new Error(e);

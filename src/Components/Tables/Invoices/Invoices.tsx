@@ -191,13 +191,6 @@ export default function Invoices() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search invoice..."
           />
-          <button
-            className={`btn btn-primary ${style.reload}`}
-            type="button"
-            onClick={handleReload}
-          >
-            <img src={reload} alt="reload" />
-          </button>
           <div className={`form-floating ${style.typeFilter}`}>
             <select
               id="type"

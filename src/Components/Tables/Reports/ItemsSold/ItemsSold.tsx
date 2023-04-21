@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Timestamp } from "firebase/firestore";
-import { Expense, Item, RootState, Sale, YearReport } from "../../../../interfaces";
-import { getFirstAndLastDayOfMonth } from "../../../../functions/date";
+import {
+  Expense,
+  Item,
+  RootState,
+  Sale,
+  YearReport,
+} from "../../../../interfaces";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
-import { restoreItems } from "../../../../redux/actions/items";
-import { postExpenses } from "../../../../redux/actions/expenses"
-import { getSoldReportData, updateReports } from "../../../../redux/actions/reports"
+import { refoundItems } from "../../../../redux/actions/items";
+import { postExpenses } from "../../../../redux/actions/expenses";
+import {
+  getSoldReportData,
+  updateReports,
+  updateReportsItems,
+} from "../../../../redux/actions/reports";
 
 import DataFilter from "./DateFilter/DateFilter";
 import Table from "./Table/Table";
@@ -17,14 +26,9 @@ import styles from "./ItemsSold.module.css";
 import swal from "sweetalert";
 import Expenses from "./Expenses/Expenses";
 
-interface Dates {
-  firstDay: string;
-  lastDay: string;
-}
-
 interface Rows {
-  item: Item | undefined,
-  sale: Sale,
+  item: Item | undefined;
+  sale: Sale;
 }
 
 interface Props {
@@ -32,22 +36,18 @@ interface Props {
   handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const initialDates: Dates = getFirstAndLastDayOfMonth(new Date());
-
-export default function ItemsSold({
-  typeReport,
-  handleChange,
-}: Props) {
+export default function ItemsSold({ typeReport, handleChange }: Props) {
   const dispatch = useDispatch();
   const sales: Sale[] = useSelector((state: RootState) => state.sales.sales);
   const items: Item[] = useSelector((state: RootState) => state.sales.items);
-  const expenses: Expense[] = useSelector((state: RootState) => state.sales.expenses);
+  const expenses: Expense[] = useSelector(
+    (state: RootState) => state.sales.expenses
+  );
   const [expenseSelected, setExpenseSelected] = useState<Expense[]>([]);
   const reports: YearReport[] = useSelector(
     (state: RootState) => state.reports
   );
   const [rows, setRows] = useState<Rows[]>([]);
-  const [dates, setDates] = useState(initialDates);
   const [totalCost, setTotalCost] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [orderTotal, setOrderTotal] = useState(0);
@@ -57,29 +57,33 @@ export default function ItemsSold({
   const [years, setYears] = useState<number[]>([]);
 
   useEffect(() => {
-    const rows: Rows[] = sales.map((sale: Sale): Rows => ({
-      item: items.find((i: Item) => i.id === sale.productId),
-      sale
-    }));
+    const rows: Rows[] = sales.map(
+      (sale: Sale): Rows => ({
+        item: items.find((i: Item) => i.id === sale.productId),
+        sale,
+      })
+    );
 
     let totalCost = 0;
     let orderTotal = 0;
 
-    rows.map((row) => totalCost += Number(row.sale.cost));
-    rows.map((row) => orderTotal += Number(row.sale.price));
+    rows.forEach((row) => {
+      totalCost += Number(row.sale.cost);
+      orderTotal += Number(row.sale.price);
+    });
 
     setTotalItems(rows.length);
     setTotalCost(totalCost);
     setOrderTotal(orderTotal);
     setRows(rows.filter((row) => row.item));
-  }, [items, sales, dates]);
+  }, [items, sales]);
 
   useEffect(() => {
     setYears(reports.map((r) => Number(r.year)));
-  }, [reports])
+  }, [reports]);
 
-  function handleRefoundSelected(id: number) {
-    setRefoundSelected(id);
+  function handleRefoundSelected(itemId: number) {
+    setRefoundSelected(itemId);
   }
 
   function handleRefound(amount: number) {
@@ -96,14 +100,24 @@ export default function ItemsSold({
     ];
 
     dispatch(loading());
-    dispatch<any>(restoreItems(refoundSelected))
+    dispatch<any>(refoundItems(refoundSelected))
       .then(() => {
         dispatch<any>(postExpenses(newExpense))
           .then(() => {
             dispatch<any>(updateReports(newExpense, reports, null))
               .then(() => {
-                swal("Refounded", "Refounded item successfully", "success");
-                dispatch(closeLoading());
+                dispatch<any>(
+                  updateReportsItems(
+                    [refoundSelected],
+                    ["Ebay Fees", "Sale"],
+                    reports
+                  )
+                )
+                  .then(() => {
+                    swal("Refounded", "Refounded item successfully", "success");
+                    dispatch(closeLoading());
+                  })
+                  .catch((err: any) => {});
               })
               .catch((err: any) => {
                 swal(
@@ -135,7 +149,7 @@ export default function ItemsSold({
     dispatch(loading());
     dispatch<any>(getSoldReportData(year, month)).then(() => {
       dispatch(closeLoading());
-    })
+    });
   }
 
   // Refound
@@ -144,10 +158,7 @@ export default function ItemsSold({
   }
 
   function handleShowExpensesDetails(productId: number) {
-    console.log(productId);
     const data: Expense[] = expenses.filter((e) => e.id === productId);
-    console.log(expenses);
-    console.log(data);
     setExpenseSelected(data);
     handleCloseDetails();
   }
@@ -160,7 +171,9 @@ export default function ItemsSold({
       {refound ? (
         <Refound handleClose={handleClose} handleSubmit={handleRefound} />
       ) : null}
-      {expensesDetails ? (<Expenses expenses={expenseSelected} handleClose={handleCloseDetails} />) : null}
+      {expensesDetails ? (
+        <Expenses expenses={expenseSelected} handleClose={handleCloseDetails} />
+      ) : null}
       <div className={styles.controls}>
         <div className="form-floating">
           <select
@@ -179,9 +192,7 @@ export default function ItemsSold({
         </div>
         <DataFilter years={years} handleFilterPerDate={handleFilterPerDate} />
         {/*         <Excel sales={itemsSold} /> */}
-        <span className={styles.total}>
-          Total items: {totalItems}
-        </span>
+        <span className={styles.total}>Total items: {totalItems}</span>
         <span className={styles.total}>
           Total cost: ${Number(totalCost).toFixed(2)}
         </span>

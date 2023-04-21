@@ -186,10 +186,10 @@ export function deleteDataAndUpdateTotals(id: number[], category: string[] | nul
     for (let j = 0; j < yearReport.month.length; j++) {
       const monthReport: MonthReport = yearReport.month[j];
       const sales: ReportItem[] = monthReport.sales.filter(
-        (item) => !id.includes(item.id) && !category?.includes(item.type)
+        (item) => !(id.includes(item.id) && category?.includes(item.type))
       );
       const expenses: ReportItem[] = monthReport.expenses.filter(
-        (item) => !id.includes(item.id)
+        (item) => !(id.includes(item.id) && category?.includes(item.type))
       );
       const totalSales: number = sales.reduce(
         (total, item) => total + Number(item.amount),

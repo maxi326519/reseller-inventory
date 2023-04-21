@@ -6,7 +6,7 @@ import {
   POST_ITEMS,
   GET_ITEMS,
   EXPIRED_ITEMS,
-  RESTORE_ITEMS,
+  REFOUND_ITEMS,
 } from "../actions/items";
 import {
   POST_INVOICE,
@@ -92,10 +92,7 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
             state: "Sold",
           });
         } else {
-          stockItems.push({
-            ...item,
-            state: "Sold",
-          });
+          stockItems.push(item);
         }
       });
 
@@ -222,7 +219,7 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
         },
       };
 
-    case RESTORE_ITEMS:
+    case REFOUND_ITEMS:
       return {
         ...state,
         items: [

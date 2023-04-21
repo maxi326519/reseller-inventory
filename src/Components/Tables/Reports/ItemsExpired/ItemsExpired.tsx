@@ -3,14 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { Item, RootState, YearReport } from "../../../../interfaces";
 import { getFirstAndLastDayOfMonth } from "../../../../functions/date";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
-import { restoreItems } from "../../../../redux/actions/items";
 
 import Table from "./Table/Table";
 
 import styles from "./ItemsExpired.module.css";
 import swal from "sweetalert";
 import DateFilter from "./DateFilter/DateFilter";
-import { getExpiredItems, updateReportsItems } from "../../../../redux/actions/reports";
+import {
+  getExpiredItems,
+  updateReportsItems,
+} from "../../../../redux/actions/reports";
+import { refoundItems } from "../../../../redux/actions/items";
 
 interface Dates {
   firstDay: string;
@@ -22,63 +25,30 @@ interface Props {
   handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const initialDates: Dates = getFirstAndLastDayOfMonth(new Date());
-
-export default function ItemsExpired({
-  typeReport,
-  handleChange,
-}: Props) {
+export default function ItemsExpired({ typeReport, handleChange }: Props) {
   const dispatch = useDispatch();
   const items: Item[] = useSelector((state: RootState) => state.sales.expired);
-  const reports: YearReport[] = useSelector((state: RootState) => state.reports);
+  const reports: YearReport[] = useSelector(
+    (state: RootState) => state.reports
+  );
   const [itemsExpired, setItemsExpired] = useState<Item[]>([]);
-  const [dates, setDates] = useState(initialDates);
   const [total, setTotal] = useState(0);
   const [years, setYears] = useState<number[]>([]);
 
   useEffect(() => {
-    setItemsExpired(
-      filterAndSortItems(
-        dates.firstDay,
-        dates.lastDay,
-        items
-      )
-    );
-  }, [items, dates]);
+    console.log(itemsExpired);
+    setItemsExpired(items);
+  }, [items]);
 
   useEffect(() => {
     setYears(reports.map((r) => Number(r.year)));
-  }, [reports])
+  }, [reports]);
 
   useEffect(() => {
     let total = 0;
     itemsExpired.forEach((item) => (total += Number(item.cost)));
     setTotal(total);
   }, [itemsExpired]);
-
-  function filterAndSortItems(
-    dateFrom: string,
-    dateTo: string,
-    items: Item[]
-  ): Item[] {
-    const fromDate = new Date(dateFrom);
-    const toDate = new Date(dateTo);
-
-    // Filtrar los elementos que estén dentro del rango de fechas
-    const filteredItems = items.filter((item) => {
-      const itemDate = item.date.toDate();
-      return itemDate >= fromDate && itemDate <= toDate;
-    });
-
-    // Ordenar los elementos por fecha de mayor a menor
-    filteredItems.sort((a, b) => {
-      const dateA = a.date.toDate();
-      const dateB = b.date.toDate();
-      return dateB.getTime() - dateA.getTime();
-    });
-
-    return filteredItems;
-  }
 
   function handleRestore(id: number) {
     swal({
@@ -89,17 +59,15 @@ export default function ItemsExpired({
     }).then((response) => {
       if (response) {
         dispatch<any>(loading());
-        dispatch<any>(restoreItems(id))
+        dispatch<any>(refoundItems(id))
           .then(() => {
             dispatch(closeLoading());
-            dispatch<any>(updateReportsItems([id], ["Sale", "Ebay Fees"], reports))
+            dispatch<any>(
+              updateReportsItems([id], ["Sale", "Ebay Fees"], reports)
+            )
               .then(() => {
                 dispatch(closeLoading());
-                swal(
-                  "Restored",
-                  "Item restores successfully",
-                  "success"
-                );
+                swal("Restored", "Item restores successfully", "success");
               })
               .catch((e: any) => {
                 swal(
@@ -129,7 +97,7 @@ export default function ItemsExpired({
     dispatch(loading());
     dispatch<any>(getExpiredItems(year, month)).then(() => {
       dispatch(closeLoading());
-    })
+    });
   }
 
   return (

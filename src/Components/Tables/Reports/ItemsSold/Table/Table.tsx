@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Item, Sale } from "../../../../../interfaces";
 
 import Rows from "./Rows/Rows";

@@ -1,14 +1,10 @@
-import { startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { db, auth } from "../../../firebase";
 import {
   collection,
   doc,
-  getDocs,
   writeBatch,
-  where,
-  query,
 } from "firebase/firestore";
 import { Sale, RootState } from "../../../interfaces";
 

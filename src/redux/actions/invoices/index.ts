@@ -17,6 +17,7 @@ import {
   where,
   query,
   getDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { Invoice, RootState, InvoiceExpenses } from "../../../interfaces";
 
@@ -111,12 +112,30 @@ export function getInvoices(
         endDate = endOfYear(new Date(Number(year), 11));
       }
 
+      console.log(startDate);
+      console.log(endDate);
+
+      // Calculate UTC start and end dates
+      const utcStartDate = new Date(
+        startDate.getTime() - startDate.getTimezoneOffset() * 60000
+      );
+      const utcEndDate = new Date(
+        endDate.getTime() - endDate.getTimezoneOffset() * 60000
+      );
+
+      console.log(utcStartDate);
+      console.log(utcEndDate);
+
+      // Convert to firebase Timestamp
+      const startTimeStamp = Timestamp.fromDate(utcStartDate);
+      const endTimeStamp = Timestamp.fromDate(utcEndDate);
+
       // Query and get docs
       const snapshot = await getDocs(
         query(
           invoiceRef,
-          where("date", ">=", startDate),
-          where("date", "<=", endDate)
+          where("date", ">=", startTimeStamp),
+          where("date", "<=", endTimeStamp)
         )
       );
 
@@ -138,13 +157,11 @@ export function getInvoices(
 
 export function getInvoiceDetails(
   isItem: boolean,
-  invoiceId: number,
+  invoiceId: number
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
-
-      console.log(isItem);
 
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
 
@@ -156,15 +173,18 @@ export function getInvoiceDetails(
       );
 
       // Query and get docs
-      let snapshot = await getDocs(query(isItem ? itemsRef : expensesRef, where("invoiceId", "==", invoiceId)));
+      let snapshot = await getDocs(
+        query(
+          isItem ? itemsRef : expensesRef,
+          where("invoiceId", "==", invoiceId)
+        )
+      );
 
       // Get data
       let data: any = [];
       snapshot.forEach((doc: any) => {
         data.push(doc.data());
       });
-
-      console.log(data);
 
       dispatch({
         type: GET_INVOICE_DETAILS,

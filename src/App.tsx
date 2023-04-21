@@ -4,7 +4,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { getUserData } from "./redux/actions/user";
 import { loading, closeLoading } from "./redux/actions/loading";
 import { getStockItems } from "./redux/actions/items";
-import { getExpiredItems, getReports, getSoldReportData } from "./redux/actions/reports";
+import {
+  getExpiredItems,
+  getReports,
+  getSoldReportData,
+} from "./redux/actions/reports";
 import { getInvoices } from "./redux/actions/invoices";
 import { RootState } from "./interfaces";
 import { getAuth } from "firebase/auth";
@@ -42,9 +46,11 @@ function App() {
           dispatch<any>(getExpiredItems(year, null)),
         ])
           .then(() => {
+            redirect("/");
             dispatch(closeLoading());
           })
           .catch((err: any) => {
+            dispatch(closeLoading());
             swal("Error", "Error to load info, try again later", "error");
             console.log(err);
           });

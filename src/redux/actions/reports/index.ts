@@ -43,10 +43,10 @@ export function getReports(): ThunkAction<
         auth.currentUser.uid,
         "Reports"
       );
-      const query = await getDocs(reportRef);
+      const query: any = await getDocs(reportRef);
       const reports: any[] = [];
 
-      query.forEach((doc) => {
+      query.forEach((doc: any) => {
         reports.push(doc.data());
       });
 
