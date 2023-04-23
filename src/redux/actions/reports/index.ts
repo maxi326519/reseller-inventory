@@ -12,6 +12,7 @@ import {
   getDocs,
   where,
   query,
+  Timestamp,
 } from "firebase/firestore";
 import {
   Expense,
@@ -78,35 +79,47 @@ export function getSoldReportData(
 
       // Per year or month
       if (month !== null) {
-        startDate = startOfMonth(new Date(year, month - 1));
-        endDate = endOfMonth(new Date(year, month - 1));
+        startDate = startOfMonth(new Date(Number(year), Number(month) - 1));
+        endDate = endOfMonth(new Date(Number(year), Number(month) - 1));
       } else {
-        startDate = startOfYear(new Date(year, 0));
-        endDate = endOfYear(new Date(year, 11));
+        startDate = startOfYear(new Date(Number(year), 0));
+        endDate = endOfYear(new Date(Number(year), 11));
       }
+
+      // Calculate UTC start and end dates
+      const utcStartDate = new Date(
+        startDate.getTime() - startDate.getTimezoneOffset() * 60000
+      );
+      const utcEndDate = new Date(
+        endDate.getTime() - endDate.getTimezoneOffset() * 60000
+      );
+
+      // Convert to firebase Timestamp
+      const startTimeStamp = Timestamp.fromDate(utcStartDate);
+      const endTimeStamp = Timestamp.fromDate(utcEndDate);
 
       // Query and get items docs
       const itemsQuery = await getDocs(
         query(
           itemsRef,
-          where("saleDate", ">=", startDate),
-          where("saleDate", "<=", endDate)
+          where("saleDate", ">=", startTimeStamp),
+          where("saleDate", "<=", endTimeStamp)
         )
       );
 
       const salesQuery = await getDocs(
         query(
           salesRef,
-          where("date", ">=", startDate),
-          where("date", "<=", endDate)
+          where("date", ">=", startTimeStamp),
+          where("date", "<=", endTimeStamp)
         )
       );
 
       const expensesQuery = await getDocs(
         query(
           expensesRef,
-          where("date", ">=", startDate),
-          where("date", "<=", endDate)
+          where("date", ">=", startTimeStamp),
+          where("date", "<=", endTimeStamp)
         )
       );
 
