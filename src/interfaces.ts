@@ -8,6 +8,7 @@ export interface User {
 export interface Item {
   id: number;
   date: Timestamp;
+  saleDate?: Timestamp;
   invoiceId: number;
   state: string;
   cost: number | string;
@@ -113,7 +114,7 @@ export interface MonthTaxesData {
     ebayFees: number;
     adsFee: number;
     otherExpense: number;
-    otherCategories: OtherCategories[]
+    otherCategories: OtherCategories[];
   };
 }
 
@@ -124,7 +125,7 @@ export interface ExportYearTaxesData {
   months: ExportMonthTaxes[];
 }
 
-export interface ExportMonthTaxes{
+export interface ExportMonthTaxes {
   month: string;
   salesTotal: number;
   sales: number;
@@ -135,7 +136,7 @@ export interface ExportMonthTaxes{
   ebayFees: number;
   adsFee: number;
   otherExpense: number;
-  otherCategories: OtherCategories[]
+  otherCategories: OtherCategories[];
 }
 
 export interface OtherCategories {

@@ -1,11 +1,7 @@
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { db, auth } from "../../../firebase";
-import {
-  collection,
-  doc,
-  writeBatch,
-} from "firebase/firestore";
+import { collection, doc, writeBatch } from "firebase/firestore";
 import { Sale, RootState } from "../../../interfaces";
 
 export const POST_SALE = "POST_SALE";
@@ -27,6 +23,7 @@ export function postSales(
         batch.set(doc(salesRef), sale);
         batch.update(doc(itemsRef, sale.productId.toString()), {
           state: "Sold",
+          saleDate: sale.date,
         });
       });
 
