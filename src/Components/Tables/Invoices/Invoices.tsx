@@ -89,31 +89,6 @@ export default function Invoices() {
     setClose(!close);
   }
 
-  function handleReload() {
-    swal({
-      title: "¡Attention!",
-      text: `All invoices will be reloaded`,
-      icon: "info",
-      buttons: { confirm: true, cancel: true },
-    }).then((response) => {
-      if (response) {
-        dispatch(loading());
-        dispatch<any>(getInvoices(dateFilter.year, dateFilter.month))
-          .then(() => {
-            dispatch(closeLoading());
-          })
-          .catch((e: any) => {
-            swal(
-              "Error",
-              "Error trying to get the invoices, try again leter",
-              "error"
-            );
-            console.log(e);
-          });
-      }
-    });
-  }
-
   function handleFilterDate(date: Filter) {
     const year = date.year;
     const month = date.month;

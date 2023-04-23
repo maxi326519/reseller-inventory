@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { Timestamp } from "firebase/firestore";
 import { Item, Sale, RootState, Expense } from "../../../../interfaces";
 import { loading, closeLoading } from "../../../../redux/actions/loading";
-import { postSales } from "../../../../redux/actions/sales"
-import { postExpenses } from "../../../../redux/actions/expenses"
-import { updateReports } from "../../../../redux/actions/reports"
+import { postSales } from "../../../../redux/actions/sales";
+import { postExpenses } from "../../../../redux/actions/expenses";
+import { updateReports } from "../../../../redux/actions/reports";
 import swal from "sweetalert";
 
 import ItemRow from "./ItemRow/ItemRow";
@@ -198,10 +198,12 @@ export default function AddSale({
     } else if (name === "date") {
       setSales(
         sales.map((s) => {
+          const fecha = new Date(event.target.value);
+          fecha.setHours(fecha.getHours() + fecha.getTimezoneOffset() / 60);
           if (s.id === saleId) {
             return {
               ...s,
-              date: Timestamp.fromDate(new Date(event.target.value)),
+              date: Timestamp.fromDate(fecha),
             };
           }
           return s;

@@ -104,15 +104,15 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
       .then(() => {
         dispatch<any>(postExpenses(newExpense))
           .then(() => {
-            dispatch<any>(updateReports(newExpense, reports, null))
+            dispatch<any>(
+              updateReportsItems(
+                [refoundSelected],
+                ["Ebay Fees", "Sale"],
+                reports
+              )
+            )
               .then(() => {
-                dispatch<any>(
-                  updateReportsItems(
-                    [refoundSelected],
-                    ["Ebay Fees", "Sale"],
-                    reports
-                  )
-                )
+                dispatch<any>(updateReports(newExpense, reports, null))
                   .then(() => {
                     swal("Refounded", "Refounded item successfully", "success");
                     dispatch(closeLoading());

@@ -15,16 +15,21 @@ export function calculeReports(
   let missingYears: string[] = []; // Save years of missing expenses
   let newReports: YearReport[] = []; // Save all reports
 
+  console.log(data);
+
   if (reports.length <= 0)
     reports.push(reportGenerator(new Date().getFullYear().toString()));
 
   /* Matching and missing date search */
   data.forEach((d: any) => {
+    console.log(d.date.toDate());
+    console.log(d.date.toDate().getFullYear());
+    console.log(d.date.toDate().getMonth());
     let dataDate = d.date.toDate().getFullYear();
     /* If exist any report with the date of the data */
     if (reports.some((r) => Number(r.year) === Number(dataDate)))
       years.push(dataDate.toString());
-    else missingYears.push(dataDate);
+    else missingYears.push(dataDate.toString());
   });
 
   // Delete repeat elements
@@ -34,19 +39,27 @@ export function calculeReports(
 
   /* Create missing reports  */
   newReports = [...reports, ...missingYears.map((y) => reportGenerator(y))];
+
+  console.log("Years:", years);
+  console.log("Missing years:", missingYears);
+  console.log("Reports:", reports);
+  console.log("All Reports:", newReports);
+
   /* Update reports */
   newReports = newReports.map((r) => {
     /* If matching with expeneses year */
+    console.log("Year:", r.year);
+    console.log("Years include:", years.includes(r.year));
+    console.log("Missing includes:", missingYears.includes(r.year));
+    console.log(years.includes(r.year) || missingYears.includes(r.year));
+
     if (years.includes(r.year) || missingYears.includes(r.year)) {
       const newYear = {
         year: r.year,
         month: r.month.map((month) => {
-          /* Search maching date */
+          /* Search maching date data */
           let match = data.filter((d: Expense) => {
             const date = d.date.toDate();
-            console.log(date);
-            console.log(date.getFullYear());
-            console.log(date.getMonth());
             if (
               date.getFullYear() === Number(r.year) &&
               date.getMonth() === Number(month.month) - 1
@@ -55,6 +68,12 @@ export function calculeReports(
             }
             return false;
           });
+
+          console.log("");
+          console.log("Year:", r.year, "Month:", month.month);
+          console.log("Data:", data);
+          console.log(match);
+          console.log("");
 
           let newMonth: MonthReport;
           /* If exist, update */
@@ -176,21 +195,75 @@ export function reportGenerator(year: string): YearReport {
   return reportData;
 }
 
-export function deleteDataAndUpdateTotals(id: number[], category: string[] | null, reports: YearReport[]) {
+export function deleteDataAndUpdateTotals(
+  id: number[],
+  category: string[] | null,
+  reports: YearReport[]
+) {
   const updatedReports: YearReport[] = [...reports];
   const editedYears: string[] = [];
 
-  for (let i = 0; i < updatedReports.length; i++) {
-    const yearReport: YearReport = updatedReports[i];
+  // Iterate years
+  for (let y = 0; y < updatedReports.length; y++) {
+    const yearReport: YearReport = updatedReports[y];
 
-    for (let j = 0; j < yearReport.month.length; j++) {
-      const monthReport: MonthReport = yearReport.month[j];
-      const sales: ReportItem[] = monthReport.sales.filter(
-        (item) => !(id.includes(item.id) && category?.includes(item.type))
-      );
-      const expenses: ReportItem[] = monthReport.expenses.filter(
-        (item) => !(id.includes(item.id) && category?.includes(item.type))
-      );
+    // Iterate months
+    for (let m = 0; m < yearReport.month.length; m++) {
+      const monthReport: MonthReport = yearReport.month[m];
+
+      console.log("_________________________________________________");
+      console.log("\tMonth:", m + 1);
+      console.log("_________________________________________________");
+      console.log();
+      console.log("Sales");
+
+      const sales: ReportItem[] = monthReport.sales.filter((item) => {
+        console.log(item.id, item.type);
+        console.log(
+          id.includes(item.id),
+          !category || category?.includes(item.type)
+        );
+        console.log(
+          id.includes(item.id) && (!category || category?.includes(item.type))
+        );
+        console.log("");
+
+        if (
+          id.includes(item.id) &&
+          (!category || category?.includes(item.type))
+        ) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+
+      console.log("---------------------------");
+      console.log("Expenses");
+
+      const expenses: ReportItem[] = monthReport.expenses.filter((item) => {
+        console.log(item.id, item.type);
+        console.log(
+          id.includes(item.id),
+          !category || category?.includes(item.type)
+        );
+        console.log(
+          id.includes(item.id) && (!category || category?.includes(item.type))
+        );
+        console.log("");
+
+        if (
+          id.includes(item.id) &&
+          (!category || category?.includes(item.type))
+        ) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+
+      console.log("---------------------------");
+
       const totalSales: number = sales.reduce(
         (total, item) => total + Number(item.amount),
         0
@@ -200,7 +273,7 @@ export function deleteDataAndUpdateTotals(id: number[], category: string[] | nul
         0
       );
 
-      updatedReports[i].month[j] = {
+      updatedReports[y].month[m] = {
         ...monthReport,
         sales,
         expenses,

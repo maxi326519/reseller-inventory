@@ -112,9 +112,6 @@ export function getInvoices(
         endDate = endOfYear(new Date(Number(year), 11));
       }
 
-      console.log(startDate);
-      console.log(endDate);
-
       // Calculate UTC start and end dates
       const utcStartDate = new Date(
         startDate.getTime() - startDate.getTimezoneOffset() * 60000
@@ -122,9 +119,6 @@ export function getInvoices(
       const utcEndDate = new Date(
         endDate.getTime() - endDate.getTimezoneOffset() * 60000
       );
-
-      console.log(utcStartDate);
-      console.log(utcEndDate);
 
       // Convert to firebase Timestamp
       const startTimeStamp = Timestamp.fromDate(utcStartDate);

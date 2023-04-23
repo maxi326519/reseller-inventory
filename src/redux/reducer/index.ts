@@ -14,13 +14,14 @@ import {
   DELETE_INVOICE,
   GET_INVOICE_DETAILS,
 } from "../actions/invoices";
-import { POST_SALE, GET_SALES } from "../actions/sales";
+import { POST_SALE } from "../actions/sales";
 import { POST_EXPENSES, GET_EXPENSES } from "../actions/expenses";
 import {
   GET_REPORTS,
   GET_SOLD_REPORT_DATA,
   GET_EXPIRED_ITEMS,
   UPDATE_REPORTS,
+  DELETE_ITEMS_REPORTS,
 } from "../actions/reports";
 
 const initialState: RootState = {
@@ -43,7 +44,10 @@ const initialState: RootState = {
   loading: false,
 };
 
-export const rootReducer = (state: RootState = initialState, action: AnyAction) => {
+export const rootReducer = (
+  state: RootState = initialState,
+  action: AnyAction
+) => {
   switch (action.type) {
     /* LOADING */
     case LOADING:
@@ -51,15 +55,15 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
         ...state,
         loading: true,
       };
-      case CLOSE_LOADING:
-        return {
-          ...state,
-          loading: false,
-        };
-        
-        // POST
-        case POST_CATEGORIES:
-          return {
+    case CLOSE_LOADING:
+      return {
+        ...state,
+        loading: false,
+      };
+
+    // POST
+    case POST_CATEGORIES:
+      return {
         ...state,
         user: { ...state.user, categories: action.payload },
       };
@@ -106,14 +110,18 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
           expired: state.sales.expired,
         },
       };
-      
-      // GET 
-      case GET_USER_DATA:
+    case POST_EXPENSES:
+      return {
+        ...state,
+      };
+
+    // GET
+    case GET_USER_DATA:
       return {
         ...state,
         user: { ...state.user, ...action.payload },
       };
-      case GET_ITEMS:
+    case GET_ITEMS:
       return {
         ...state,
         items: action.payload,
@@ -126,29 +134,29 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
           expired: action.payload,
         },
       };
-      case GET_INVOICE:
-        return {
-          ...state,
-          invoices: {
-            ...state.invoices,
-            data: action.payload,
-          },
-        };
-        case GET_INVOICE_DETAILS:
-          return {
+    case GET_INVOICE:
+      return {
+        ...state,
+        invoices: {
+          ...state.invoices,
+          data: action.payload,
+        },
+      };
+    case GET_INVOICE_DETAILS:
+      return {
         ...state,
         invoices: {
           ...state.invoices,
           details: action.payload,
         },
       };
-      case GET_REPORTS:
-        return {
-          ...state,
-          reports: action.payload,
-        };
-        case GET_SOLD_REPORT_DATA:
-          return {
+    case GET_REPORTS:
+      return {
+        ...state,
+        reports: action.payload,
+      };
+    case GET_SOLD_REPORT_DATA:
+      return {
         ...state,
         sales: {
           items: action.payload.items,
@@ -157,11 +165,11 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
           expired: state.sales.expired,
         },
       };
-      case GET_EXPENSES:
-        return {
-          ...state,
-          expenses: [...action.payload],
-        };
+    case GET_EXPENSES:
+      return {
+        ...state,
+        expenses: [...action.payload],
+      };
 
     // UPDATES
     case UPDATE_REPORTS:
@@ -196,6 +204,12 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
         },
       };
 
+    case DELETE_ITEMS_REPORTS:
+      return {
+        ...state,
+        reports: action.payload,
+      };
+
     // OTHER
     case EXPIRED_ITEMS:
       return {
@@ -225,13 +239,13 @@ export const rootReducer = (state: RootState = initialState, action: AnyAction) 
         items: [
           ...state.items,
           {
-            ...state.sales.expired.find((i) => action.payload === i.id),
+            ...state.sales.sales.find((i) => action.payload === i.id),
             state: "In Stock",
           },
         ],
         sales: {
           ...state.sales,
-          expired: state.sales.expired.filter((e) => e.id !== action.payload),
+          sales: state.sales.sales.filter((e) => e.id !== action.payload),
         },
       };
     default:

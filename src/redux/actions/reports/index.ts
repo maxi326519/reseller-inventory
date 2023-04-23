@@ -27,6 +27,7 @@ export const GET_REPORTS = "GET_REPORTS";
 export const GET_SOLD_REPORT_DATA = "GET_SOLD_REPORT_DATA";
 export const GET_EXPIRED_ITEMS = "GET_EXPIRED_ITEMS";
 export const UPDATE_REPORTS = "UPDATE_REPORTS";
+export const DELETE_ITEMS_REPORTS = "DELETE_ITEMS_REPORTS";
 
 export function getReports(): ThunkAction<
   Promise<void>,
@@ -274,7 +275,7 @@ export function updateReportsItems(
       }
 
       dispatch({
-        type: UPDATE_REPORTS,
+        type: DELETE_ITEMS_REPORTS,
         payload: updatedReports,
       });
     } catch (e: any) {
