@@ -8,7 +8,10 @@ import {
   InvoiceExpenses,
 } from "../../../interfaces";
 import { loading, closeLoading } from "../../../redux/actions/loading";
-import { getInvoiceDetails, getInvoices } from "../../../redux/actions/invoices";
+import {
+  getInvoiceDetails,
+  getInvoices,
+} from "../../../redux/actions/invoices";
 import { getExpenses } from "../../../redux/actions/expenses";
 import swal from "sweetalert";
 
@@ -46,7 +49,11 @@ export default function Invoices() {
     invoices.forEach((invoice): invoice is Invoice => "form" in invoice);
     setRows(
       invoices.filter((i) => {
-        if (dayFilter !== "" && i.date.toDate().toISOString().split("T")[0] !== dayFilter) return false;
+        if (
+          dayFilter !== "" &&
+          i.date.toDate().toISOString().split("T")[0] !== dayFilter
+        )
+          return false;
         if (i.type !== invoiceType) return false;
         if (search === "") return true;
         if (i.id.toString().toLowerCase().includes(search)) return true;
@@ -79,7 +86,12 @@ export default function Invoices() {
   function handleDetails(invoiceID: number) {
     const showInvoice = invoices.find((i) => i.id === invoiceID);
     if (showInvoice) {
-      dispatch<any>(getInvoiceDetails(showInvoice.type === InvoiceType.Purchase, showInvoice.id));
+      dispatch<any>(
+        getInvoiceDetails(
+          showInvoice.type === InvoiceType.Purchase,
+          showInvoice.id
+        )
+      );
       setImage(showInvoice.image);
       setClose(!close);
     }
@@ -139,6 +151,15 @@ export default function Invoices() {
     }
   }
 
+  function getYears() {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let i = 0; i < 50; i++) {
+      const year = currentYear - i;
+      years.push(year);
+    }
+    return years;
+  }
   return (
     <div className={styles.background}>
       {close ? (
@@ -180,10 +201,7 @@ export default function Invoices() {
               Type
             </label>
           </div>
-          <DateFilter
-            years={reports.map((report) => report.year)}
-            handleFilterDate={handleFilterDate}
-          />
+          <DateFilter years={getYears()} handleFilterDate={handleFilterDate} />
           <span className={style.total}>
             Total cost of invoices: ${total.toFixed(2)}
           </span>
