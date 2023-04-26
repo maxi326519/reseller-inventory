@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Item, RootState, YearReport } from "../../../../interfaces";
-import { getFirstAndLastDayOfMonth } from "../../../../functions/date";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
 
 import Table from "./Table/Table";
@@ -9,16 +8,8 @@ import Table from "./Table/Table";
 import styles from "./ItemsExpired.module.css";
 import swal from "sweetalert";
 import DateFilter from "./DateFilter/DateFilter";
-import {
-  getExpiredItems,
-  updateReportsItems,
-} from "../../../../redux/actions/reports";
-import { refoundItems } from "../../../../redux/actions/items";
-
-interface Dates {
-  firstDay: string;
-  lastDay: string;
-}
+import { updateReportsItems } from "../../../../redux/actions/reports";
+import { getExpired, restoreItem } from "../../../../redux/actions/items";
 
 interface Props {
   typeReport: any;
@@ -27,7 +18,7 @@ interface Props {
 
 export default function ItemsExpired({ typeReport, handleChange }: Props) {
   const dispatch = useDispatch();
-  const items: Item[] = useSelector((state: RootState) => state.sales.expired);
+  const items: Item[] = useSelector((state: RootState) => state.expired);
   const reports: YearReport[] = useSelector(
     (state: RootState) => state.reports
   );
@@ -59,7 +50,7 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
     }).then((response) => {
       if (response) {
         dispatch<any>(loading());
-        dispatch<any>(refoundItems(id))
+        dispatch<any>(restoreItem(id))
           .then(() => {
             dispatch(closeLoading());
             dispatch<any>(
@@ -95,7 +86,7 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
     let month = dateFilter.month === "00" ? null : dateFilter.month;
 
     dispatch(loading());
-    dispatch<any>(getExpiredItems(year, month)).then(() => {
+    dispatch<any>(getExpired(year, month)).then(() => {
       dispatch(closeLoading());
     });
   }

@@ -3,12 +3,8 @@ import { useDispatch } from "react-redux";
 import { loading, closeLoading } from "../../redux/actions/loading";
 import { getUserData } from "../../redux/actions/user";
 import { logIn } from "../../redux/actions/login";
-import { getStockItems } from "../../redux/actions/items";
-import {
-  getExpiredItems,
-  getReports,
-  getSoldReportData,
-} from "../../redux/actions/reports";
+import { getExpired, getStockItems } from "../../redux/actions/items";
+import { getReports, getSoldReportData } from "../../redux/actions/reports";
 import { getInvoices } from "../../redux/actions/invoices";
 import { useNavigate } from "react-router-dom";
 
@@ -71,7 +67,7 @@ export default function Signin() {
             dispatch<any>(getInvoices(year, null)),
             dispatch<any>(getStockItems()),
             dispatch<any>(getSoldReportData(year, null)),
-            dispatch<any>(getExpiredItems(year, null)),
+            dispatch<any>(getExpired(year, null)),
           ])
             .then(() => {
               redirect("/");

@@ -13,6 +13,7 @@ export interface Item {
   state: string;
   cost: number | string;
   description: string;
+  expired?: Timestamp;
 }
 
 export interface Invoice {
@@ -60,6 +61,12 @@ export interface Sale {
   productId: number;
   shipment: Shipment;
   expenses: ExpenseRef[];
+}
+
+export interface Expired {
+  date: Timestamp;
+  itemId: string;
+  expenseId: string;
 }
 
 interface ExpenseRef {
@@ -155,8 +162,8 @@ export interface RootState {
     items: Item[];
     sales: Sale[];
     expenses: Expense[];
-    expired: Item[];
   };
+  expired: Item[];
   reports: YearReport[];
   loading: boolean;
 }

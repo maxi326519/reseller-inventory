@@ -4,7 +4,7 @@ import { Timestamp } from "firebase/firestore";
 import { closeLoading, loading } from "../../../redux/actions/loading";
 import { postExpenses } from "../../../redux/actions/expenses";
 import { updateReports } from "../../../redux/actions/reports";
-import { expiredItems, getStockItems } from "../../../redux/actions/items"
+import { expiredItems, getStockItems } from "../../../redux/actions/items";
 import { RootState, Item, Sale } from "../../../interfaces";
 import { Link } from "react-router-dom";
 
@@ -135,30 +135,28 @@ export default function Inventory() {
         buttons: { confirm: true, cancel: true },
       }).then((response) => {
         if (response) {
+          const dataItemSelected = items.filter((item) =>
+            itemSelected.some((id) => id === item.id)
+          );
+          const newExpenses = dataItemSelected.map((item: Item) => {
+            return {
+              id: item.id,
+              date: Timestamp.fromDate(new Date()),
+              price: item.cost,
+              category: "Expired",
+              description: "Expired item expense",
+              invoiceId: 0,
+            };
+          });
           dispatch<any>(loading());
-          dispatch<any>(expiredItems(itemSelected))
+          dispatch<any>(expiredItems(itemSelected, newExpenses))
             .then(() => {
-              dispatch(closeLoading());
-              const dataItemSelected = items.filter((item) =>
-                itemSelected.some((id) => id === item.id)
-              );
-              const newExpenses = dataItemSelected.map((item: Item) => {
-                return {
-                  id: item.id,
-                  date: Timestamp.fromDate(new Date()),
-                  price: item.cost,
-                  category: "Expired",
-                  description: "Expired item expense",
-                  invoiceId: 0,
-                };
-              });
-
-              dispatch<any>(postExpenses(newExpenses));
               dispatch<any>(updateReports(newExpenses, reports, null));
               setItem([]);
               setOther([]);
               setShiping([]);
               setSales([]);
+              dispatch(closeLoading());
             })
             .catch((e: any) => {
               swal(

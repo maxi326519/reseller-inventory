@@ -7,6 +7,7 @@ import {
   GET_ITEMS,
   EXPIRED_ITEMS,
   REFOUND_ITEMS,
+  GET_ITEMS_EXPIRED,
 } from "../actions/items";
 import {
   POST_INVOICE,
@@ -23,6 +24,7 @@ import {
   UPDATE_REPORTS,
   DELETE_ITEMS_REPORTS,
 } from "../actions/reports";
+import { Timestamp } from "firebase/firestore";
 
 const initialState: RootState = {
   user: {
@@ -38,8 +40,8 @@ const initialState: RootState = {
     items: [],
     sales: [],
     expenses: [],
-    expired: [],
   },
+  expired: [],
   reports: [],
   loading: false,
 };
@@ -107,7 +109,6 @@ export const rootReducer = (
           items: soldItems,
           sales: [...state.sales.sales, ...action.payload],
           expenses: state.sales.expenses,
-          expired: state.sales.expired,
         },
       };
     case POST_EXPENSES:
@@ -162,13 +163,18 @@ export const rootReducer = (
           items: action.payload.items,
           sales: action.payload.sales,
           expenses: action.payload.expenses,
-          expired: state.sales.expired,
         },
       };
     case GET_EXPENSES:
       return {
         ...state,
         expenses: [...action.payload],
+      };
+
+    case GET_ITEMS_EXPIRED:
+      return {
+        ...state,
+        expired: action.payload,
       };
 
     // UPDATES
@@ -200,7 +206,6 @@ export const rootReducer = (
               !action.payload.items.some((id: number) => id === sale.productId)
           ),
           expenses: [],
-          expired: state.sales.expired,
         },
       };
 
@@ -214,23 +219,14 @@ export const rootReducer = (
     case EXPIRED_ITEMS:
       return {
         ...state,
-        items: state.items.filter(
-          (i) => !action.payload.some((itemId: number) => itemId === i.id)
-        ),
-        sales: {
-          ...state.sales,
-          expired: [
-            ...state.sales.expired,
-            ...state.items
-              .filter((i) =>
-                action.payload.some((itemId: number) => itemId === i.id)
-              )
-              .map((i) => ({
-                ...i,
-                state: "Expired",
-              })),
-          ],
-        },
+        items: state.items.filter((item) => !action.payload?.includes(item.id)),
+        expired: state.items
+          .filter((item) => action.payload?.includes(item.id))
+          .map((item) => ({
+            ...item,
+            state: "Expired",
+            expired: Timestamp.now(),
+          })),
       };
 
     case REFOUND_ITEMS:
