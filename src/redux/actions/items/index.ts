@@ -6,6 +6,7 @@ import {
   updateDoc,
   where,
   writeBatch,
+  deleteField,
 } from "@firebase/firestore";
 import { Expense, Item, RootState } from "../../../interfaces";
 import { ThunkAction } from "redux-thunk";
@@ -17,9 +18,10 @@ import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
 
 export const POST_ITEMS = "POST_ITEMS";
 export const GET_ITEMS = "GET_ITEMS";
+export const GET_ITEMS_EXPIRED = "GET_ITEMS_EXPIRED";
 export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
 export const REFOUND_ITEMS = "REFOUND_ITEMS";
-export const GET_ITEMS_EXPIRED = "GET_ITEMS_EXPIRED";
+export const RESTORE_ITEMS = "RESTORE_ITEMS";
 
 export function postItems(
   items: Item[]
@@ -193,10 +195,13 @@ export function restoreItem(
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
-      await updateDoc(doc(itemsRef, itemID.toString()), { state: "In Stock" });
+      await updateDoc(doc(itemsRef, itemID.toString()), {
+        state: "In Stock",
+        expired: deleteField(),
+      });
 
       dispatch({
-        type: REFOUND_ITEMS,
+        type: RESTORE_ITEMS,
         payload: itemID,
       });
     } catch (e: any) {

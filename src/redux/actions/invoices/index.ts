@@ -48,7 +48,7 @@ export function postInvoice(
 
       if (image) {
         // Set directory
-        dir = `${year}/${month}/${invoice.id}`;
+        dir = `${auth.currentUser.uid}/${year}/${month}/${invoice.id}`;
 
         // POST invoice image
         const storageRef = ref(storage, dir);

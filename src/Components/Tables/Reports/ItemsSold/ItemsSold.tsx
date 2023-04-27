@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Timestamp } from "firebase/firestore";
 import {
   Expense,
+  ExportSales,
   Item,
   RootState,
   Sale,
@@ -25,6 +26,7 @@ import Excel from "./Excel/Excel.jsx";
 import styles from "./ItemsSold.module.css";
 import swal from "sweetalert";
 import Expenses from "./Expenses/Expenses";
+import changeDateFormat from "../../../../functions/changeDateFormat";
 
 interface Rows {
   item: Item | undefined;
@@ -47,14 +49,16 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   const reports: YearReport[] = useSelector(
     (state: RootState) => state.reports
   );
-  const [rows, setRows] = useState<Rows[]>([]);
-  const [totalCost, setTotalCost] = useState(0);
-  const [totalItems, setTotalItems] = useState(0);
-  const [orderTotal, setOrderTotal] = useState(0);
   const [expensesDetails, setExpensesDetails] = useState(false);
   const [refound, setRefound] = useState(false);
   const [refoundSelected, setRefoundSelected] = useState<number>();
   const [years, setYears] = useState<number[]>([]);
+
+  const [rows, setRows] = useState<Rows[]>([]);
+  const [totalCost, setTotalCost] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [orderTotal, setOrderTotal] = useState(0);
+  const [exports, setExports] = useState<ExportSales[]>([]);
 
   useEffect(() => {
     const rows: Rows[] = sales.map(
@@ -81,6 +85,25 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   useEffect(() => {
     setYears(reports.map((r) => Number(r.year)));
   }, [reports]);
+
+  useEffect(() => {
+    const data = rows
+      .map(({ item, sale }) => {
+        const data: ExportSales = {
+          invoiceId: item?.invoiceId || 0,
+          itemId: item?.id || 0,
+          date: changeDateFormat(
+            sale.date.toDate().toISOString().split("T")[0]
+          ),
+          unitCost: item ? Number(item.cost) : 0, // El signo + convierte un string a un número
+          price: Number(sale.price),
+          shipmentIncome: Number(sale.shipment.amount),
+          description: item?.description || "",
+        };
+        return data;
+      });
+    setExports(data);
+  }, [rows]);
 
   function handleRefoundSelected(itemId: number) {
     setRefoundSelected(itemId);
@@ -191,7 +214,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
           </label>
         </div>
         <DataFilter years={years} handleFilterPerDate={handleFilterPerDate} />
-        {/*         <Excel sales={itemsSold} /> */}
+        <Excel sales={exports} />
         <span className={styles.total}>Total items: {totalItems}</span>
         <span className={styles.total}>
           Total cost: ${Number(totalCost).toFixed(2)}

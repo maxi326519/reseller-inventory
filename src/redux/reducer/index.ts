@@ -8,6 +8,7 @@ import {
   EXPIRED_ITEMS,
   REFOUND_ITEMS,
   GET_ITEMS_EXPIRED,
+  RESTORE_ITEMS,
 } from "../actions/items";
 import {
   POST_INVOICE,
@@ -244,6 +245,18 @@ export const rootReducer = (
           sales: state.sales.sales.filter((e) => e.id !== action.payload),
         },
       };
+
+    case RESTORE_ITEMS:
+      const itemToRestore = state.expired.find(
+        (item) => item.id === action.payload
+      );
+
+      return {
+        ...state,
+        items: [...state.items, { ...itemToRestore, state: "In Stock" }],
+        expired: state.expired.filter((item) => item.id !== action.payload),
+      };
+
     default:
       return state;
   }

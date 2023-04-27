@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Item, RootState, YearReport } from "../../../../interfaces";
+import {
+  ExportExpired,
+  Item,
+  RootState,
+  YearReport,
+} from "../../../../interfaces";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
 
 import Table from "./Table/Table";
@@ -10,6 +15,8 @@ import swal from "sweetalert";
 import DateFilter from "./DateFilter/DateFilter";
 import { updateReportsItems } from "../../../../redux/actions/reports";
 import { getExpired, restoreItem } from "../../../../redux/actions/items";
+import Excel from "./Excel/Excel";
+import changeDateFormat from "../../../../functions/changeDateFormat";
 
 interface Props {
   typeReport: any;
@@ -22,14 +29,9 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
   const reports: YearReport[] = useSelector(
     (state: RootState) => state.reports
   );
-  const [itemsExpired, setItemsExpired] = useState<Item[]>([]);
+  const [exports, setExports] = useState<ExportExpired[]>();
   const [total, setTotal] = useState(0);
   const [years, setYears] = useState<number[]>([]);
-
-  useEffect(() => {
-    console.log(itemsExpired);
-    setItemsExpired(items);
-  }, [items]);
 
   useEffect(() => {
     setYears(reports.map((r) => Number(r.year)));
@@ -37,9 +39,25 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
 
   useEffect(() => {
     let total = 0;
-    itemsExpired.forEach((item) => (total += Number(item.cost)));
+    items.forEach((item) => (total += Number(item.cost)));
     setTotal(total);
-  }, [itemsExpired]);
+  }, [items]);
+
+  useEffect(() => {
+    const data = items.map((item) => {
+      const data: ExportExpired = {
+        id: item.id,
+        invoiceId: item.invoiceId,
+        date: item.expired
+          ? changeDateFormat(item.expired?.toDate().toISOString().split("T")[0])
+          : "",
+        unitCost: Number(item.cost),
+        description: item.description,
+      };
+      return data;
+    });
+    setExports(data);
+  }, [items]);
 
   function handleRestore(id: number) {
     swal({
@@ -53,9 +71,7 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
         dispatch<any>(restoreItem(id))
           .then(() => {
             dispatch(closeLoading());
-            dispatch<any>(
-              updateReportsItems([id], ["Sale", "Ebay Fees"], reports)
-            )
+            dispatch<any>(updateReportsItems([id], ["Expired"], reports))
               .then(() => {
                 dispatch(closeLoading());
                 swal("Restored", "Item restores successfully", "success");
@@ -110,11 +126,12 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
           </label>
         </div>
         <DateFilter years={years} handleFilterPerDate={handleFilterPerDate} />
+        <Excel expired={exports} />
         <span className={styles.total}>
           Total cost: ${Number(total).toFixed(2)}
         </span>
       </div>
-      <Table items={itemsExpired} handleRestore={handleRestore} />
+      <Table items={items} handleRestore={handleRestore} />
     </div>
   );
 }

@@ -146,6 +146,24 @@ export interface ExportMonthTaxes {
   otherCategories: OtherCategories[];
 }
 
+export interface ExportSales {
+  invoiceId: number;
+  itemId: number;
+  date: string;
+  unitCost: number;
+  price: number;
+  shipmentIncome: number;
+  description: string;
+}
+
+export interface ExportExpired {
+  id: number;
+  invoiceId: number;
+  date: string;
+  unitCost: number;
+  description: string;
+}
+
 export interface OtherCategories {
   category: string;
   total: number;

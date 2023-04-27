@@ -1,11 +1,13 @@
 import ReactExport from "react-export-excel";
 
+import style from "./Excel.module.css";
+import exportSvg from "../../../../../assets/svg/export.svg";
+
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 export default function Excel({ taxes }) {
-
   const totals = {
     sales: taxes.salesTotal,
     expenses: taxes.expensesTotal,
@@ -13,8 +15,15 @@ export default function Excel({ taxes }) {
   };
 
   return (
-    <ExcelFile element={<button className="btn btn-primary" filename="Taxes report">Exportar</button>}>
-{/*       <ExcelSheet data={[totals]} name="Totals">
+    <ExcelFile
+      element={
+        <button className={`btn btn-primary ${style.export}`}>
+          <img src={exportSvg} alt="export" />
+          <span>Export</span>
+        </button>
+      }
+    >
+      {/*       <ExcelSheet data={[totals]} name="Totals">
         <ExcelColumn label="Total sales" value="sales" />
         <ExcelColumn label="Total Expenses" value="expenses" />
         <ExcelColumn label="Total profit" value="profit" />

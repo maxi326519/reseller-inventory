@@ -1,0 +1,14 @@
+.export {
+  display: flex;
+  align-items: center;
+  height: 58px;
+}
+
+.export img {
+  width: 25px;
+  filter: invert(100%);
+}
+
+.export span {
+  margin-left: 10px;
+}

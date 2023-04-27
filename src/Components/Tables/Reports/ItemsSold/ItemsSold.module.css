@@ -1,19 +1,19 @@
-.itemsSold{
+.itemsSold {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
 
-.controls{
+.controls {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
 }
 
-.controls div{
+.controls div {
   margin-right: 10px;
 }
 
-.controls .total{
+.controls .total {
   margin-left: 10px;
 }

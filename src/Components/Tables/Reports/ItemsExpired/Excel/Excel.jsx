@@ -7,24 +7,25 @@ const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
-export default function Excel({ sales }) {
+export default function Excel({ expired }) {
   return (
     <ExcelFile
       element={
-        <button className={`btn btn-primary ${style.export}`}>
+        <button
+          className={`btn btn-primary ${style.export}`}
+          onClick={() => console.log("Data:", expired)}
+        >
           <img src={exportSvg} alt="export" />
           <span>Export</span>
         </button>
       }
-      filename="Items sold report"
+      filename="Items expired report"
     >
-      <ExcelSheet data={sales} name="Employees">
+      <ExcelSheet data={expired} name="Employees">
         <ExcelColumn label="Invoice ID" value="invoiceId" />
-        <ExcelColumn label="Item ID" value="itemId" />
+        <ExcelColumn label="Item ID" value="id" />
         <ExcelColumn label="Date" value="date" />
         <ExcelColumn label="Unit Cost" value="unitCost" />
-        <ExcelColumn label="Price" value="price" />
-        <ExcelColumn label="Shipment Income" value="shipmentIncome" />
         <ExcelColumn label="Description" value="description" />
       </ExcelSheet>
     </ExcelFile>

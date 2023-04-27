@@ -130,7 +130,7 @@ export default function Inventory() {
     if (itemSelected.length > 0) {
       swal({
         title: "Warning",
-        text: `You want to change the status of ${itemSelected.length} products to "Expired"`,
+        text: `Do you want to expire ${itemSelected.length} products?`,
         icon: "warning",
         buttons: { confirm: true, cancel: true },
       }).then((response) => {
@@ -144,7 +144,7 @@ export default function Inventory() {
               date: Timestamp.fromDate(new Date()),
               price: item.cost,
               category: "Expired",
-              description: "Expired item expense",
+              description: "Expired item",
               invoiceId: 0,
             };
           });

@@ -47,7 +47,7 @@ export default function AddBusinessExpense() {
     let total: number = 0;
     expenses.forEach((expense) => (total += Number(expense.price) * amount));
     setTotal(total);
-  }, [expenses]);
+  }, [expenses, amount]);
 
   function generateInvoiceId(date: string) {
     const toDay: string[] = date.split("/");
@@ -86,8 +86,6 @@ export default function AddBusinessExpense() {
             return acc + price;
           }, 0),
         };
-        console.log(newInvoice);
-        console.log(expenses);
         dispatch<any>(loading());
         dispatch<any>(postInvoice(newInvoice, file))
           .then(() => {
