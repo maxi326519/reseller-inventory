@@ -26,8 +26,8 @@ export default function Signin() {
   const dispatch = useDispatch();
   const [error, setError] = useState(initialError);
   const [user, setUser] = useState({
-    email: "maxi.32519@gmail.com",
-    password: "12345678",
+    email: "",
+    password: "",
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>): void {
