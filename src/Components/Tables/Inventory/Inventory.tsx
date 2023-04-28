@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Timestamp } from "firebase/firestore";
 import { closeLoading, loading } from "../../../redux/actions/loading";
-import { postExpenses } from "../../../redux/actions/expenses";
 import { updateReports } from "../../../redux/actions/reports";
 import { expiredItems, getStockItems } from "../../../redux/actions/items";
 import { RootState, Item, Sale } from "../../../interfaces";
@@ -12,6 +11,9 @@ import reload from "../../../assets/svg/reload.svg";
 
 import Table from "./Table/Table";
 import AddSale from "./AddSale/AddSale";
+
+import menuSvg from "../../../assets/svg/menu.svg";
+import closeSvg from "../../../assets/svg/close.svg";
 
 import style from "./Inventory.module.css";
 import swal from "sweetalert";
@@ -73,21 +75,24 @@ export default function Inventory() {
   const [shipment, setShiping] = useState<ShipingExpenses[]>([]);
   const [total, setTotal] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const [active, setActive] = useState<boolean>(false);
 
   useEffect(() => {
     let total = 0;
     let totalItems = 0;
     setRows(
-      items.filter((i) => {
-        if (i.state === "Sold") return false;
-        if (i.state === "Expired") return false;
-        if (search === "") return true;
-        if (i.id.toString().toLowerCase().includes(search.toLowerCase()))
-          return true;
-        if (i.description.toLowerCase().includes(search.toLowerCase()))
-          return true;
-        return false;
-      })
+      items
+        .filter((i) => {
+          if (i.state === "Sold") return false;
+          if (i.state === "Expired") return false;
+          if (search === "") return true;
+          if (i.id.toString().toLowerCase().includes(search.toLowerCase()))
+            return true;
+          if (i.description.toLowerCase().includes(search.toLowerCase()))
+            return true;
+          return false;
+        })
+        .sort((a, b) => b.date.toMillis()! - a.date.toMillis())
     );
     items.forEach((i) =>
       i.state === "In Stock" ? (total += Number(i.cost)) : null
@@ -96,6 +101,10 @@ export default function Inventory() {
     setTotal(Number(total.toFixed(2)));
     setTotalItems(Number(totalItems.toFixed(2)));
   }, [items, search]);
+
+  function handleActive() {
+    setActive(!active);
+  }
 
   function handleClose() {
     setClose(!close);
@@ -282,9 +291,17 @@ export default function Inventory() {
       ) : null}
       <div className={style.head}>
         <Link className="btn btn-primary" to="/">
-          {"< Menu"}
+          <span>{"< "}</span>
+          <span>{"Menu"}</span>
         </Link>
         <h1>Inventory</h1>
+        <div className={style.navBar} onClick={handleActive}>
+          {active ? (
+            <img src={closeSvg} alt="menu" />
+          ) : (
+            <img src={menuSvg} alt="menu" />
+          )}
+        </div>
       </div>
       <div className={style.table}>
         <div className={style.searchBar}>
@@ -295,31 +312,35 @@ export default function Inventory() {
             placeholder="Search"
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button
-            className={`btn btn-primary ${style.reload}`}
-            type="button"
-            onClick={handleReload}
-          >
-            <img src={reload} alt="reload" />
-          </button>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={handleClose}
-            disabled={!(itemSelected.length > 0)}
-          >
-            Sale
-          </button>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={handleExpired}
-            disabled={!(itemSelected.length > 0)}
-          >
-            Expired
-          </button>
-          <span className={style.totalStock}>Total Items: {totalItems}</span>
-          <span className={style.totalStock}>Stock price: ${total}</span>
+          <div>
+            <button
+              className={`btn btn-primary ${style.reload}`}
+              type="button"
+              onClick={handleReload}
+            >
+              <img src={reload} alt="reload" />
+            </button>
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={handleClose}
+              disabled={!(itemSelected.length > 0)}
+            >
+              Sale
+            </button>
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={handleExpired}
+              disabled={!(itemSelected.length > 0)}
+            >
+              Expired
+            </button>
+          </div>
+          <div>
+            <span className={style.totalStock}>Total Items: {totalItems}</span>
+            <span className={style.totalStock}>Stock price: ${total}</span>
+          </div>
         </div>
         <Table
           items={rows}

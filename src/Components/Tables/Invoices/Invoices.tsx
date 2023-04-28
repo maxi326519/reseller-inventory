@@ -17,8 +17,10 @@ import swal from "sweetalert";
 
 import Table from "./Table/Table";
 import DateFilter from "./DateFilter/DateFilter";
-import reload from "../../../assets/svg/reload.svg";
 import Details from "./Details/Details";
+
+import menuSvg from "../../../assets/svg/menu.svg";
+import closeSvg from "../../../assets/svg/close.svg";
 
 import styles from "../Tables.module.css";
 import style from "./Invoices.module.css";
@@ -44,26 +46,29 @@ export default function Invoices() {
   const [invoiceType, setInvoiceType] = useState<InvoiceType>(
     InvoiceType.Purchase
   );
+  const [active, setActive] = useState<boolean>(false);
 
   useEffect(() => {
     invoices.forEach((invoice): invoice is Invoice => "form" in invoice);
     setRows(
-      invoices.filter((i) => {
-        if (
-          dayFilter !== "" &&
-          i.date.toDate().toISOString().split("T")[0] !== dayFilter
-        )
+      invoices
+        .filter((i) => {
+          if (
+            dayFilter !== "" &&
+            i.date.toDate().toISOString().split("T")[0] !== dayFilter
+          )
+            return false;
+          if (i.type !== invoiceType) return false;
+          if (search === "") return true;
+          if (i.id.toString().toLowerCase().includes(search)) return true;
+          if (i.type !== InvoiceType.Purchase) {
+            const invoice = i as Invoice;
+            if (invoice.form.toLowerCase().includes(search)) return true;
+            if (invoice.source.toLowerCase().includes(search)) return true;
+          }
           return false;
-        if (i.type !== invoiceType) return false;
-        if (search === "") return true;
-        if (i.id.toString().toLowerCase().includes(search)) return true;
-        if (i.type !== InvoiceType.Purchase) {
-          const invoice = i as Invoice;
-          if (invoice.form.toLowerCase().includes(search)) return true;
-          if (invoice.source.toLowerCase().includes(search)) return true;
-        }
-        return false;
-      })
+        })
+        .sort((a, b) => b.date.toMillis()! - a.date.toMillis())
     );
   }, [search, invoices, dayFilter, invoiceType]);
 
@@ -81,6 +86,10 @@ export default function Invoices() {
     } else if (type === "1") {
       setInvoiceType(InvoiceType.Expenses);
     }
+  }
+
+  function handleActive() {
+    setActive(!active);
   }
 
   function handleDetails(invoiceID: number) {
@@ -172,34 +181,44 @@ export default function Invoices() {
       ) : null}
       <div className={styles.head}>
         <Link className="btn btn-primary" to="/">
-          {"< Menu"}
+          <span>{"< "}</span>
+          <span>{"Menu"}</span>
         </Link>
         <h1>Invoices</h1>
+        <div className={style.navBar} onClick={handleActive}>
+          {active ? (
+            <img src={closeSvg} alt="menu" />
+          ) : (
+            <img src={menuSvg} alt="menu" />
+          )}
+        </div>
       </div>
       <div className={style.container}>
         <div className={style.searchBar}>
-          <input
-            className="form-control"
-            id="search"
-            type="search"
-            name="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search invoice..."
-          />
-          <div className={`form-floating ${style.typeFilter}`}>
-            <select
-              id="type"
-              name="type"
-              className="form-select "
-              onChange={handleSelect}
-            >
-              <option value={InvoiceType.Purchase}>Purchase</option>
-              <option value={InvoiceType.Expenses}>Expenses</option>
-            </select>
-            <label htmlFor="type" className="form-label">
-              Type
-            </label>
+          <div className={style.inputs}>
+            <input
+              className="form-control"
+              id="search"
+              type="search"
+              name="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search invoice..."
+            />
+            <div className={`form-floating ${style.typeFilter}`}>
+              <select
+                id="type"
+                name="type"
+                className="form-select "
+                onChange={handleSelect}
+              >
+                <option value={InvoiceType.Purchase}>Purchase</option>
+                <option value={InvoiceType.Expenses}>Expenses</option>
+              </select>
+              <label htmlFor="type" className="form-label">
+                Type
+              </label>
+            </div>
           </div>
           <DateFilter years={getYears()} handleFilterDate={handleFilterDate} />
           <span className={style.total}>

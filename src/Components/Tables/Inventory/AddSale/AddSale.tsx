@@ -112,34 +112,20 @@ export default function AddSale({
     if (handleValidations()) {
       dispatch(loading());
       const newData = convertData(sales, other, shipment);
-      dispatch<any>(postSales(newData.sales))
+      dispatch<any>(postSales(newData.sales, newData.expenses))
         .then(() => {
-          dispatch<any>(postExpenses(newData.expenses))
+          dispatch<any>(updateReports(newData.expenses, reports, newData.sales))
             .then(() => {
-              dispatch<any>(
-                updateReports(newData.expenses, reports, newData.sales)
-              )
-                .then(() => {
-                  dispatch(closeLoading());
-                  handleClose();
-                  swal("Save", "Items sold successfully", "success");
-                  setItem([]);
-                })
-                .catch((err: any) => {
-                  dispatch(closeLoading());
-                  swal(
-                    "Error",
-                    "Error to update reports, try again later",
-                    "error"
-                  );
-                  console.log(err);
-                });
+              dispatch(closeLoading());
+              handleClose();
+              swal("Save", "Items sold successfully", "success");
+              setItem([]);
             })
             .catch((err: any) => {
               dispatch(closeLoading());
               swal(
                 "Error",
-                "Error to create expenses, try again later",
+                "Error to update reports, try again later",
                 "error"
               );
               console.log(err);

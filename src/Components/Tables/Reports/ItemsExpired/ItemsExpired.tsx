@@ -32,6 +32,13 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
   const [exports, setExports] = useState<ExportExpired[]>();
   const [total, setTotal] = useState(0);
   const [years, setYears] = useState<number[]>([]);
+  const [rows, setRows] = useState<Item[]>([]);
+
+  useEffect(() => {
+    setRows(
+      items.sort((a, b) => b.expired!.toMillis()! - a.expired!.toMillis())
+    );
+  }, [items]);
 
   useEffect(() => {
     setYears(reports.map((r) => Number(r.year)));
@@ -39,12 +46,12 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
 
   useEffect(() => {
     let total = 0;
-    items.forEach((item) => (total += Number(item.cost)));
+    rows.forEach((item) => (total += Number(item.cost)));
     setTotal(total);
-  }, [items]);
+  }, [rows]);
 
   useEffect(() => {
-    const data = items.map((item) => {
+    const data = rows.map((item) => {
       const data: ExportExpired = {
         id: item.id,
         invoiceId: item.invoiceId,
@@ -57,7 +64,7 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
       return data;
     });
     setExports(data);
-  }, [items]);
+  }, [rows]);
 
   function handleRestore(id: number) {
     swal({
@@ -131,7 +138,7 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
           Total cost: ${Number(total).toFixed(2)}
         </span>
       </div>
-      <Table items={items} handleRestore={handleRestore} />
+      <Table items={rows} handleRestore={handleRestore} />
     </div>
   );
 }

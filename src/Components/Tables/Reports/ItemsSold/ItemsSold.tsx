@@ -10,7 +10,7 @@ import {
   YearReport,
 } from "../../../../interfaces";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
-import { refoundItems } from "../../../../redux/actions/items";
+import { deleteSoldItem, refoundItems } from "../../../../redux/actions/items";
 import { postExpenses } from "../../../../redux/actions/expenses";
 import {
   getSoldReportData,
@@ -79,29 +79,30 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     setTotalItems(rows.length);
     setTotalCost(totalCost);
     setOrderTotal(orderTotal);
-    setRows(rows.filter((row) => row.item));
+    setRows(
+      rows
+        .filter((row) => row.item)
+        .sort((a, b) => b.sale.date.toMillis() - a.sale.date.toMillis())
+    );
   }, [items, sales]);
 
   useEffect(() => {
-    setYears(reports.map((r) => Number(r.year)));
+    setYears(reports.map((r) => Number(r.year))); 
   }, [reports]);
 
   useEffect(() => {
-    const data = rows
-      .map(({ item, sale }) => {
-        const data: ExportSales = {
-          invoiceId: item?.invoiceId || 0,
-          itemId: item?.id || 0,
-          date: changeDateFormat(
-            sale.date.toDate().toISOString().split("T")[0]
-          ),
-          unitCost: item ? Number(item.cost) : 0, // El signo + convierte un string a un número
-          price: Number(sale.price),
-          shipmentIncome: Number(sale.shipment.amount),
-          description: item?.description || "",
-        };
-        return data;
-      });
+    const data = rows.map(({ item, sale }) => {
+      const data: ExportSales = {
+        invoiceId: item?.invoiceId || 0,
+        itemId: item?.id || 0,
+        date: changeDateFormat(sale.date.toDate().toISOString().split("T")[0]),
+        unitCost: item ? Number(item.cost) : 0, // El signo + convierte un string a un número
+        price: Number(sale.price),
+        shipmentIncome: Number(sale.shipment.amount),
+        description: item?.description || "",
+      };
+      return data;
+    });
     setExports(data);
   }, [rows]);
 
@@ -163,6 +164,48 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         dispatch(closeLoading());
         console.log(err);
       });
+  }
+
+  function handleDeleteSold(itemId: number) {
+    swal({
+      title: "Atention!",
+      text: "Are you sure are you want to delete this sale? \n This action is irreversible",
+      icon: "warning",
+      buttons: {
+        Accept: true,
+        Cancel: true,
+      },
+    }).then((response) => {
+      if (response === "Accept") {
+        dispatch(loading());
+        dispatch<any>(deleteSoldItem(itemId))
+          .then(() => {
+            dispatch<any>(updateReportsItems([itemId], null, reports))
+              .then(() => {
+                dispatch(closeLoading());
+                swal("Deleted", "Sold deleted successfully", "success");
+              })
+              .catch((err: any) => {
+                swal(
+                  "Error",
+                  "Error to update reports, try again later",
+                  "error"
+                );
+                dispatch(closeLoading());
+                console.log(err);
+              });
+          })
+          .catch((err: any) => {
+            swal(
+              "Error",
+              "Error to delete this sale, try again later",
+              "error"
+            );
+            dispatch(closeLoading());
+            console.log(err);
+          });
+      }
+    });
   }
 
   function handleFilterPerDate(dateFilter: any) {
@@ -227,6 +270,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         rows={rows}
         handleClose={handleClose}
         handleRefoundSelected={handleRefoundSelected}
+        handleDeleteSold={handleDeleteSold}
         handleShowExpensesDetails={handleShowExpensesDetails}
       />
     </div>

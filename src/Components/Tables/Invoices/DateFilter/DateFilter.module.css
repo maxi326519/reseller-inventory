@@ -1,10 +1,10 @@
-.dateFilter{
+.dateFilter {
   display: flex;
   margin-left: 10px;
   border-radius: 10px;
 }
 
-.dateFilter .date{
+.dateFilter .date {
   margin-right: 5px;
   margin-bottom: 0px !important;
 }

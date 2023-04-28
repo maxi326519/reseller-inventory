@@ -16,9 +16,23 @@
   overflow-y: scroll;
 }
 
+.data::-webkit-scrollbar {
+  width: 15px;
+  background: #0004;
+}
+
+.data::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.data::-webkit-scrollbar-thumb {
+  background-color: grey; /* color of the scroll thumb */
+  border-radius: 5px; /* roundness of the scroll thumb */
+}
+
 .firstRow {
   background: gray;
-  padding-right: 17px;
+  padding-right: 15px;
 }
 
 .rows {

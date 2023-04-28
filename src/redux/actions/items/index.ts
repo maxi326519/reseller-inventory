@@ -22,6 +22,7 @@ export const GET_ITEMS_EXPIRED = "GET_ITEMS_EXPIRED";
 export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
 export const REFOUND_ITEMS = "REFOUND_ITEMS";
 export const RESTORE_ITEMS = "RESTORE_ITEMS";
+export const DELETE_SOLD_ITEMS = " DELETE_SOLD_ITEMS";
 
 export function postItems(
   items: Item[]
@@ -202,6 +203,61 @@ export function restoreItem(
 
       dispatch({
         type: RESTORE_ITEMS,
+        payload: itemID,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function deleteSoldItem(
+  itemID: number
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
+
+      const batch = writeBatch(db);
+
+      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
+      const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
+      const expensesRef = collection(
+        db,
+        "Users",
+        auth.currentUser.uid,
+        "Expenses"
+      );
+
+      // Update item status
+      batch.update(doc(itemsRef, itemID.toString()), {
+        state: "In Stock",
+      });
+
+      // Delete items sales
+      const salesQuery = await getDocs(
+        query(salesRef, where("productId", "==", itemID))
+      );
+      if (!salesQuery.empty) {
+        salesQuery.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+      }
+
+      // Delete items expenses
+      const expensesQuery = await getDocs(
+        query(expensesRef, where("id", "==", itemID))
+      );
+      if (!expensesQuery.empty) {
+        expensesQuery.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+      }
+
+      await batch.commit();
+
+      dispatch({
+        type: DELETE_SOLD_ITEMS,
         payload: itemID,
       });
     } catch (e: any) {

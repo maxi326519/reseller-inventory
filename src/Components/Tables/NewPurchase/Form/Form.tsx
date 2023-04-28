@@ -44,11 +44,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     image: null,
   });
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    console.log("asdasdasd");
-
+  function handleSubmit() {
     if (handleVerification()) {
       let allItems: Item[] = [];
 
@@ -227,7 +223,7 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
         </div>
       </div>
       <hr />
-      <form onSubmit={handleSubmit}>
+      <div>
         <h4>Items</h4>
 
         <div className="form-floating mb-3">
@@ -276,8 +272,8 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
           </label>
           {!error.amount ? null : <small>{error.amount}</small>}
         </div>
-      </form>
-      <button className="btn btn-primary" type="submit">
+      </div>
+      <button className="btn btn-primary" type="button" onClick={handleSubmit}>
         Add Item
       </button>
     </div>

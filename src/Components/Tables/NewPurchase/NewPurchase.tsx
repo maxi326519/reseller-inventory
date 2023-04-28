@@ -159,7 +159,8 @@ export default function NewPurchase() {
       ) : null}
       <div className={styles.head}>
         <Link className="btn btn-primary" to="/">
-          {"< Menu"}
+          <span>{"< "}</span>
+          <span>{"Menu"}</span>
         </Link>
         <h1>New purchase</h1>
         <div className={style.navBar} onClick={handleActive}>
@@ -186,7 +187,7 @@ export default function NewPurchase() {
               onClick={handleSubmit}
               disabled={items.length <= 0}
             >
-              Add Invoice
+              Add <span>Invoice</span>
             </button>
             <button
               className="btn btn-primary"
@@ -194,7 +195,7 @@ export default function NewPurchase() {
               onClick={handleReset}
               disabled={items.length <= 0}
             >
-              Reset Invoice
+              Reset <span>Invoice</span>
             </button>
             <button
               className="btn btn-primary"

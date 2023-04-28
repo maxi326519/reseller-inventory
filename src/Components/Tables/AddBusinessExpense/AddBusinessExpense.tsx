@@ -156,7 +156,8 @@ export default function AddBusinessExpense() {
       {close ? <Categories handleClose={handleClose} /> : null}
       <div className={styles.head}>
         <Link className="btn btn-primary" to="/">
-          {"< Menu"}
+          <span>{"< "}</span>
+          <span>{"Menu"}</span>
         </Link>
         <h1>Add Business Expense</h1>
       </div>

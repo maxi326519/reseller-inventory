@@ -9,6 +9,7 @@ import {
   REFOUND_ITEMS,
   GET_ITEMS_EXPIRED,
   RESTORE_ITEMS,
+  DELETE_SOLD_ITEMS,
 } from "../actions/items";
 import {
   POST_INVOICE,
@@ -89,11 +90,13 @@ export const rootReducer = (
         },
       };
     case POST_SALE:
+      const salesData = action.payload.sales;
+      const expensesData = action.payload.expenses;
       let stockItems: Item[] = [];
       let soldItems: Item[] = [];
 
       state.items.forEach((item) => {
-        if (action.payload.some((sale: Sale) => sale.productId === item.id)) {
+        if (salesData.some((sale: Sale) => sale.productId === item.id)) {
           soldItems.push({
             ...item,
             state: "Sold",
@@ -107,9 +110,9 @@ export const rootReducer = (
         ...state,
         items: stockItems,
         sales: {
-          items: soldItems,
-          sales: [...state.sales.sales, ...action.payload],
-          expenses: state.sales.expenses,
+          items: [...state.sales.items, ...soldItems],
+          sales: [...state.sales.sales, ...salesData],
+          expenses: [...state.sales.expenses, ...expensesData],
         },
       };
     case POST_EXPENSES:
@@ -214,6 +217,27 @@ export const rootReducer = (
       return {
         ...state,
         reports: action.payload,
+      };
+
+    case DELETE_SOLD_ITEMS:
+      return {
+        ...state,
+        items: [
+          ...state.items,
+          {
+            ...state.sales.items.find((item) => item.id === action.payload),
+            state: "In Stock",
+          },
+        ],
+        sales: {
+          items: state.sales.items.filter((item) => item.id !== action.payload),
+          sales: state.sales.sales.filter(
+            (sale) => sale.productId !== action.payload
+          ),
+          expenses: state.sales.expenses.filter(
+            (expense) => expense.id !== action.payload
+          ),
+        },
       };
 
     // OTHER

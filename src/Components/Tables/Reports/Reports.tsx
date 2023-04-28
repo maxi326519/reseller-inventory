@@ -19,14 +19,21 @@ export default function Reports() {
     <div className={styles.background}>
       <div className={styles.head}>
         <Link className="btn btn-primary" to="/">
-          {"< Menu"}
+          <span>{"< "}</span>
+          <span>{"Menu"}</span>
         </Link>
         <h1>Reports</h1>
       </div>
       <div className={style.container}>
-        {typeReport === "1" ? <ItemsSold typeReport={typeReport} handleChange={handleChange} /> : null}
-        {typeReport === "2" ? <ItemsExpired typeReport={typeReport} handleChange={handleChange} /> : null}
-        {typeReport === "3" ? <Taxes typeReport={typeReport} handleChange={handleChange} /> : null}
+        {typeReport === "1" ? (
+          <ItemsSold typeReport={typeReport} handleChange={handleChange} />
+        ) : null}
+        {typeReport === "2" ? (
+          <ItemsExpired typeReport={typeReport} handleChange={handleChange} />
+        ) : null}
+        {typeReport === "3" ? (
+          <Taxes typeReport={typeReport} handleChange={handleChange} />
+        ) : null}
       </div>
     </div>
   );

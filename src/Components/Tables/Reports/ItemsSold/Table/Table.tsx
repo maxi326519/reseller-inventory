@@ -5,14 +5,15 @@ import Rows from "./Rows/Rows";
 import styles from "./Table.module.css";
 
 interface Rows {
-  item: Item | undefined,
-  sale: Sale,
+  item: Item | undefined;
+  sale: Sale;
 }
 
 interface Props {
   rows: Rows[];
   handleClose: () => void;
   handleRefoundSelected: (id: number) => void;
+  handleDeleteSold: (id: number) => void;
   handleShowExpensesDetails: (productId: number) => void;
 }
 
@@ -20,9 +21,9 @@ export default function Table({
   rows,
   handleClose,
   handleRefoundSelected,
-  handleShowExpensesDetails
+  handleDeleteSold,
+  handleShowExpensesDetails,
 }: Props) {
-
   return (
     <div className={styles.table}>
       <div className={`${styles.firstRow} ${styles.rows}`}>
@@ -44,6 +45,7 @@ export default function Table({
               sale={row.sale}
               handleClose={handleClose}
               handleRefoundSelected={handleRefoundSelected}
+              handleDeleteSold={handleDeleteSold}
               handleShowExpensesDetails={handleShowExpensesDetails}
             />
           );

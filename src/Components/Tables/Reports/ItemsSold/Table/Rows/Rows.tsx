@@ -7,6 +7,7 @@ interface Props {
   sale: Sale;
   handleClose: () => void;
   handleRefoundSelected: (id: number) => void;
+  handleDeleteSold: (id: number) => void;
   handleShowExpensesDetails: (productId: number) => void;
 }
 
@@ -15,6 +16,7 @@ export default function Rows({
   sale,
   handleClose,
   handleRefoundSelected,
+  handleDeleteSold,
   handleShowExpensesDetails,
 }: Props) {
   function handleClick() {
@@ -46,6 +48,13 @@ export default function Rows({
         onClick={() => handleShowExpensesDetails(sale.productId)}
       >
         Expenses
+      </button>
+      <button
+        className="btn btn-danger"
+        type="button"
+        onClick={() => handleDeleteSold(sale.productId)}
+      >
+        -
       </button>
     </div>
   );
