@@ -14,6 +14,9 @@ import InvoiceImage from "./InvoiceImage/InvoiceImage";
 import AddSource from "./AddSource/AddSource";
 import DownloadExcel from "./DownloadExcel/DownloadExcel";
 
+import menu from "../../../assets/svg/menu.svg";
+import close from "../../../assets/svg/close.svg";
+
 import style from "./NewPurchase.module.css";
 import styles from "../Tables.module.css";
 interface ExportData {
@@ -40,6 +43,7 @@ export default function NewPurchase() {
   const [source, setSource] = useState(false);
   const [excel, setExcel] = useState(false);
   const [exportData, setExportData] = useState<ExportData[]>([]);
+  const [active, setActive] = useState<boolean>(false);
 
   function generateInvoiceId(date: string) {
     const toDay: string[] = date.split("/");
@@ -61,6 +65,10 @@ export default function NewPurchase() {
       total: total,
     });
   }, [items, setInvoice]);
+
+  function handleActive() {
+    setActive(!active);
+  }
 
   function handleRemove(id: number) {
     setItems(items.filter((item) => item.id !== id));
@@ -154,8 +162,15 @@ export default function NewPurchase() {
           {"< Menu"}
         </Link>
         <h1>New purchase</h1>
+        <div className={style.navBar} onClick={handleActive}>
+          {active ? (
+            <img src={active ? close : menu} alt="menu" />
+          ) : (
+            <img src={active ? close : menu} alt="menu" />
+          )}
+        </div>
       </div>
-      <div className={styles.container}>
+      <div className={style.container}>
         <Form
           invoice={invoice}
           setInvoice={setInvoice}

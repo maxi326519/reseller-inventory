@@ -1,13 +1,13 @@
-.sesion{
+.sesion {
   flex-grow: 1;
-  displaY: flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   background-color: #102040;
 }
 
-.sesion form{
+.sesion form {
   display: flex;
   flex-direction: column;
   padding: 30px;
@@ -18,14 +18,23 @@
   background-color: white;
 }
 
-.sesion form h2{
+.sesion form h2 {
   margin-bottom: 30px;
 }
 
-.sesion form p{
+.sesion form p {
   margin-top: 30px;
 }
 
-.sesion small{
+.sesion small {
   color: red;
+}
+
+@media screen and (max-width: 600px) {
+  .sesion form {
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
 }

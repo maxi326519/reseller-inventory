@@ -47,6 +47,8 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    console.log("asdasdasd");
+
     if (handleVerification()) {
       let allItems: Item[] = [];
 
@@ -73,7 +75,10 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
 
   function handleInvoice(event: React.ChangeEvent<HTMLInputElement>): void {
     if (event.target.name === "date") {
-      setInvoice({ ...invoice, date: Timestamp.fromDate(new Date(event.target.value)) });
+      setInvoice({
+        ...invoice,
+        date: Timestamp.fromDate(new Date(event.target.value)),
+      });
     } else {
       setInvoice({ ...invoice, [event.target.name]: event.target.value });
       setError({ ...error, [event.target.name]: null });
@@ -228,8 +233,9 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
         <div className="form-floating mb-3">
           <input
             id="description"
-            className={`form-control ${error.description ? "is-invalid" : null
-              }`}
+            className={`form-control ${
+              error.description ? "is-invalid" : null
+            }`}
             name="description"
             type="text"
             value={newItem.description}
@@ -270,11 +276,10 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
           </label>
           {!error.amount ? null : <small>{error.amount}</small>}
         </div>
-
-        <button className="btn btn-primary" type="submit">
-          Add Item
-        </button>
       </form>
+      <button className="btn btn-primary" type="submit">
+        Add Item
+      </button>
     </div>
   );
 }
