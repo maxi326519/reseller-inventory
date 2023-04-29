@@ -63,7 +63,6 @@ const initialErrors: Errors = {
 interface Props {
   handleClose: () => void;
   itemSelected: number[];
-  setItem: (items: number[]) => void;
   handleSelected: (id: number, cost: null) => void;
   sales: Sale[];
   setSales: (sales: Sale[]) => void;
@@ -73,18 +72,19 @@ interface Props {
     event: React.ChangeEvent<HTMLInputElement>,
     id: number | undefined
   ) => void;
+  resetData: () => void;
 }
 
 export default function AddSale({
   handleClose,
   itemSelected,
-  setItem,
   handleSelected,
   sales,
   setSales,
   other,
   shipment,
   handleExpense,
+  resetData
 }: Props) {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.items);
@@ -119,7 +119,7 @@ export default function AddSale({
               dispatch(closeLoading());
               handleClose();
               swal("Save", "Items sold successfully", "success");
-              setItem([]);
+              resetData();
             })
             .catch((err: any) => {
               dispatch(closeLoading());

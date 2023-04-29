@@ -67,15 +67,17 @@ export default function Inventory() {
   const items = useSelector((state: RootState) => state.items);
   const reports = useSelector((state: RootState) => state.reports);
   const [rows, setRows] = useState<Item[]>([]);
-  const [close, setClose] = useState<boolean>(false);
-  const [itemSelected, setItem] = useState<number[]>([]);
-  const [sales, setSales] = useState<Sale[]>([]);
   const [search, setSearch] = useState<string>("");
+  const [totalItems, setTotalItems] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [close, setClose] = useState<boolean>(false);
+  const [active, setActive] = useState<boolean>(false);
+  
+  // Sale data
+  const [itemSelected, setItemSelected] = useState<number[]>([]);
+  const [sales, setSales] = useState<Sale[]>([]);
   const [other, setOther] = useState<OtherExpenses[]>([]);
   const [shipment, setShiping] = useState<ShipingExpenses[]>([]);
-  const [total, setTotal] = useState(0);
-  const [totalItems, setTotalItems] = useState(0);
-  const [active, setActive] = useState<boolean>(false);
 
   useEffect(() => {
     let total = 0;
@@ -108,6 +110,13 @@ export default function Inventory() {
 
   function handleClose() {
     setClose(!close);
+  }
+
+  function resetData(){
+    setItemSelected([]);
+    setOther([]);
+    setShiping([]);
+    setSales([]);
   }
 
   function handleReload() {
@@ -161,10 +170,7 @@ export default function Inventory() {
           dispatch<any>(expiredItems(itemSelected, newExpenses))
             .then(() => {
               dispatch<any>(updateReports(newExpenses, reports, null));
-              setItem([]);
-              setOther([]);
-              setShiping([]);
-              setSales([]);
+              resetData();
               dispatch(closeLoading());
             })
             .catch((e: any) => {
@@ -174,7 +180,7 @@ export default function Inventory() {
                 "error"
               );
               console.log(e);
-              setItem([]);
+              setItemSelected([]);
             });
         }
       });
@@ -183,12 +189,12 @@ export default function Inventory() {
 
   function handleSelected(id: number, cost: number | null) {
     if (itemSelected.some((s) => s === id)) {
-      setItem(itemSelected.filter((s) => s !== id));
+      setItemSelected(itemSelected.filter((s) => s !== id));
       setSales(sales.filter((s) => s.productId !== id));
       setOther(other.filter((o) => o.saleId !== id));
       setShiping(shipment.filter((s) => s.saleId !== id));
     } else if (cost !== null) {
-      setItem([...itemSelected, id]);
+      setItemSelected([...itemSelected, id]);
       setOther([...other, { ...initialOtherExpenses, saleId: id }]);
       setShiping([...shipment, { ...initialShipingExpenses, saleId: id }]);
       setSales([
@@ -280,13 +286,13 @@ export default function Inventory() {
         <AddSale
           handleClose={handleClose}
           itemSelected={itemSelected}
-          setItem={setItem}
           handleSelected={handleSelected}
           sales={sales}
           setSales={setSales}
           other={other}
           shipment={shipment}
           handleExpense={handleExpense}
+          resetData={resetData}
         />
       ) : null}
       <div className={style.head}>
