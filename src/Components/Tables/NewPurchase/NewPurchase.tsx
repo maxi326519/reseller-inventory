@@ -26,7 +26,7 @@ interface ExportData {
 
 export default function NewPurchase() {
   const initialState: Invoice = {
-    id: generateInvoiceId(new Date().toLocaleDateString()),
+    id: 0,
     type: InvoiceType.Purchase,
     date: Timestamp.fromDate(new Date()),
     items: [],
@@ -86,13 +86,17 @@ export default function NewPurchase() {
         dangerMode: true,
       }).then((response) => {
         if (response) {
+          const newInvoice = {
+            ...invoice,
+            id: generateInvoiceId(new Date().toLocaleDateString())
+          }
           dispatch(loading());
-          dispatch<any>(postInvoice(invoice, file))
+          dispatch<any>(postInvoice(newInvoice, file))
             .then(() => {
               dispatch<any>(
                 postItems(
                   items.map((item) => {
-                    return { ...item, date: invoice.date };
+                    return { ...item, date: newInvoice.date, invoiceId: newInvoice.id };
                   })
                 )
               ).then(() => {
