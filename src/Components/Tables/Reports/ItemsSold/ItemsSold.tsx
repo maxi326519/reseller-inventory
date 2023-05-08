@@ -58,6 +58,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   const [totalCost, setTotalCost] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [orderTotal, setOrderTotal] = useState(0);
+  const [shipmentTotal, setShipmentTotal] = useState(0);
   const [exports, setExports] = useState<ExportSales[]>([]);
 
   useEffect(() => {
@@ -70,15 +71,18 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
 
     let totalCost = 0;
     let orderTotal = 0;
+    let shipmentTotal = 0;
 
     rows.forEach((row) => {
       totalCost += Number(row.sale.cost);
       orderTotal += Number(row.sale.price);
+      shipmentTotal += Number(row.sale.shipment.amount);
     });
 
     setTotalItems(rows.length);
     setTotalCost(totalCost);
     setOrderTotal(orderTotal);
+    setShipmentTotal(shipmentTotal);
     setRows(
       rows
         .filter((row) => row.item)
@@ -260,10 +264,13 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         <Excel sales={exports} />
         <span className={styles.total}>Total items: {totalItems}</span>
         <span className={styles.total}>
-          Total cost: ${Number(totalCost).toFixed(2)}
+          Total inventory cost: ${Number(totalCost).toFixed(2)}
         </span>
         <span className={styles.total}>
-          Order total: ${Number(orderTotal).toFixed(2)}
+          Total order income: ${Number(orderTotal).toFixed(2)}
+        </span>
+        <span className={styles.total}>
+          Shipment income: ${Number(shipmentTotal).toFixed(2)}
         </span>
       </div>
       <Table

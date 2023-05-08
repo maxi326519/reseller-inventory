@@ -54,12 +54,15 @@ export default function Details({
             x
           </button>
         </div>
+        <span>Items: {itemsList.length}</span>
         <div className={styles.data}>
           <div className={styles.list}>
             {itemsList.map((item, i) =>
-              invoiceType === InvoiceType.Purchase
-                ? <PurchaseData key={i} item={(item as Item)} />
-                : <ExpenseData key={i} item={(item as Expense)} />
+              invoiceType === InvoiceType.Purchase ? (
+                <PurchaseData key={i} item={item as Item} />
+              ) : (
+                <ExpenseData key={i} item={item as Expense} />
+              )
             )}
           </div>
           {image ? (

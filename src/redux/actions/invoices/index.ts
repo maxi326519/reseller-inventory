@@ -16,7 +16,6 @@ import {
   writeBatch,
   where,
   query,
-  getDoc,
   Timestamp,
 } from "firebase/firestore";
 import { Invoice, RootState, InvoiceExpenses } from "../../../interfaces";

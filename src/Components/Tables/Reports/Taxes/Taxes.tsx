@@ -22,17 +22,15 @@ interface Props {
   handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-export default function Taxes({
-  typeReport,
-  handleChange,
-}: Props) {
+export default function Taxes({ typeReport, handleChange }: Props) {
   const reports = useSelector((state: RootState) => state.reports);
   const [taxesData, setTaxesData] = useState<YearTaxesData[] | null>(null); // YearTaxesData list
   const [taxesYear, setTaxesYear] = useState<number[]>([]); // Taxes year list
   const [TaxesYearIndex, setTaxesYearIndex] = useState<number | null>(null); // Selected YearTaxesData Index
   const [excelData, setExcelData] = useState<any>();
   const [otherCategories, setOtherCategories] = useState<OtherCategories[]>([]);
-  const [otherCategoriesDetails, setOtherCategoriesDetails] = useState<boolean>(false);
+  const [otherCategoriesDetails, setOtherCategoriesDetails] =
+    useState<boolean>(false);
   const [totals, setTotals] = useState({
     Sales: 0,
     Expenses: 0,
@@ -77,7 +75,7 @@ export default function Taxes({
         Sales: sales,
         Expenses: expenses,
         Profit: Number(sales) - Number(expenses),
-      })
+      });
     }
   }, [taxesData, TaxesYearIndex]);
 
@@ -86,20 +84,18 @@ export default function Taxes({
     let newData: any = null;
 
     if (TaxesYearIndex !== null && taxesData)
-      newData = convertToExportYearTaxesData(taxesData[TaxesYearIndex])
+      newData = convertToExportYearTaxesData(taxesData[TaxesYearIndex]);
 
     console.log(newData);
 
-    if (newData)
-      newData = desglosarOtherCategories(newData);
+    if (newData) newData = desglosarOtherCategories(newData);
 
     console.log(newData);
 
-    if (newData)
-      setExcelData(newData);
+    if (newData) setExcelData(newData);
 
     console.log(newData);
-  }, [taxesData, TaxesYearIndex])
+  }, [taxesData, TaxesYearIndex]);
 
   function desglosarOtherCategories(taxes: ExportYearTaxesData): void {
     let data: any = taxes;
@@ -117,11 +113,11 @@ export default function Taxes({
 
   function toCamelCase(text: string): string {
     return text
-      .replace(/[-_]+/g, ' ')
+      .replace(/[-_]+/g, " ")
       .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
         return index === 0 ? word.toLowerCase() : word.toUpperCase();
       })
-      .replace(/\s+/g, '');
+      .replace(/\s+/g, "");
   }
 
   const handleYearSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -132,15 +128,20 @@ export default function Taxes({
   };
 
   function handleShowOtherCategories(data: OtherCategories[] | null) {
-    if (data) setOtherCategories(data)
-    else setOtherCategories([])
+    if (data) setOtherCategories(data);
+    else setOtherCategories([]);
 
     setOtherCategoriesDetails(!otherCategoriesDetails);
   }
 
   return (
     <div className={styles.container}>
-      {otherCategoriesDetails ? <Details expenses={otherCategories} handleClose={handleShowOtherCategories} /> : null}
+      {otherCategoriesDetails ? (
+        <Details
+          expenses={otherCategories}
+          handleClose={handleShowOtherCategories}
+        />
+      ) : null}
       <div className={styles.controls}>
         <div className="form-floating">
           <select
@@ -172,23 +173,23 @@ export default function Taxes({
         {excelData ? <Excel taxes={excelData} /> : null}
       </div>
       <div className={styles.head}>
-        <span>{`Total Sales and Shipment: ${totals.Sales}`}</span>
-        <span>{`Total Expenses: ${totals.Expenses}`}</span>
-        <span>{`Total Profit: ${totals.Profit}`}</span>
+        <span>{`Total Sales and Shipment: ${totals.Sales.toFixed(2)}`}</span>
+        <span>{`Total Expenses: ${totals.Expenses.toFixed(2)}`}</span>
+        <span>{`Total Profit: ${totals.Profit.toFixed(2)}`}</span>
       </div>
       <div className={styles.scroll}>
         {TaxesYearIndex !== null && taxesData
           ? taxesData[TaxesYearIndex].month.map(
-            (taxesMonth: MonthTaxesData) => {
-              return (
-                <Row
-                  key={taxesMonth.month.number}
-                  taxesMonth={taxesMonth}
-                  handleShowOtherCategories={handleShowOtherCategories}
-                />
-              )
-            }
-          )
+              (taxesMonth: MonthTaxesData) => {
+                return (
+                  <Row
+                    key={taxesMonth.month.number}
+                    taxesMonth={taxesMonth}
+                    handleShowOtherCategories={handleShowOtherCategories}
+                  />
+                );
+              }
+            )
           : null}
       </div>
     </div>
