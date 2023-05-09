@@ -20,7 +20,7 @@
 
 .rows {
   display: grid;
-  grid-template-columns: 180px 120px repeat(4, 1fr) 150px 80px;
+  grid-template-columns: 120px repeat(4, 1fr) 100px 150px 80px;
   text-align: center;
   border-bottom: 1px solid #ccc;
 }
@@ -30,10 +30,10 @@
   border-right: 1px solid #ccc;
 }
 
-.rows button{
+.rows button {
   border-radius: 0;
 }
 
-.expenses{
+.expenses {
   grid-template-columns: 180px 120px repeat(4, 1fr) 80px;
 }

@@ -20,7 +20,7 @@
 
 .rows {
   display: grid;
-  grid-template-columns: 40px 180px 120px 1fr 100px;
+  grid-template-columns: 40px 180px 120px 1fr 100px 100px;
   text-align: center;
   border-bottom: 1px solid #ccc;
 }
@@ -31,6 +31,15 @@
 
 .rows input[type="checkbox"] {
   width: 20px;
+}
+
+.row button {
+  border-radius: 0;
+}
+
+.rows button img {
+  width: 20px;
+  filter: invert(100%);
 }
 
 .rows span,

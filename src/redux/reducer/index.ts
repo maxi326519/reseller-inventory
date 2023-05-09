@@ -1,4 +1,4 @@
-import { Item, RootState, Sale } from "../../interfaces";
+import { InvoiceType, Item, RootState, Sale } from "../../interfaces";
 import { AnyAction } from "redux";
 import { LOADING, CLOSE_LOADING } from "../actions/loading";
 import { POST_SOURCES, POST_CATEGORIES, GET_USER_DATA } from "../actions/user";
@@ -10,6 +10,8 @@ import {
   GET_ITEMS_EXPIRED,
   RESTORE_ITEMS,
   DELETE_SOLD_ITEMS,
+  GET_ITEMS_INVOICE_DETAILS,
+  DELETE_ITEMS_INVOICE_DETAILS,
 } from "../actions/items";
 import {
   POST_INVOICE,
@@ -33,7 +35,23 @@ const initialState: RootState = {
     categories: ["General"],
     sources: [],
   },
-  items: [],
+  items: {
+    data: [],
+    details: {
+      invoice: {
+        id: 0,
+        type: InvoiceType.Purchase,
+        date: Timestamp.now(),
+        items: [],
+        form: "",
+        source: "",
+        total: 0,
+        image: "",
+        imageRef: "",
+      },
+      items: [],
+    },
+  },
   invoices: {
     data: [],
     details: [],
@@ -79,7 +97,10 @@ export const rootReducer = (
     case POST_ITEMS:
       return {
         ...state,
-        items: [...state.items, ...action.payload],
+        items: {
+          ...state.items,
+          data: [...state.items.data, ...action.payload],
+        },
       };
     case POST_INVOICE:
       return {
@@ -95,7 +116,7 @@ export const rootReducer = (
       let stockItems: Item[] = [];
       let soldItems: Item[] = [];
 
-      state.items.forEach((item) => {
+      state.items.data.forEach((item) => {
         if (salesData.some((sale: Sale) => sale.productId === item.id)) {
           soldItems.push({
             ...item,
@@ -108,7 +129,10 @@ export const rootReducer = (
 
       return {
         ...state,
-        items: stockItems,
+        items: {
+          ...state.items,
+          data: stockItems,
+        },
         sales: {
           items: [...state.sales.items, ...soldItems],
           sales: [...state.sales.sales, ...salesData],
@@ -129,7 +153,10 @@ export const rootReducer = (
     case GET_ITEMS:
       return {
         ...state,
-        items: action.payload,
+        items: {
+          ...state.items,
+          data: action.payload,
+        },
       };
     case GET_EXPIRED_ITEMS:
       return {
@@ -155,6 +182,19 @@ export const rootReducer = (
           details: action.payload,
         },
       };
+
+    case GET_ITEMS_INVOICE_DETAILS:
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          details: {
+            invoice: action.payload.invoice,
+            items: action.payload.items,
+          },
+        },
+      };
+
     case GET_REPORTS:
       return {
         ...state,
@@ -198,9 +238,12 @@ export const rootReducer = (
           ),
           details: [],
         },
-        items: state.items.filter(
-          (item) => !action.payload.items.some((id: number) => id === item.id)
-        ),
+        items: {
+          ...state.items,
+          data: state.items.data.filter(
+            (item) => !action.payload.items.some((id: number) => id === item.id)
+          ),
+        },
         sales: {
           items: state.sales.items.filter(
             (item) => !action.payload.items.some((id: number) => id === item.id)
@@ -222,13 +265,16 @@ export const rootReducer = (
     case DELETE_SOLD_ITEMS:
       return {
         ...state,
-        items: [
+        items: {
           ...state.items,
-          {
-            ...state.sales.items.find((item) => item.id === action.payload),
-            state: "In Stock",
-          },
-        ],
+          data: [
+            ...state.items.data,
+            {
+              ...state.sales.items.find((item) => item.id === action.payload),
+              state: "In Stock",
+            },
+          ],
+        },
         sales: {
           items: state.sales.items.filter((item) => item.id !== action.payload),
           sales: state.sales.sales.filter(
@@ -240,12 +286,38 @@ export const rootReducer = (
         },
       };
 
+    case DELETE_ITEMS_INVOICE_DETAILS:
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          details: {
+            invoice: {
+              id: 0,
+              type: InvoiceType.Purchase,
+              date: Timestamp.now(),
+              items: [],
+              form: "",
+              source: "",
+              total: 0,
+              image: "",
+              imageRef: "",
+            },
+            items: [],
+          },
+        },
+      };
     // OTHER
     case EXPIRED_ITEMS:
       return {
         ...state,
-        items: state.items.filter((item) => !action.payload?.includes(item.id)),
-        expired: state.items
+        items: {
+          ...state.items,
+          data: state.items.data.filter(
+            (item) => !action.payload?.includes(item.id)
+          ),
+        },
+        expired: state.items.data
           .filter((item) => action.payload?.includes(item.id))
           .map((item) => ({
             ...item,
@@ -257,13 +329,16 @@ export const rootReducer = (
     case REFOUND_ITEMS:
       return {
         ...state,
-        items: [
+        items: {
           ...state.items,
-          {
-            ...state.sales.sales.find((i) => action.payload === i.id),
-            state: "In Stock",
-          },
-        ],
+          data: [
+            ...state.items.data,
+            {
+              ...state.sales.sales.find((i) => action.payload === i.id),
+              state: "In Stock",
+            },
+          ],
+        },
         sales: {
           ...state.sales,
           sales: state.sales.sales.filter((e) => e.id !== action.payload),
@@ -277,7 +352,10 @@ export const rootReducer = (
 
       return {
         ...state,
-        items: [...state.items, { ...itemToRestore, state: "In Stock" }],
+        items: {
+          ...state.items,
+          data: [...state.items.data, { ...itemToRestore, state: "In Stock" }],
+        },
         expired: state.expired.filter((item) => item.id !== action.payload),
       };
 

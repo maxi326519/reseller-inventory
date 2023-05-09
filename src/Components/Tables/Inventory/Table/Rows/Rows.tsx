@@ -3,14 +3,16 @@ import changeDateFormat from "../../../../../functions/changeDateFormat";
 import { Item } from "../../../../../interfaces";
 
 import styles from "../Table.module.css";
+import invoiceSvg from "../../../../../assets/svg/invoice.svg";
 
 interface Props {
   item: Item;
   itemSelected: number[];
   handleSelected: (id: number, cost: number) => void;
+  handleInvoiceDetail: (invoiceId: number) => void;
 }
 
-export default function Rows({ item, itemSelected, handleSelected }: Props) {
+export default function Rows({ item, itemSelected, handleSelected, handleInvoiceDetail }: Props) {
 
   function handleCheck(id: number, cost: number | string) {
     handleSelected(id, Number(cost));
@@ -31,6 +33,9 @@ export default function Rows({ item, itemSelected, handleSelected }: Props) {
       <span>{changeDateFormat(item.date.toDate().toISOString().split("T")[0])}</span>
       <span>{item.description}</span>
       <span>{item.cost}</span>
+      <button className="btn btn-success" type="button" onClick={() => handleInvoiceDetail(item.invoiceId)}>
+        <img src={invoiceSvg} alt="invoice" />
+      </button>
     </div>
   );
 }

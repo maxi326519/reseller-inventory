@@ -8,9 +8,10 @@ interface Props {
   items: Item[];
   itemSelected: number[];
   handleSelected: (id: number, cost: number) => void;
+  handleInvoiceDetail: (invoiceId: number) => void;
 }
 
-export default function Table({ items, itemSelected, handleSelected }: Props) {
+export default function Table({ items, itemSelected, handleSelected, handleInvoiceDetail }: Props) {
   return (
     <div className={styles.table}>
       <div className={`${styles.firstRow} ${styles.rows}`}>
@@ -19,6 +20,7 @@ export default function Table({ items, itemSelected, handleSelected }: Props) {
         <span>Date</span>
         <span>Description</span>
         <span>Unit cost</span>
+        <span>Invoice</span>
       </div>
       <div className={styles.data}>
         {items.map((item) => (
@@ -27,6 +29,7 @@ export default function Table({ items, itemSelected, handleSelected }: Props) {
             item={item}
             itemSelected={itemSelected}
             handleSelected={handleSelected}
+            handleInvoiceDetail={handleInvoiceDetail}
           />
         ))}
       </div>

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Timestamp } from "firebase/firestore";
 import { closeLoading, loading } from "../../../redux/actions/loading";
 import { updateReports } from "../../../redux/actions/reports";
-import { expiredItems, getStockItems } from "../../../redux/actions/items";
+import { deleteItemInvoiceDetail, expiredItems, getItemInvoiceDetail, getStockItems } from "../../../redux/actions/items";
 import { RootState, Item, Sale } from "../../../interfaces";
 import { Link } from "react-router-dom";
 
@@ -17,6 +17,7 @@ import closeSvg from "../../../assets/svg/close.svg";
 
 import style from "./Inventory.module.css";
 import swal from "sweetalert";
+import InvoiceDetails from "./InvoiceDetails/InvoiceDetails";
 
 interface OtherExpenses {
   saleId: number;
@@ -64,7 +65,8 @@ const initialShipingExpenses: ShipingExpenses = {
 
 export default function Inventory() {
   const dispatch = useDispatch();
-  const items = useSelector((state: RootState) => state.items);
+  const items = useSelector((state: RootState) => state.items.data);
+  const invoiceDetail = useSelector((state: RootState) => state.items.details);
   const reports = useSelector((state: RootState) => state.reports);
   const [rows, setRows] = useState<Item[]>([]);
   const [search, setSearch] = useState<string>("");
@@ -72,7 +74,8 @@ export default function Inventory() {
   const [total, setTotal] = useState(0);
   const [close, setClose] = useState<boolean>(false);
   const [active, setActive] = useState<boolean>(false);
-  
+  const [details, setDetails] = useState<boolean>(false);
+
   // Sale data
   const [itemSelected, setItemSelected] = useState<number[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
@@ -112,7 +115,7 @@ export default function Inventory() {
     setClose(!close);
   }
 
-  function resetData(){
+  function resetData() {
     setItemSelected([]);
     setOther([]);
     setShiping([]);
@@ -280,6 +283,15 @@ export default function Inventory() {
     }
   }
 
+  function handleInvoiceDetail(invoiceId?: number) {
+    setDetails(!details);
+    if(details){
+      dispatch<any>(deleteItemInvoiceDetail());
+    }else if(invoiceId){
+      dispatch<any>(getItemInvoiceDetail(invoiceId));
+    }
+  }
+
   return (
     <div className={style.background}>
       {close ? (
@@ -293,6 +305,13 @@ export default function Inventory() {
           shipment={shipment}
           handleExpense={handleExpense}
           resetData={resetData}
+        />
+      ) : null}
+      {details ? (
+        <InvoiceDetails
+          handleClose={handleInvoiceDetail}
+          itemsList={invoiceDetail.items}
+          image={invoiceDetail.invoice.image}
         />
       ) : null}
       <div className={style.head}>
@@ -352,6 +371,7 @@ export default function Inventory() {
           items={rows}
           itemSelected={itemSelected}
           handleSelected={handleSelected}
+          handleInvoiceDetail={handleInvoiceDetail}
         />
       </div>
     </div>

@@ -19,10 +19,12 @@ import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
 export const POST_ITEMS = "POST_ITEMS";
 export const GET_ITEMS = "GET_ITEMS";
 export const GET_ITEMS_EXPIRED = "GET_ITEMS_EXPIRED";
+export const GET_ITEMS_INVOICE_DETAILS = "GET_ITEMS_INVOICE_DETAILS";
 export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
 export const REFOUND_ITEMS = "REFOUND_ITEMS";
 export const RESTORE_ITEMS = "RESTORE_ITEMS";
 export const DELETE_SOLD_ITEMS = " DELETE_SOLD_ITEMS";
+export const DELETE_ITEMS_INVOICE_DETAILS = "DELETE_ITEMS_INVOICE_DETAILS";
 
 export function postItems(
   items: Item[]
@@ -77,6 +79,58 @@ export function getStockItems(): ThunkAction<
     } catch (e: any) {
       throw new Error(e);
     }
+  };
+}
+
+export function getItemInvoiceDetail(
+  invoiceId: number
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
+
+      let invoice = {};
+      let items: any = [];
+
+      // Get invoice
+      const invoiceRef = collection(
+        db,
+        "Users",
+        auth.currentUser.uid,
+        "Invoices"
+      );
+      const newQueryInvoice = query(invoiceRef, where("id", "==", invoiceId));
+      const invoiceResponse = await getDocs(newQueryInvoice);
+
+      invoiceResponse.forEach((doc) => {
+        invoice = doc.data();
+      });
+
+      // Get items
+      const itemRef = collection(db, "Users", auth.currentUser.uid, "Items");
+      const newQueryItems = query(itemRef, where("invoiceId", "==", invoiceId));
+      const itemsResponse = await getDocs(newQueryItems);
+
+      itemsResponse.forEach((doc) => {
+        items.push(doc.data());
+      });
+
+      dispatch({
+        type: GET_ITEMS_INVOICE_DETAILS,
+        payload: {
+          invoice,
+          items,
+        },
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function deleteItemInvoiceDetail() {
+  return {
+    type: DELETE_ITEMS_INVOICE_DETAILS,
   };
 }
 

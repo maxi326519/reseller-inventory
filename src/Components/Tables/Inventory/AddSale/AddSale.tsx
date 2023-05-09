@@ -87,7 +87,7 @@ export default function AddSale({
   resetData
 }: Props) {
   const dispatch = useDispatch();
-  const items = useSelector((state: RootState) => state.items);
+  const items = useSelector((state: RootState) => state.items.data);
   const reports = useSelector((state: RootState) => state.reports);
   const [rows, setRows] = useState<Item[]>([]);
   const [rowSelected, setSelected] = useState<number>(itemSelected[0]);

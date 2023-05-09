@@ -171,7 +171,13 @@ export interface OtherCategories {
 
 export interface RootState {
   user: User;
-  items: Item[];
+  items: {
+    data: Item[],
+    details: {
+      invoice: Invoice,
+      items: Item[]
+    }
+  }
   invoices: {
     data: Array<Invoice | InvoiceExpenses>;
     details: Array<Item> | Array<Expense>;
