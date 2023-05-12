@@ -7,12 +7,19 @@ import Taxes from "./Taxes/Taxes";
 
 import styles from "../Tables.module.css";
 import style from "./Reports.module.css";
+import menuSvg from "../../../assets/svg/menu.svg";
+import closeSvg from "../../../assets/svg/close.svg";
 
 export default function Reports() {
   const [typeReport, setTypeReport] = useState("1");
+  const [active, setActive] = useState<boolean>(false);
 
   function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setTypeReport(event.target.value);
+  }
+
+  function handleActive() {
+    setActive(!active);
   }
 
   return (
@@ -23,6 +30,13 @@ export default function Reports() {
           <span>{"Menu"}</span>
         </Link>
         <h1>Reports</h1>
+        <div className={style.navBar} onClick={handleActive}>
+          {active ? (
+            <img src={active ? closeSvg : menuSvg} alt="menu" />
+          ) : (
+            <img src={active ? closeSvg : menuSvg} alt="menu" />
+          )}
+        </div>
       </div>
       <div className={style.container}>
         {typeReport === "1" ? (

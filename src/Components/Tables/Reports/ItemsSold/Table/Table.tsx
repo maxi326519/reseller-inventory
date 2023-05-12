@@ -26,30 +26,32 @@ export default function Table({
 }: Props) {
   return (
     <div className={styles.table}>
-      <div className={`${styles.firstRow} ${styles.rows}`}>
-        <span>Invoice ID</span>
-        <span>Item ID</span>
-        <span>Date</span>
-        <span>Unit cost</span>
-        <span>Price</span>
-        <span>Shipment income</span>
-        <span>Description</span>
-        <span>Refound</span>
-      </div>
-      <div className={styles.data}>
-        {rows.map((row: Rows) => {
-          return (
-            <Rows
-              key={row.sale.id}
-              item={row.item}
-              sale={row.sale}
-              handleClose={handleClose}
-              handleRefoundSelected={handleRefoundSelected}
-              handleDeleteSold={handleDeleteSold}
-              handleShowExpensesDetails={handleShowExpensesDetails}
-            />
-          );
-        })}
+      <div className={styles.responsive}>
+        <div className={`${styles.firstRow} ${styles.rows}`}>
+          <span>Invoice ID</span>
+          <span>Item ID</span>
+          <span>Date</span>
+          <span>Unit cost</span>
+          <span>Price</span>
+          <span>Shipment income</span>
+          <span>Description</span>
+          <span>Refound</span>
+        </div>
+        <div className={styles.data}>
+          {rows.map((row: Rows) => {
+            return (
+              <Rows
+                key={row.sale.id}
+                item={row.item}
+                sale={row.sale}
+                handleClose={handleClose}
+                handleRefoundSelected={handleRefoundSelected}
+                handleDeleteSold={handleDeleteSold}
+                handleShowExpensesDetails={handleShowExpensesDetails}
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -65,7 +65,7 @@ export default function Form({
             null
           ),
           date: invoice.date,
-          invoiceId: invoice.id
+          invoiceId: invoice.id,
         });
       }
       setExpenses([...expenses, ...allExpenses]);
@@ -102,7 +102,10 @@ export default function Form({
     event: React.ChangeEvent<HTMLInputElement>
   ): void {
     if (event.target.name === "date") {
-      setInvoice({ ...invoice, date: Timestamp.fromDate(new Date(event.target.value)) });
+      setInvoice({
+        ...invoice,
+        date: Timestamp.fromDate(new Date(event.target.value)),
+      });
     } else {
       setInvoice({ ...invoice, [event.target.name]: event.target.value });
     }
@@ -193,7 +196,7 @@ export default function Form({
           className={`form-select ${error.category ? "is-invalid" : null}`}
           id="category"
           name="category"
-          value={invoice.category}
+          value={expense.category}
           onChange={handleChangeSelect}
         >
           <option value="0">Select category</option>
@@ -208,7 +211,7 @@ export default function Form({
         </label>
         {!error.category ? null : <small>{error.category}</small>}
       </div>
-
+      <hr />
       <h4>Expense</h4>
       <div className="mb-3 form-floating">
         <input

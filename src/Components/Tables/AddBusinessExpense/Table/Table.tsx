@@ -12,14 +12,18 @@ interface Props {
 export default function Table({ expenses, handleRemove }: Props) {
   return (
     <div className={styles.table}>
-      <div className={`${styles.firstRow} ${styles.rows}`}>
-        <span>Category</span>
-        <span>Description</span>
-        <span>Const</span>
-        <span>Delete</span>
-      </div>
-      <div className={styles.data}>
-        {expenses.map((expense, i) => <Rows key={i} expense={expense} handleRemove={handleRemove}/>)}
+      <div className={styles.responsive}>
+        <div className={`${styles.firstRow} ${styles.rows}`}>
+          <span>Category</span>
+          <span>Description</span>
+          <span>Const</span>
+          <span>Delete</span>
+        </div>
+        <div className={styles.data}>
+          {expenses.map((expense, i) => (
+            <Rows key={i} expense={expense} handleRemove={handleRemove} />
+          ))}
+        </div>
       </div>
     </div>
   );

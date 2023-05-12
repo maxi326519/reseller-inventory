@@ -44,7 +44,8 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     image: null,
   });
 
-  function handleSubmit() {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     if (handleVerification()) {
       let allItems: Item[] = [];
 
@@ -167,115 +168,109 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
   }
 
   return (
-    <div className={styles.form}>
-      <div>
-        <h4>Invoice</h4>
-        <div className="form-floating mb-3">
-          <input
-            className="form-control"
-            type="date"
-            id="date"
-            name="date"
-            value={invoice.date.toDate().toISOString().split("T")[0]}
-            max={maxDate}
-            onChange={handleInvoice}
-          />
-          <label className="form-label" htmlFor="date">
-            Date of Purchase:
-          </label>
-        </div>
+    <form className={styles.form} onSubmit={handleSubmit}>
+      <h4>Invoice</h4>
+      <div className="form-floating mb-3">
+        <input
+          className="form-control"
+          type="date"
+          id="date"
+          name="date"
+          value={invoice.date.toDate().toISOString().split("T")[0]}
+          max={maxDate}
+          onChange={handleInvoice}
+        />
+        <label className="form-label" htmlFor="date">
+          Date of Purchase:
+        </label>
+      </div>
 
-        <div className="form-floating mb-3">
-          <select
-            className="form-select"
-            id="form"
-            name="form"
-            value={invoice.form}
-            onChange={handleInvoiceSelect}
-          >
-            <option value="Cash">Cash</option>
-            <option value="Debit">Debit</option>
-            <option value="Paypal">Paypal</option>
-          </select>
-          <label className="form-label" htmlFor="form">
-            Form of Purchase:
-          </label>
-        </div>
-        <div className="form-floating mb-3">
-          <select
-            id="source"
-            name="source"
-            className={`form-select ${error.source ? "is-invalid" : null}`}
-            value={invoice.source}
-            onChange={handleInvoiceSelect}
-          >
-            <option value="0">Select</option>
-            {sources.map((source) => (
-              <option key={source} value={source}>
-                {source}
-              </option>
-            ))}
-          </select>
-          <label className="form-label" htmlFor="source">
-            Source:
-          </label>
-          {!error.source ? null : <small>{error.source}</small>}
-        </div>
+      <div className="form-floating mb-3">
+        <select
+          className="form-select"
+          id="form"
+          name="form"
+          value={invoice.form}
+          onChange={handleInvoiceSelect}
+        >
+          <option value="Cash">Cash</option>
+          <option value="Debit">Debit</option>
+          <option value="Paypal">Paypal</option>
+        </select>
+        <label className="form-label" htmlFor="form">
+          Form of Purchase:
+        </label>
+      </div>
+      <div className="form-floating mb-3">
+        <select
+          id="source"
+          name="source"
+          className={`form-select ${error.source ? "is-invalid" : null}`}
+          value={invoice.source}
+          onChange={handleInvoiceSelect}
+        >
+          <option value="0">Select</option>
+          {sources.map((source) => (
+            <option key={source} value={source}>
+              {source}
+            </option>
+          ))}
+        </select>
+        <label className="form-label" htmlFor="source">
+          Source:
+        </label>
+        {!error.source ? null : <small>{error.source}</small>}
       </div>
       <hr />
-      <div>
-        <h4>Items</h4>
+      <h4>Items</h4>
 
-        <div className="form-floating mb-3">
-          <input
-            id="description"
-            className={`form-control ${
-              error.description ? "is-invalid" : null
-            }`}
-            name="description"
-            type="text"
-            value={newItem.description}
-            onChange={handleNewItems}
-          />
-          <label className="form-label" htmlFor="description">
-            Description:
-          </label>
-          {!error.description ? null : <small>{error.description}</small>}
-        </div>
-
-        <div className="form-floating mb-3">
-          <input
-            id="cost"
-            name="cost"
-            className={`form-control ${error.cost ? "is-invalid" : null}`}
-            type="number"
-            value={newItem.cost}
-            onChange={handleNewItems}
-          />
-          <label className="form-label" htmlFor="cost">
-            Unit cost $:
-          </label>
-          {!error.cost ? null : <small>{error.cost}</small>}
-        </div>
-
-        <div className="form-floating mb-3">
-          <input
-            id="amount"
-            name="amount"
-            className={`form-control ${error.amount ? "is-invalid" : null}`}
-            type="number"
-            value={amount}
-            onChange={handleAmount}
-          />
-          <label className="form-label" htmlFor="amount">
-            Number of Items:
-          </label>
-          {!error.amount ? null : <small>{error.amount}</small>}
-        </div>
+      <div className="form-floating mb-3">
+        <input
+          id="description"
+          className={`form-control ${error.description ? "is-invalid" : null}`}
+          name="description"
+          type="text"
+          value={newItem.description}
+          onChange={handleNewItems}
+        />
+        <label className="form-label" htmlFor="description">
+          Description:
+        </label>
+        {!error.description ? null : <small>{error.description}</small>}
       </div>
-      <button className="btn btn-primary" type="button" onClick={handleSubmit}>
+
+      <div className="form-floating mb-3">
+        <input
+          id="cost"
+          name="cost"
+          className={`form-control ${error.cost ? "is-invalid" : null}`}
+          type="number"
+          value={newItem.cost}
+          onChange={handleNewItems}
+        />
+        <label className="form-label" htmlFor="cost">
+          Unit cost $:
+        </label>
+        {!error.cost ? null : <small>{error.cost}</small>}
+      </div>
+
+      <div className="form-floating mb-3">
+        <input
+          id="amount"
+          name="amount"
+          className={`form-control ${error.amount ? "is-invalid" : null}`}
+          type="number"
+          value={amount}
+          onChange={handleAmount}
+        />
+        <label className="form-label" htmlFor="amount">
+          Number of Items:
+        </label>
+        {!error.amount ? null : <small>{error.amount}</small>}
+      </div>
+      <button className="btn btn-primary" type="submit">
         Add Item
       </button>
-    </div>
+    </form>
   );
 }

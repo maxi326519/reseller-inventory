@@ -1,9 +1,9 @@
 .dateFilter{
   display: flex;
+  gap: 5px;
   border-radius: 10px;
 }
 
 .dateFilter .date{
-  margin-right: 5px;
   margin-bottom: 0px !important;
 }

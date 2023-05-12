@@ -179,7 +179,7 @@ export default function Invoices() {
           image={image}
         />
       ) : null}
-      <div className={styles.head}>
+      <header className={styles.head}>
         <Link className="btn btn-primary" to="/">
           <span>{"< "}</span>
           <span>{"Menu"}</span>
@@ -192,7 +192,7 @@ export default function Invoices() {
             <img src={menuSvg} alt="menu" />
           )}
         </div>
-      </div>
+      </header>
       <div className={style.container}>
         <div className={style.searchBar}>
           <div className={style.inputs}>

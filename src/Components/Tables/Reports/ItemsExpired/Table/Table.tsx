@@ -12,18 +12,20 @@ interface Props {
 export default function Table({ items, handleRestore }: Props) {
   return (
     <div className={styles.table}>
-      <div className={`${styles.firstRow} ${styles.rows}`}>
-        <span>Invoice ID</span>
-        <span>Item ID</span>
-        <span>Date</span>
-        <span>Unit cost</span>
-        <span>Description</span>
-        <span>Restore</span>
-      </div>
-      <div className={styles.data}>
-        {items.map((item) => (
-          <Rows key={item.id} item={item} handleRestore={handleRestore} />
-        ))}
+      <div className={styles.responsive}>
+        <div className={`${styles.firstRow} ${styles.rows}`}>
+          <span>Invoice ID</span>
+          <span>Item ID</span>
+          <span>Date</span>
+          <span>Unit cost</span>
+          <span>Description</span>
+          <span>Restore</span>
+        </div>
+        <div className={styles.data}>
+          {items.map((item) => (
+            <Rows key={item.id} item={item} handleRestore={handleRestore} />
+          ))}
+        </div>
       </div>
     </div>
   );

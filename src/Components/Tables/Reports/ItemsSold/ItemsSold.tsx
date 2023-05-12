@@ -91,7 +91,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   }, [items, sales]);
 
   useEffect(() => {
-    setYears(reports.map((r) => Number(r.year))); 
+    setYears(reports.map((r) => Number(r.year)));
   }, [reports]);
 
   useEffect(() => {
@@ -262,16 +262,18 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         </div>
         <DataFilter years={years} handleFilterPerDate={handleFilterPerDate} />
         <Excel sales={exports} />
-        <span className={styles.total}>Total items: {totalItems}</span>
-        <span className={styles.total}>
-          Total inventory cost: ${Number(totalCost).toFixed(2)}
-        </span>
-        <span className={styles.total}>
-          Total order income: ${Number(orderTotal).toFixed(2)}
-        </span>
-        <span className={styles.total}>
-          Shipment income: ${Number(shipmentTotal).toFixed(2)}
-        </span>
+        <div>
+          <span className={styles.total}>Total items: {totalItems}</span>
+          <span className={styles.total}>
+            Total inventory cost: ${Number(totalCost).toFixed(2)}
+          </span>
+          <span className={styles.total}>
+            Total order income: ${Number(orderTotal).toFixed(2)}
+          </span>
+          <span className={styles.total}>
+            Shipment income: ${Number(shipmentTotal).toFixed(2)}
+          </span>
+        </div>
       </div>
       <Table
         rows={rows}

@@ -1,35 +1,77 @@
-.container{
+.container {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
 
-.head{
-  display: flex;
-  margin-bottom: 20px;
-  background-color: gray;
-}
-
-.controls{
+.controls {
   display: flex;
   margin-bottom: 20px;
 }
 
-.controls div{
+.controls div {
   margin-bottom: 0px !important;
   margin-right: 10px;
 }
 
-.head span{
+.head span {
   flex-grow: 1;
   padding: 20px;
   outline: 1px solid #ccc;
 }
 
-.scroll{
+.table {
+  overflow-x: scroll;
+  height: calc(100vh - 200px);
+  outline: 1px solid grey;
+  border-radius: 10px;
+}
+
+.head {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  background-color: gray;
+}
+
+.responsive {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: max-content;
+  min-width: 100%;
+}
+
+.scroll {
   flex-grow: 1;
   overflow-y: scroll;
-  height: 500px;
   background-color: #fff2;
   outline: 1px solid #ccc;
+}
+
+/* width */
+.scroll::-webkit-scrollbar {
+  width: 18px;
+}
+
+/* Track */
+.scroll::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+.scroll::-webkit-scrollbar-thumb {
+  background: grey;
+  width: 10px;
+}
+
+@media screen and (max-width: 700px) {
+  .controls {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 120px 120px;
+    grid-template-rows: 1fr;
+    align-items: center;
+  }
 }

@@ -314,7 +314,7 @@ export default function Inventory() {
           image={invoiceDetail.invoice.image}
         />
       ) : null}
-      <div className={style.head}>
+      <header className={style.head}>
         <Link className="btn btn-primary" to="/">
           <span>{"< "}</span>
           <span>{"Menu"}</span>
@@ -327,7 +327,7 @@ export default function Inventory() {
             <img src={menuSvg} alt="menu" />
           )}
         </div>
-      </div>
+      </header>
       <div className={style.table}>
         <div className={style.searchBar}>
           <input

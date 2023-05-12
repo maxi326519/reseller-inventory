@@ -1,5 +1,6 @@
 .background {
   position: fixed;
+  z-index: 1000;
   top: 0;
   left: 0;
   display: flex;
@@ -56,11 +57,11 @@
   text-align: center;
 }
 
-.sourcesList .empty{
+.sourcesList .empty {
   color: grey;
 }
 
-.sourcesList .row{
+.sourcesList .row {
   display: flex;
   align-items: center;
   margin-bottom: 5px;
@@ -69,11 +70,11 @@
   background-color: #282828;
 }
 
-.sourcesList .row span{
+.sourcesList .row span {
   flex-grow: 1;
 }
 
-.sourcesList .row button{
+.sourcesList .row button {
   width: 40px;
   border-radius: 8px;
 }

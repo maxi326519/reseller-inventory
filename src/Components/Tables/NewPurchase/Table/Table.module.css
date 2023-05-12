@@ -1,18 +1,21 @@
 .table {
   flex-grow: 1;
-  flex-wrap: nowrap;
+  border-radius: 10px;
+  overflow-x: scroll;
+  background-color: #fff2;
+  margin-bottom: 80px;
+}
+
+.responsive {
   display: flex;
   flex-direction: column;
-  border-radius: 10px;
-  overflow: hidden;
-  background-color: #fff2;
+  height: 100%;
+  width: max-content;
+  min-width: 100%;
 }
 
 .data {
   flex-grow: 1;
-  flex-wrap: nowrap;
-  display: flex;
-  flex-direction: column;
   overflow-y: scroll;
 }
 

@@ -12,6 +12,7 @@ import { closeLoading, loading } from "../../../redux/actions/loading";
 import { postInvoice } from "../../../redux/actions/invoices";
 import { postExpenses } from "../../../redux/actions/expenses";
 import { updateReports } from "../../../redux/actions/reports";
+import swal from "sweetalert";
 
 import Form from "./Form/Form";
 import Table from "./Table/Table";
@@ -20,7 +21,8 @@ import Categories from "./Categories/Categories";
 
 import style from "./AddBusinessExpense.module.css";
 import styles from "../Tables.module.css";
-import swal from "sweetalert";
+import menuSvg from "../../../assets/svg/menu.svg";
+import closeSvg from "../../../assets/svg/close.svg";
 
 export default function AddBusinessExpense() {
   const initialState: InvoiceExpenses = {
@@ -33,7 +35,7 @@ export default function AddBusinessExpense() {
     image: "",
     imageRef: "",
   };
-
+  const dispatch = useDispatch();
   const reports = useSelector((state: RootState) => state.reports);
   const [invoice, setInvoice] = useState<InvoiceExpenses>(initialState);
   const [file, setFile] = useState<File | null>(null);
@@ -41,7 +43,7 @@ export default function AddBusinessExpense() {
   const [total, setTotal] = useState<number>(0);
   const [close, setClose] = useState<boolean>(false);
   const [amount, setAmount] = useState<any>("");
-  const dispatch = useDispatch();
+  const [active, setActive] = useState<boolean>(false);
 
   useEffect(() => {
     let total: number = 0;
@@ -94,7 +96,6 @@ export default function AddBusinessExpense() {
                 dispatch<any>(updateReports(expenses, reports, false))
                   .then(() => {
                     setExpenses([]);
-                    setTotal(0);
                     dispatch<any>(closeLoading());
                     swal("Saved", "Saved expenses successfully", "success");
                   })
@@ -151,17 +152,28 @@ export default function AddBusinessExpense() {
     setClose(!close);
   }
 
+  function handleActive() {
+    setActive(!active);
+  }
+
   return (
     <div className={styles.background}>
       {close ? <Categories handleClose={handleClose} /> : null}
-      <div className={styles.head}>
+      <header className={styles.head}>
         <Link className="btn btn-primary" to="/">
           <span>{"< "}</span>
           <span>{"Menu"}</span>
         </Link>
-        <h1>Add Business Expense</h1>
-      </div>
-      <div className={styles.container}>
+        <h1>Add <span>Business</span> Expense</h1>
+        <div className={style.navBar} onClick={handleActive}>
+          {active ? (
+            <img src={active ? closeSvg : menuSvg} alt="menu" />
+          ) : (
+            <img src={active ? closeSvg : menuSvg} alt="menu" />
+          )}
+        </div>
+      </header>
+      <div className={style.container}>
         <Form
           invoice={invoice}
           setInvoice={setInvoice}
@@ -179,7 +191,7 @@ export default function AddBusinessExpense() {
               onClick={handleAddExpese}
               disabled={expenses.length <= 0}
             >
-              Add Expenses
+              Add <span>expenses</span>
             </button>
             <button
               className="btn btn-primary"
@@ -187,7 +199,7 @@ export default function AddBusinessExpense() {
               onClick={handleReset}
               disabled={expenses.length <= 0}
             >
-              Reset Expenses
+              Reset <span>expenses</span>
             </button>
             <button
               className="btn btn-primary"

@@ -134,9 +134,11 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
         </div>
         <DateFilter years={years} handleFilterPerDate={handleFilterPerDate} />
         <Excel expired={exports} />
-        <span className={styles.total}>
-          Total cost: ${Number(total).toFixed(2)}
-        </span>
+        <div>
+          <span className={styles.total}>
+            Total cost: ${Number(total).toFixed(2)}
+          </span>
+        </div>
       </div>
       <Table items={rows} handleRestore={handleRestore} />
     </div>

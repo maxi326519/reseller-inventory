@@ -161,7 +161,7 @@ export default function NewPurchase() {
       {excel ? (
         <DownloadExcel handleClose={handleCloseExcel} data={exportData} />
       ) : null}
-      <div className={styles.head}>
+      <header className={styles.head}>
         <Link className="btn btn-primary" to="/">
           <span>{"< "}</span>
           <span>{"Menu"}</span>
@@ -174,7 +174,7 @@ export default function NewPurchase() {
             <img src={active ? close : menu} alt="menu" />
           )}
         </div>
-      </div>
+      </header>
       <div className={style.container}>
         <Form
           invoice={invoice}
@@ -191,7 +191,7 @@ export default function NewPurchase() {
               onClick={handleSubmit}
               disabled={items.length <= 0}
             >
-              Add <span>Invoice</span>
+              Add <span>invoice</span>
             </button>
             <button
               className="btn btn-primary"
@@ -199,7 +199,7 @@ export default function NewPurchase() {
               onClick={handleReset}
               disabled={items.length <= 0}
             >
-              Reset <span>Invoice</span>
+              Reset <span>invoice</span>
             </button>
             <button
               className="btn btn-primary"

@@ -1,16 +1,39 @@
 .table {
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
   border-radius: 10px;
   height: 100%;
-  overflow: hidden;
+  overflow-y: scroll;
   background-color: #fff2;
+}
+
+.responsive {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: max-content;
+  min-width: 100%;
 }
 
 .data {
   flex-grow: 1;
   overflow-y: scroll;
+}
+
+/* width */
+.data::-webkit-scrollbar {
+  width: 18px;
+}
+
+/* Track */
+.data::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+.data::-webkit-scrollbar-thumb {
+  background: grey;
+  width: 10px;
 }
 
 .firstRow {
@@ -21,6 +44,7 @@
 .rows {
   display: grid;
   grid-template-columns: 160px 160px 110px 150px 1fr 100px;
+  width: 100%;
   text-align: center;
   border-bottom: 1px solid #ccc;
 }

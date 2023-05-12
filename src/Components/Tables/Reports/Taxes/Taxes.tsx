@@ -172,25 +172,29 @@ export default function Taxes({ typeReport, handleChange }: Props) {
         </div>
         {excelData ? <Excel taxes={excelData} /> : null}
       </div>
-      <div className={styles.head}>
-        <span>{`Total Sales and Shipment: ${totals.Sales.toFixed(2)}`}</span>
-        <span>{`Total Expenses: ${totals.Expenses.toFixed(2)}`}</span>
-        <span>{`Total Profit: ${totals.Profit.toFixed(2)}`}</span>
-      </div>
-      <div className={styles.scroll}>
-        {TaxesYearIndex !== null && taxesData
-          ? taxesData[TaxesYearIndex].month.map(
-              (taxesMonth: MonthTaxesData) => {
-                return (
-                  <Row
-                    key={taxesMonth.month.number}
-                    taxesMonth={taxesMonth}
-                    handleShowOtherCategories={handleShowOtherCategories}
-                  />
-                );
-              }
-            )
-          : null}
+      <div className={styles.table}>
+        <div className={styles.head}>
+          <span>{`Total Sales and Shipment: ${totals.Sales.toFixed(2)}`}</span>
+          <span>{`Total Expenses: ${totals.Expenses.toFixed(2)}`}</span>
+          <span>{`Total Profit: ${totals.Profit.toFixed(2)}`}</span>
+        </div>
+        <div className={styles.responsive}>
+          <div className={styles.scroll}>
+            {TaxesYearIndex !== null && taxesData
+              ? taxesData[TaxesYearIndex].month.map(
+                  (taxesMonth: MonthTaxesData) => {
+                    return (
+                      <Row
+                        key={taxesMonth.month.number}
+                        taxesMonth={taxesMonth}
+                        handleShowOtherCategories={handleShowOtherCategories}
+                      />
+                    );
+                  }
+                )
+              : null}
+          </div>
+        </div>
       </div>
     </div>
   );
