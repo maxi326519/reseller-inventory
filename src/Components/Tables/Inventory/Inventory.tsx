@@ -18,6 +18,7 @@ import closeSvg from "../../../assets/svg/close.svg";
 import style from "./Inventory.module.css";
 import swal from "sweetalert";
 import InvoiceDetails from "./InvoiceDetails/InvoiceDetails";
+import List from "../../Menu/List/List";
 
 interface OtherExpenses {
   saleId: number;
@@ -294,6 +295,7 @@ export default function Inventory() {
 
   return (
     <div className={style.background}>
+      <List active={active}/>
       {close ? (
         <AddSale
           handleClose={handleClose}

@@ -9,6 +9,7 @@ import styles from "../Tables.module.css";
 import style from "./Reports.module.css";
 import menuSvg from "../../../assets/svg/menu.svg";
 import closeSvg from "../../../assets/svg/close.svg";
+import List from "../../Menu/List/List";
 
 export default function Reports() {
   const [typeReport, setTypeReport] = useState("1");
@@ -24,6 +25,7 @@ export default function Reports() {
 
   return (
     <div className={styles.background}>
+      <List active={active} />
       <div className={styles.head}>
         <Link className="btn btn-primary" to="/">
           <span>{"< "}</span>

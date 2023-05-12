@@ -10,6 +10,8 @@
 }
 
 .navBar {
+  position: relative;
+  z-index: 1200;
   display: none;
 }
 
@@ -21,17 +23,6 @@
   flex-grow: 1;
   display: flex;
   justify-content: center;
-}
-
-.btnContainer {
-  display: flex;
-  flex-direction: column;
-}
-
-.btnContainer a {
-  margin-bottom: 20px;
-  padding: 15px 30px;
-  font-size: 20px;
 }
 
 .image {
@@ -51,23 +42,6 @@
 
   .navBar img {
     filter: invert(100%);
-  }
-
-  .btnContainer {
-    display: none;
-  }
-
-  .menu{
-    position: absolute;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    height: 100vh;
-    padding: 40px;
-    background-color: #0006;
   }
 
   .navBar {

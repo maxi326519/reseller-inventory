@@ -23,6 +23,7 @@ import style from "./AddBusinessExpense.module.css";
 import styles from "../Tables.module.css";
 import menuSvg from "../../../assets/svg/menu.svg";
 import closeSvg from "../../../assets/svg/close.svg";
+import List from "../../Menu/List/List";
 
 export default function AddBusinessExpense() {
   const initialState: InvoiceExpenses = {
@@ -159,6 +160,7 @@ export default function AddBusinessExpense() {
   return (
     <div className={styles.background}>
       {close ? <Categories handleClose={handleClose} /> : null}
+      <List active={active}/>
       <header className={styles.head}>
         <Link className="btn btn-primary" to="/">
           <span>{"< "}</span>

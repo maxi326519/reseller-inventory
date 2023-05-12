@@ -19,6 +19,7 @@ import close from "../../../assets/svg/close.svg";
 
 import style from "./NewPurchase.module.css";
 import styles from "../Tables.module.css";
+import List from "../../Menu/List/List";
 interface ExportData {
   id: number;
   description: string;
@@ -157,6 +158,7 @@ export default function NewPurchase() {
 
   return (
     <div className={styles.background}>
+      <List active={active}/>
       {source ? <AddSource handleClose={handleCloseSource} /> : null}
       {excel ? (
         <DownloadExcel handleClose={handleCloseExcel} data={exportData} />

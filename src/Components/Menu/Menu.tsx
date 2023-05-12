@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+
+import List from "./List/List";
 
 import Charts from "./Charts/Charts";
 import img from "../../assets/img/logo.png";
@@ -26,23 +27,7 @@ export default function Menu() {
             <img src={active ? close : menu} alt="menu" />
           )}
         </div>
-        <div className={`${style.btnContainer} ${active ? style.menu : ""}`}>
-          <Link className="btn btn-primary" to="newPurchase">
-            Add New Purchase
-          </Link>
-          <Link className="btn btn-primary" to="inventory">
-            Inventory
-          </Link>
-          <Link className="btn btn-primary" to="invoices">
-            Invoices
-          </Link>
-          <Link className="btn btn-primary" to="addExpense">
-            Add Business Expense
-          </Link>
-          <Link className="btn btn-primary" to="reports">
-            Reports
-          </Link>
-        </div>
+        <List active={active} />
         <Charts />
       </div>
     </div>

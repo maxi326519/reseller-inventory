@@ -1,4 +1,6 @@
 .navBar {
+  position: relative;
+  z-index: 1200;
   display: none;
 }
 

@@ -10,6 +10,8 @@
 }
 
 .navBar {
+  position: relative;
+  z-index: 1200;
   display: none;
 }
 
@@ -95,7 +97,6 @@
 }
 
 @media screen and (max-width: 700px) {
-
   .navBar img {
     filter: invert(100%);
   }

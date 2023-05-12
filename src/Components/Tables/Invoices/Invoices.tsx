@@ -24,6 +24,7 @@ import closeSvg from "../../../assets/svg/close.svg";
 
 import styles from "../Tables.module.css";
 import style from "./Invoices.module.css";
+import List from "../../Menu/List/List";
 
 interface Filter {
   year: string | number;
@@ -171,6 +172,7 @@ export default function Invoices() {
   }
   return (
     <div className={styles.background}>
+      <List active={active}/>
       {close ? (
         <Details
           handleClose={handleClose}
