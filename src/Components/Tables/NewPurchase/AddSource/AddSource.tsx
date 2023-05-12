@@ -65,7 +65,8 @@ export default function AddSource({ handleClose }: Props) {
       if (sources.length <= 0 && sourcesList.length <= 0) {
         setValidation(false);
         return false;
-      } if (sources.every((value, index) => value === sourcesList[index])) {
+      }
+      if (sources.every((value, index) => value === sourcesList[index])) {
         setValidation(false);
         return false;
       }
@@ -79,7 +80,7 @@ export default function AddSource({ handleClose }: Props) {
 
   return (
     <div className={styles.background}>
-      <form className={styles.container} onSubmit={handleSubmit}>
+      <form className={`toTop ${styles.container}`} onSubmit={handleSubmit}>
         <div className={styles.close}>
           <h4>Sources</h4>
           <button

@@ -3,7 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { Timestamp } from "firebase/firestore";
 import { closeLoading, loading } from "../../../redux/actions/loading";
 import { updateReports } from "../../../redux/actions/reports";
-import { deleteItemInvoiceDetail, expiredItems, getItemInvoiceDetail, getStockItems } from "../../../redux/actions/items";
+import {
+  deleteItemInvoiceDetail,
+  expiredItems,
+  getItemInvoiceDetail,
+  getStockItems,
+} from "../../../redux/actions/items";
 import { RootState, Item, Sale } from "../../../interfaces";
 import { Link } from "react-router-dom";
 
@@ -286,16 +291,18 @@ export default function Inventory() {
 
   function handleInvoiceDetail(invoiceId?: number) {
     setDetails(!details);
-    if(details){
+    if (details) {
       dispatch<any>(deleteItemInvoiceDetail());
-    }else if(invoiceId){
+    } else if (invoiceId) {
       dispatch<any>(getItemInvoiceDetail(invoiceId));
     }
   }
 
   return (
     <div className={style.background}>
-      <List active={active}/>
+      <div className={style.menu}>
+        <List active={active} />
+      </div>
       {close ? (
         <AddSale
           handleClose={handleClose}

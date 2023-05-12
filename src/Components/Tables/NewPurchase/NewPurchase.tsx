@@ -89,15 +89,19 @@ export default function NewPurchase() {
         if (response) {
           const newInvoice = {
             ...invoice,
-            id: generateInvoiceId(new Date().toLocaleDateString())
-          }
+            id: generateInvoiceId(new Date().toLocaleDateString()),
+          };
           dispatch(loading());
           dispatch<any>(postInvoice(newInvoice, file))
             .then(() => {
               dispatch<any>(
                 postItems(
                   items.map((item) => {
-                    return { ...item, date: newInvoice.date, invoiceId: newInvoice.id };
+                    return {
+                      ...item,
+                      date: newInvoice.date,
+                      invoiceId: newInvoice.id,
+                    };
                   })
                 )
               ).then(() => {
@@ -158,7 +162,9 @@ export default function NewPurchase() {
 
   return (
     <div className={styles.background}>
-      <List active={active}/>
+      <div className={styles.menu}>
+        <List active={active} />
+      </div>
       {source ? <AddSource handleClose={handleCloseSource} /> : null}
       {excel ? (
         <DownloadExcel handleClose={handleCloseExcel} data={exportData} />

@@ -160,13 +160,17 @@ export default function AddBusinessExpense() {
   return (
     <div className={styles.background}>
       {close ? <Categories handleClose={handleClose} /> : null}
-      <List active={active}/>
+      <div className={styles.menu}>
+        <List active={active} />
+      </div>
       <header className={styles.head}>
         <Link className="btn btn-primary" to="/">
           <span>{"< "}</span>
           <span>{"Menu"}</span>
         </Link>
-        <h1>Add <span>Business</span> Expense</h1>
+        <h1>
+          Add <span>Business</span> Expense
+        </h1>
         <div className={style.navBar} onClick={handleActive}>
           {active ? (
             <img src={active ? closeSvg : menuSvg} alt="menu" />

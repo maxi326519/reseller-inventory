@@ -34,7 +34,7 @@ export default function Refound({ handleClose, handleSubmit }: Props) {
 
   return (
     <div className={styles.background}>
-      <form className={styles.container} onSubmit={handleLocalSubmit}>
+      <form className={`toTop ${styles.container}`} onSubmit={handleLocalSubmit}>
         <div className={styles.close}>
           <h4>Refound item</h4>
           <button

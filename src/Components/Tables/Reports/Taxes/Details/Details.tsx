@@ -9,14 +9,10 @@ interface Props {
   handleClose: (data: OtherCategories[] | null) => void;
 }
 
-export default function Details({
-  expenses,
-  handleClose,
-}: Props) {
-
+export default function Details({ expenses, handleClose }: Props) {
   return (
     <div className={styles.background}>
-      <div className={styles.container}>
+      <div className={`toTop ${styles.container}`}>
         <div className={styles.close}>
           <h4>Other categories</h4>
           <button
@@ -27,12 +23,10 @@ export default function Details({
             x
           </button>
         </div>
-        <div className={styles.data}>
-          <div className={styles.list}>
-            {expenses.map((expense: OtherCategories, i) =>
-              <ExpenseData key={i} expense={expense} />
-            )}
-          </div>
+        <div className={styles.list}>
+          {expenses.map((expense: OtherCategories, i) => (
+            <ExpenseData key={i} expense={expense} />
+          ))}
         </div>
       </div>
     </div>

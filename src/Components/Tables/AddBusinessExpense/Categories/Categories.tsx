@@ -64,7 +64,7 @@ export default function Categories({ handleClose }: Props) {
 
   return (
     <div className={styles.background}>
-      <form className={styles.container} onSubmit={handleSubmit}>
+      <form className={`toTop ${styles.container}`} onSubmit={handleSubmit}>
         <div className={styles.close}>
           <h4>Categories</h4>
           <button

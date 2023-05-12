@@ -34,7 +34,6 @@ interface Filter {
 
 export default function Invoices() {
   const dispatch = useDispatch();
-  const reports = useSelector((state: RootState) => state.reports);
   const invoices = useSelector((state: RootState) => state.invoices.data);
   const details = useSelector((state: RootState) => state.invoices.details);
   const [image, setImage] = useState<string>("");
@@ -43,7 +42,6 @@ export default function Invoices() {
   const [search, setSearch] = useState<string>("");
   const [total, setTotal] = useState(0);
   const [dayFilter, setDayFilter] = useState<string>("");
-  const [dateFilter, setDateFilter] = useState<any>();
   const [invoiceType, setInvoiceType] = useState<InvoiceType>(
     InvoiceType.Purchase
   );
@@ -116,8 +114,6 @@ export default function Invoices() {
     const month = date.month;
     const day = date.day;
 
-    setDateFilter(date);
-
     if (month !== "00") {
       dispatch(loading());
       dispatch<any>(getInvoices(year, month))
@@ -172,7 +168,9 @@ export default function Invoices() {
   }
   return (
     <div className={styles.background}>
-      <List active={active}/>
+      <div className={styles.menu}>
+        <List active={active} />
+      </div>
       {close ? (
         <Details
           handleClose={handleClose}

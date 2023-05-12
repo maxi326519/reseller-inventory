@@ -4,7 +4,6 @@ import { Timestamp } from "firebase/firestore";
 import { Item, Sale, RootState, Expense } from "../../../../interfaces";
 import { loading, closeLoading } from "../../../../redux/actions/loading";
 import { postSales } from "../../../../redux/actions/sales";
-import { postExpenses } from "../../../../redux/actions/expenses";
 import { updateReports } from "../../../../redux/actions/reports";
 import swal from "sweetalert";
 

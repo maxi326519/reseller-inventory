@@ -25,7 +25,9 @@ export default function Reports() {
 
   return (
     <div className={styles.background}>
-      <List active={active} />
+      <div className={styles.menu}>
+        <List active={active} />
+      </div>
       <div className={styles.head}>
         <Link className="btn btn-primary" to="/">
           <span>{"< "}</span>

@@ -1,12 +1,10 @@
 .toTop {
-  position: relative;
   animation-name: toTopAnimation;
   animation-duration: 0.2s;
   animation-timing-function: ease-out;
 }
 
 .toRight {
-  position: relative;
   animation-name: toRightAnimation;
   animation-duration: 0.2s;
   animation-timing-function: ease-out;

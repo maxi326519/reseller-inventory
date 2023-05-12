@@ -40,7 +40,7 @@ export default function InvoiceDetails({
           </button>
         </div>
       ) : null}
-      <div className={styles.container}>
+      <div className={`toTop ${styles.container}`}>
         <div className={styles.close}>
           <h4>Invoice Details</h4>
           <button

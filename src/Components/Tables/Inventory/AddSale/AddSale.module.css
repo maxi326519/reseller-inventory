@@ -1,19 +1,19 @@
 .background {
   position: fixed;
-  z-index: 500;
+  z-index: 1300;
   top: 0;
   left: 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
   background-color: #0006;
 }
 
 .container {
+  position: relative;
   width: 600px;
-  max-height: 100vh;
+  height: max-content;
   padding: 20px;
   border-radius: 10px;
   background-color: #333;
@@ -57,7 +57,7 @@
   text-align: center;
 }
 
-.list .empty{
+.list .empty {
   color: grey;
 }
 
@@ -98,33 +98,40 @@
 }
 
 /* SHIPMENT */
-.shipment{
+.shipment {
   display: flex;
 }
 
-.shipment div{
+.shipment div {
   padding: 10px 0;
   flex-grow: 1;
 }
 
-.shipment div:first-child{
+.shipment div:first-child {
   margin-right: 10px;
 }
 /* SHIPMENT */
 
 /* EXPENSES */
-.expenses .inputs{
+.expenses .inputs {
   display: flex;
 }
 
-.expenses .inputs input:first-child{
+.expenses .inputs input:first-child {
   margin-right: 10px;
 }
 /* EXPENSES */
 
+@media screen and (min-width: 700px) {
+  .background {
+    justify-content: center;
+    padding: 30px;
+  }
+}
+
 @media screen and (max-width: 700px) {
-  .container{
-  border-radius: 0;
-  overflow-y: scroll;
+  .container {
+    border-radius: 0;
+    overflow-y: scroll;
   }
 }

@@ -12,6 +12,7 @@
 }
 
 .container {
+  position: relative;
   width: 400px;
   padding: 20px;
   border-radius: 10px;
@@ -28,7 +29,7 @@
   flex-grow: 1;
 }
 
-.question{
+.question {
   display: block;
   width: 100%;
   font-size: 18px;
@@ -36,11 +37,17 @@
   margin-bottom: 30px;
 }
 
-.bntContainer{
+.bntContainer {
   display: flex;
   justify-content: center;
 }
 
-.cancel{
+.cancel {
   margin-left: 20px;
+}
+
+@media screen and (max-width: 500px) {
+  .container {
+    width: 90%;
+  }
 }
