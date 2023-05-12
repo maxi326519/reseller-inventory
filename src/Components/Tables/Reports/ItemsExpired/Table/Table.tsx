@@ -7,9 +7,14 @@ import styles from "./Table.module.css";
 interface Props {
   items: Item[];
   handleRestore: (id: number) => void;
+  handleInvoiceDetail: (invoiceId: number) => void;
 }
 
-export default function Table({ items, handleRestore }: Props) {
+export default function Table({
+  items,
+  handleRestore,
+  handleInvoiceDetail,
+}: Props) {
   return (
     <div className={styles.table}>
       <div className={styles.responsive}>
@@ -23,7 +28,12 @@ export default function Table({ items, handleRestore }: Props) {
         </div>
         <div className={styles.data}>
           {items.map((item) => (
-            <Rows key={item.id} item={item} handleRestore={handleRestore} />
+            <Rows
+              key={item.id}
+              item={item}
+              handleRestore={handleRestore}
+              handleInvoiceDetail={handleInvoiceDetail}
+            />
           ))}
         </div>
       </div>

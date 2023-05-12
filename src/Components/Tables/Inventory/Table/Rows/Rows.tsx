@@ -12,8 +12,12 @@ interface Props {
   handleInvoiceDetail: (invoiceId: number) => void;
 }
 
-export default function Rows({ item, itemSelected, handleSelected, handleInvoiceDetail }: Props) {
-
+export default function Rows({
+  item,
+  itemSelected,
+  handleSelected,
+  handleInvoiceDetail,
+}: Props) {
   function handleCheck(id: number, cost: number | string) {
     handleSelected(id, Number(cost));
   }
@@ -30,10 +34,16 @@ export default function Rows({ item, itemSelected, handleSelected, handleInvoice
         />
       </div>
       <span>{item.id}</span>
-      <span>{changeDateFormat(item.date.toDate().toISOString().split("T")[0])}</span>
+      <span>
+        {changeDateFormat(item.date.toDate().toISOString().split("T")[0])}
+      </span>
       <span>{item.description}</span>
       <span>{item.cost}</span>
-      <button className="btn btn-success" type="button" onClick={() => handleInvoiceDetail(item.invoiceId)}>
+      <button
+        className="btn btn-success"
+        type="button"
+        onClick={() => handleInvoiceDetail(item.invoiceId)}
+      >
         <img src={invoiceSvg} alt="invoice" />
       </button>
     </div>

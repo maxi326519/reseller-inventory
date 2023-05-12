@@ -14,9 +14,15 @@ import styles from "./ItemsExpired.module.css";
 import swal from "sweetalert";
 import DateFilter from "./DateFilter/DateFilter";
 import { updateReportsItems } from "../../../../redux/actions/reports";
-import { getExpired, restoreItem } from "../../../../redux/actions/items";
+import {
+  deleteItemInvoiceDetail,
+  getExpired,
+  getItemInvoiceDetail,
+  restoreItem,
+} from "../../../../redux/actions/items";
 import Excel from "./Excel/Excel";
 import changeDateFormat from "../../../../functions/changeDateFormat";
+import InvoiceDetails from "../../Inventory/InvoiceDetails/InvoiceDetails";
 
 interface Props {
   typeReport: any;
@@ -29,10 +35,12 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
   const reports: YearReport[] = useSelector(
     (state: RootState) => state.reports
   );
+  const invoiceDetail = useSelector((state: RootState) => state.items.details);
   const [exports, setExports] = useState<ExportExpired[]>();
   const [total, setTotal] = useState(0);
   const [years, setYears] = useState<number[]>([]);
   const [rows, setRows] = useState<Item[]>([]);
+  const [details, setDetails] = useState<boolean>(false);
 
   useEffect(() => {
     setRows(
@@ -114,8 +122,24 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
     });
   }
 
+  function handleInvoiceDetail(invoiceId?: number) {
+    setDetails(!details);
+    if (details) {
+      dispatch<any>(deleteItemInvoiceDetail());
+    } else if (invoiceId) {
+      dispatch<any>(getItemInvoiceDetail(invoiceId));
+    }
+  }
+
   return (
     <div className={styles.itemsSold}>
+      {details ? (
+        <InvoiceDetails
+          handleClose={handleInvoiceDetail}
+          itemsList={invoiceDetail.items}
+          image={invoiceDetail.invoice.image}
+        />
+      ) : null}
       <div className={styles.controls}>
         <div className="form-floating">
           <select
@@ -140,7 +164,11 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
           </span>
         </div>
       </div>
-      <Table items={rows} handleRestore={handleRestore} />
+      <Table
+        items={rows}
+        handleRestore={handleRestore}
+        handleInvoiceDetail={handleInvoiceDetail}
+      />
     </div>
   );
 }

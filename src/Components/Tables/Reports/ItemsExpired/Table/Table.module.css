@@ -43,7 +43,7 @@
 
 .rows {
   display: grid;
-  grid-template-columns: 160px 160px 110px 150px 1fr 100px;
+  grid-template-columns: 160px 110px 150px 1fr 160px 100px;
   width: 100%;
   text-align: center;
   border-bottom: 1px solid #ccc;
@@ -61,6 +61,11 @@
 .rows div {
   padding: 5px;
   border-right: 1px solid #ccc;
+}
+
+.rows button img {
+  width: 20px;
+  filter: invert(100%);
 }
 
 .rows button {

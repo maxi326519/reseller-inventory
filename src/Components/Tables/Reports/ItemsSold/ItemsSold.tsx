@@ -10,7 +10,12 @@ import {
   YearReport,
 } from "../../../../interfaces";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
-import { deleteSoldItem, refoundItems } from "../../../../redux/actions/items";
+import {
+  deleteItemInvoiceDetail,
+  deleteSoldItem,
+  getItemInvoiceDetail,
+  refoundItems,
+} from "../../../../redux/actions/items";
 import { postExpenses } from "../../../../redux/actions/expenses";
 import {
   getSoldReportData,
@@ -27,6 +32,7 @@ import styles from "./ItemsSold.module.css";
 import swal from "sweetalert";
 import Expenses from "./Expenses/Expenses";
 import changeDateFormat from "../../../../functions/changeDateFormat";
+import InvoiceDetails from "../../Inventory/InvoiceDetails/InvoiceDetails";
 
 interface Rows {
   item: Item | undefined;
@@ -49,6 +55,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   const reports: YearReport[] = useSelector(
     (state: RootState) => state.reports
   );
+  const invoiceDetail = useSelector((state: RootState) => state.items.details);
   const [expensesDetails, setExpensesDetails] = useState(false);
   const [refound, setRefound] = useState(false);
   const [refoundSelected, setRefoundSelected] = useState<number>();
@@ -60,6 +67,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   const [orderTotal, setOrderTotal] = useState(0);
   const [shipmentTotal, setShipmentTotal] = useState(0);
   const [exports, setExports] = useState<ExportSales[]>([]);
+  const [details, setDetails] = useState<boolean>(false);
 
   useEffect(() => {
     const rows: Rows[] = sales.map(
@@ -236,6 +244,16 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   function handleCloseDetails() {
     setExpensesDetails(!expensesDetails);
   }
+
+  function handleInvoiceDetail(invoiceId?: number) {
+    setDetails(!details);
+    if (details) {
+      dispatch<any>(deleteItemInvoiceDetail());
+    } else if (invoiceId) {
+      dispatch<any>(getItemInvoiceDetail(invoiceId));
+    }
+  }
+
   return (
     <div className={styles.itemsSold}>
       {refound ? (
@@ -243,6 +261,13 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
       ) : null}
       {expensesDetails ? (
         <Expenses expenses={expenseSelected} handleClose={handleCloseDetails} />
+      ) : null}
+      {details ? (
+        <InvoiceDetails
+          handleClose={handleInvoiceDetail}
+          itemsList={invoiceDetail.items}
+          image={invoiceDetail.invoice.image}
+        />
       ) : null}
       <div className={styles.controls}>
         <div className="form-floating">
@@ -281,7 +306,8 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         handleRefoundSelected={handleRefoundSelected}
         handleDeleteSold={handleDeleteSold}
         handleShowExpensesDetails={handleShowExpensesDetails}
-      />
+        handleInvoiceDetail={handleInvoiceDetail}
+        />
     </div>
   );
 }

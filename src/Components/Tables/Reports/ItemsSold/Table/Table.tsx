@@ -15,6 +15,7 @@ interface Props {
   handleRefoundSelected: (id: number) => void;
   handleDeleteSold: (id: number) => void;
   handleShowExpensesDetails: (productId: number) => void;
+  handleInvoiceDetail: (invoiceId: number) => void;
 }
 
 export default function Table({
@@ -23,18 +24,19 @@ export default function Table({
   handleRefoundSelected,
   handleDeleteSold,
   handleShowExpensesDetails,
+  handleInvoiceDetail,
 }: Props) {
   return (
     <div className={styles.table}>
       <div className={styles.responsive}>
         <div className={`${styles.firstRow} ${styles.rows}`}>
-          <span>Invoice ID</span>
           <span>Item ID</span>
           <span>Date</span>
           <span>Unit cost</span>
           <span>Price</span>
           <span>Shipment income</span>
           <span>Description</span>
+          <span>Invoice</span>
           <span>Refound</span>
         </div>
         <div className={styles.data}>
@@ -48,6 +50,7 @@ export default function Table({
                 handleRefoundSelected={handleRefoundSelected}
                 handleDeleteSold={handleDeleteSold}
                 handleShowExpensesDetails={handleShowExpensesDetails}
+                handleInvoiceDetail={handleInvoiceDetail}
               />
             );
           })}
