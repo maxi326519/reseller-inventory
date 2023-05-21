@@ -7,12 +7,24 @@ const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
+const cellStyles = {
+  fill: { fgColor: { rgb: "FFFFAA00" } },
+  font: { color: { rgb: "FFFFAA00" }, italic: true },
+};
+
 export default function Excel({ taxes }) {
-  const totals = {
+  /*   const totals = {
     sales: taxes.salesTotal,
     expenses: taxes.expensesTotal,
     profit: taxes.profitTotal,
-  };
+  }; */
+
+  const columns = taxes
+    ? Object.keys(taxes.months[0]).map((key) => ({
+        label: key,
+        value: key,
+      }))
+    : [];
 
   return (
     <ExcelFile
@@ -30,16 +42,13 @@ export default function Excel({ taxes }) {
       </ExcelSheet> */}
 
       <ExcelSheet data={taxes.months} name="Months">
-        <ExcelColumn label="Month" value="month" />
-        <ExcelColumn label="Sales" value="sales" />
-        <ExcelColumn label="Shipment" value="shipment" />
-        <ExcelColumn label="Total Sales" value="salesTotal" />
-        <ExcelColumn label="COGS" value="COGS" />
-        <ExcelColumn label="Ship Label" value="shipLabel" />
-        <ExcelColumn label="Ebay Fees" value="ebayFees" />
-        <ExcelColumn label="Ads Fee" value="adsFee" />
-        <ExcelColumn label="Other Expense" value="otherExpense" />
-        <ExcelColumn label="Total Expenses" value="expensesTotal" />
+        {columns.map((column) => (
+          <ExcelColumn
+            label={column.label}
+            value={column.value}
+            style={cellStyles}
+          />
+        ))}
       </ExcelSheet>
     </ExcelFile>
   );

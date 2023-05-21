@@ -40,20 +40,18 @@ export default function Table({
           <span>Refound</span>
         </div>
         <div className={styles.data}>
-          {rows.map((row: Rows) => {
-            return (
-              <Rows
-                key={row.sale.id}
-                item={row.item}
-                sale={row.sale}
-                handleClose={handleClose}
-                handleRefoundSelected={handleRefoundSelected}
-                handleDeleteSold={handleDeleteSold}
-                handleShowExpensesDetails={handleShowExpensesDetails}
-                handleInvoiceDetail={handleInvoiceDetail}
-              />
-            );
-          })}
+          {rows.map((row: Rows) => (
+            <Rows
+              key={row.sale.id}
+              item={row.item}
+              sale={row.sale}
+              handleClose={handleClose}
+              handleRefoundSelected={handleRefoundSelected}
+              handleDeleteSold={handleDeleteSold}
+              handleShowExpensesDetails={handleShowExpensesDetails}
+              handleInvoiceDetail={handleInvoiceDetail}
+            />
+          ))}
         </div>
       </div>
     </div>

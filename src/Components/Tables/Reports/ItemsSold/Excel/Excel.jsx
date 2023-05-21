@@ -8,6 +8,14 @@ const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 export default function Excel({ sales }) {
+
+  const columns = sales.length !== 0
+    ? Object.keys(sales[0]).map((key) => ({
+        label: key,
+        value: key,
+      }))
+    : [];
+
   return (
     <ExcelFile
       element={
@@ -19,13 +27,9 @@ export default function Excel({ sales }) {
       filename="Items sold report"
     >
       <ExcelSheet data={sales} name="Employees">
-        <ExcelColumn label="Invoice ID" value="invoiceId" />
-        <ExcelColumn label="Item ID" value="itemId" />
-        <ExcelColumn label="Date" value="date" />
-        <ExcelColumn label="Unit Cost" value="unitCost" />
-        <ExcelColumn label="Price" value="price" />
-        <ExcelColumn label="Shipment Income" value="shipmentIncome" />
-        <ExcelColumn label="Description" value="description" />
+        {columns.map((column, i ) => (
+          <ExcelColumn key={i} label={column.label} value={column.value} />
+        ))}
       </ExcelSheet>
     </ExcelFile>
   );

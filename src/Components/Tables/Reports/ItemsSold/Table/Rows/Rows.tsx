@@ -31,19 +31,35 @@ export default function Rows({
   }
 
   return (
-    <div key={item?.id} className={styles.rows}>
-      <span>{item?.id}</span>
+    <div className={styles.rows}>
       <span>
+        <b>ITEM ID: </b>
+        {item?.id}
+      </span>
+      <span>
+        <b>DATE: </b>
         {changeDateFormat(
           new Date(sale.date.toDate()).toISOString().split("T")[0]
         )}
       </span>
-      <span>{item?.cost}</span>
-      <span>{sale.price}</span>
-      <span>{sale.shipment.amount !== "" ? sale.shipment.amount : 0}</span>
-      <span>{item?.description}</span>
+      <span>
+        <b>COST: </b>
+        {item?.cost}
+      </span>
+      <span>
+        <b>PRICE: </b>
+        {sale.price}
+      </span>
+      <span>
+        <b>SHIPMENT: </b>
+        {sale.shipment.amount !== "" ? sale.shipment.amount : 0}
+      </span>
+      <span>
+        <b>DESCRIPTION: </b>
+        {item?.description}
+      </span>
       <button
-        className="btn btn-success"
+        className="btn btn-primary"
         type="button"
         onClick={() => handleInvoiceDetail(item!.invoiceId)}
       >

@@ -38,7 +38,7 @@ function App() {
           dispatch<any>(getReports()),
           dispatch<any>(getInvoices(year, null)),
           dispatch<any>(getStockItems()),
-          dispatch<any>(getSoldReportData(year, null)),
+          dispatch<any>(getSoldReportData(year.toString(), null)),
           dispatch<any>(getExpired(year, null)),
         ])
           .then(() => {

@@ -63,20 +63,38 @@ export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
 
   return (
     <div
-      className={`${styles.rows} ${invoiceType === InvoiceType.Expenses ? styles.expenses : null
-        }`}
+      className={`${styles.rows} ${
+        invoiceType === InvoiceType.Expenses ? styles.expenses : null
+      }`}
     >
-      <span>{invoice.id}</span>
-      <span>{changeDateFormat(invoice.date.toDate().toISOString().split("T")[0])}</span>
-      <span>{invoice.items.length}</span>
-      <span>{invoice.total}</span>
       <span>
+        <b>INVOICE ID: </b>
+        {invoice.id}
+      </span>
+      <span>
+        <b>DATE: </b>
+        {changeDateFormat(invoice.date.toDate().toISOString().split("T")[0])}
+      </span>
+      <span>
+        <b>ITEMS: </b>
+        {invoice.items.length}
+      </span>
+      <span>
+        <b>TOTAL: </b>
+        {invoice.total.toFixed(2)}
+      </span>
+      <span>
+        <b>TYPE:</b>
         {invoiceType === InvoiceType.Purchase
           ? (invoice as Invoice).form
           : (invoice as InvoiceExpenses).category}
       </span>
+
       {invoiceType === InvoiceType.Purchase ? (
-        <span>{(invoice as Invoice).source}</span>
+        <span>
+          <b>SOURCE: </b>
+          {(invoice as Invoice).source}
+        </span>
       ) : null}
       <button
         className="btn btn-primary"

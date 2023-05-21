@@ -16,7 +16,6 @@ export default function Table({ items, handleRemove }: Props) {
         <div className={`${styles.firstRow} ${styles.rows}`}>
           <span>Description</span>
           <span>Unit cost</span>
-          <span>Item ID</span>
           <span>Delete</span>
         </div>
         <div className={styles.data}>

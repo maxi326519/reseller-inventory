@@ -18,6 +18,10 @@
   margin-left: 10px;
 }
 
+.rows b {
+  display: none;
+}
+
 @media screen and (max-width: 700px) {
   .controls {
     display: grid;
@@ -39,5 +43,47 @@
 
   .controls div:last-child {
     display: none;
+  }
+
+  .responsive {
+    width: 100%;
+  }
+
+  .rows {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(7, 1fr);
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .firstRow {
+    display: none;
+  }
+
+  .rows b {
+    display: inline-block;
+    text-align: left;
+    width: 110px;
+    margin-right: 10px;
+    color: #fff8;
+  }
+
+  .rows span {
+    display: flex;
+    max-width: 100%;
+    margin-left: 10px;
+    overflow: hidden;
+    grid-column: 1 / 3;
+  }
+
+  .rows span,
+  .rows div {
+    padding: 5px;
+    border-right: none;
+  }
+
+  .rows button {
+    grid-row: 7 / 8;
   }
 }

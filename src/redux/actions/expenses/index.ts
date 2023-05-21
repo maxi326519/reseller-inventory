@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { Expense, RootState } from "../../../interfaces";
 
-export const GET_EXPENSES = "GET_EXPENSES";
+export const GET_SOLD_EXPENSES = "GET_SOLD_EXPENSES";
 export const POST_EXPENSES = "POST_EXPENSES";
 
 export function postExpenses(
@@ -48,8 +48,8 @@ export function postExpenses(
 }
 
 export function getExpenses(
-  year: number,
-  month: number | null
+  year: number | string,
+  month: number | string | null
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
@@ -69,11 +69,11 @@ export function getExpenses(
 
       // Per year or month
       if (month !== null) {
-        startDate = startOfMonth(new Date(year, month - 1));
-        endDate = endOfMonth(new Date(year, month - 1));
+        startDate = startOfMonth(new Date(Number(year), Number(month) - 1));
+        endDate = endOfMonth(new Date(Number(year), Number(month) - 1));
       } else {
-        startDate = startOfYear(new Date(year, 0));
-        endDate = endOfYear(new Date(year, 11));
+        startDate = startOfYear(new Date(Number(year), 0));
+        endDate = endOfYear(new Date(Number(year), 11));
       }
 
       // Query and get docs
@@ -92,7 +92,7 @@ export function getExpenses(
       });
 
       dispatch({
-        type: GET_EXPENSES,
+        type: GET_SOLD_EXPENSES,
         payload: expenses,
       });
     } catch (e: any) {

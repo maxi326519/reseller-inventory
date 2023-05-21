@@ -20,7 +20,7 @@ import {
   GET_INVOICE_DETAILS,
 } from "../actions/invoices";
 import { POST_SALE } from "../actions/sales";
-import { POST_EXPENSES, GET_EXPENSES } from "../actions/expenses";
+import { POST_EXPENSES, GET_SOLD_EXPENSES } from "../actions/expenses";
 import {
   GET_REPORTS,
   GET_SOLD_REPORT_DATA,
@@ -209,10 +209,13 @@ export const rootReducer = (
           expenses: action.payload.expenses,
         },
       };
-    case GET_EXPENSES:
+    case GET_SOLD_EXPENSES:
       return {
         ...state,
-        expenses: [...action.payload],
+        sales: {
+          ...state.sales,
+          expenses: [...action.payload],
+        }
       };
 
     case GET_ITEMS_EXPIRED:

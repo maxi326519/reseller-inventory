@@ -33,12 +33,22 @@ export default function Rows({
           onChange={() => handleCheck(item.id, item.cost)}
         />
       </div>
-      <span>{item.id}</span>
       <span>
+        <b>ITEM ID:</b>
+        {item.id}
+      </span>
+      <span>
+        <b>DATE: </b>
         {changeDateFormat(item.date.toDate().toISOString().split("T")[0])}
       </span>
-      <span>{item.description}</span>
-      <span>{item.cost}</span>
+      <span>
+        <b>DESCRIPTION: </b>
+        {item.description}
+      </span>
+      <span>
+        <b>COST: </b>
+        {item.cost}
+      </span>
       <button
         className="btn btn-success"
         type="button"

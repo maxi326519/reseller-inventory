@@ -16,10 +16,22 @@ export default function Rows({
 }: Props) {
   return (
     <div key={item.id} className={styles.rows}>
-      <span>{item.id}</span>
-      <span>{item.expired!.toDate().toISOString().split("T")[0]}</span>
-      <span>{item.cost}</span>
-      <span>{item.description}</span>
+      <span>
+        <b>ID: </b>
+        {item.id}
+      </span>
+      <span>
+        <b>EXPIRED: </b>
+        {item.expired!.toDate().toISOString().split("T")[0]}
+      </span>
+      <span>
+        <b>COST: </b>
+        {item.cost}
+      </span>
+      <span>
+        <b>DESCRIPTION: </b>
+        {item.description}
+      </span>
       <button
         className="btn btn-success"
         type="button"

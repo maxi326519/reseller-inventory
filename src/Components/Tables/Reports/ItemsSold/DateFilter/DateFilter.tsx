@@ -110,7 +110,7 @@ export default function DateFilter({ years, handleFilterPerDate }: Porps) {
           value={filter.day}
           onChange={handleChange}
         >
-          <option value="00">All</option>
+          <option value="0">All</option>
           {days.map((day) => (
             <option key={day} value={`0${day}`.slice(-2)}>
               {`0${day}`.slice(-2)}

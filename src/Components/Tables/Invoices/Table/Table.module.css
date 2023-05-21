@@ -43,7 +43,7 @@
 
 .rows {
   display: grid;
-  grid-template-columns: 120px repeat(4, 1fr) 100px 150px 80px;
+  grid-template-columns: 120px repeat(4, 1fr) 300px 150px 80px;
   width: 100%;
   text-align: center;
   border-bottom: 1px solid #ccc;
@@ -60,4 +60,54 @@
 
 .expenses {
   grid-template-columns: 180px 120px repeat(4, 1fr) 80px;
+}
+
+.rows b {
+  display: none;
+}
+
+@media screen and (max-width: 700px) {
+
+  .responsive {
+    width: 100%;
+  }
+
+  .rows {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(7, 1fr);
+    gap: 5px;
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .firstRow {
+    display: none;
+  }
+
+  .rows b {
+    display: inline-block;
+    text-align: left;
+    width: 110px;
+    margin-right: 10px;
+    color: #fff8;
+  }
+
+  .rows span {
+    display: flex;
+    max-width: 100%;
+    margin-left: 10px;
+    overflow: hidden;
+    grid-column: 1 / 3;
+  }
+
+  .rows span,
+  .rows div {
+    padding: 5px;
+    border-right: none;
+  }
+
+  .rows button {
+    grid-row: 7 / 8;
+  }
 }

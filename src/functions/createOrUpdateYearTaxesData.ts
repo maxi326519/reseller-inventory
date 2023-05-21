@@ -46,7 +46,7 @@ export function createOrUpdateYearTaxesData(
     });
     monthReport.expenses.forEach((item) => {
       switch (item.type) {
-        case "Sale":
+        case "COGS":
           monthTaxesData.expenses.COGS += Number(item.amount);
           break;
         case "Ship Label":

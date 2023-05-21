@@ -86,15 +86,11 @@ export default function Taxes({ typeReport, handleChange }: Props) {
     if (TaxesYearIndex !== null && taxesData)
       newData = convertToExportYearTaxesData(taxesData[TaxesYearIndex]);
 
-    console.log(newData);
-
-    if (newData) newData = desglosarOtherCategories(newData);
-
-    console.log(newData);
-
-    if (newData) setExcelData(newData);
-
-    console.log(newData);
+    if (newData) {
+      newData = desglosarOtherCategories(newData);
+      console.log(newData);
+      setExcelData(newData);
+    }
   }, [taxesData, TaxesYearIndex]);
 
   function desglosarOtherCategories(taxes: ExportYearTaxesData): void {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp, getDocs } from "firebase/firestore";
+import { get, ref } from "firebase/database";
 import {
   Expense,
   ExportSales,
@@ -16,14 +17,14 @@ import {
   getItemInvoiceDetail,
   refoundItems,
 } from "../../../../redux/actions/items";
-import { postExpenses } from "../../../../redux/actions/expenses";
+import { getExpenses, postExpenses } from "../../../../redux/actions/expenses";
 import {
   getSoldReportData,
   updateReports,
   updateReportsItems,
 } from "../../../../redux/actions/reports";
 
-import DataFilter from "./DateFilter/DateFilter";
+import DateFilter from "./DateFilter/DateFilter";
 import Table from "./Table/Table";
 import Refound from "./Refound/Refound";
 
@@ -60,6 +61,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   const [refound, setRefound] = useState(false);
   const [refoundSelected, setRefoundSelected] = useState<number>();
   const [years, setYears] = useState<number[]>([]);
+  const [dateFilter, setDateFilter] = useState({ year: 0, month: 0 });
 
   const [rows, setRows] = useState<Rows[]>([]);
   const [totalCost, setTotalCost] = useState(0);
@@ -103,8 +105,20 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   }, [reports]);
 
   useEffect(() => {
+    let categories: any = {};
+
+    // Traer las expensas
+    const year = dateFilter.year.toString();
+    let month =
+      dateFilter.month.toString() === "00" ? null : dateFilter.month.toString();
+    // Extraer las categorias
+    expenses.forEach((expense) => {
+      categories[expense.category] = 0;
+    });
+    // Traer las expensas
+
     const data = rows.map(({ item, sale }) => {
-      const data: ExportSales = {
+      const data: any = {
         invoiceId: item?.invoiceId || 0,
         itemId: item?.id || 0,
         date: changeDateFormat(sale.date.toDate().toISOString().split("T")[0]),
@@ -112,11 +126,40 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         price: Number(sale.price),
         shipmentIncome: Number(sale.shipment.amount),
         description: item?.description || "",
+        ...categories,
       };
+
+      // Cargar los datos de las expensas
+      const itemsExpenses = expenses.filter(
+        (expense) => expense.id === item?.id
+      );
+
+      itemsExpenses.forEach(
+        (expense) => (data[expense.category] = expense.price)
+      );
       return data;
     });
     setExports(data);
   }, [rows]);
+
+  useEffect(() => {
+    if (dateFilter.year !== 0) {
+      const year = dateFilter.year.toString();
+      let month =
+        dateFilter.month.toString() === "00"
+          ? null
+          : dateFilter.month.toString();
+
+      dispatch(loading());
+      dispatch<any>(getSoldReportData(year, month)).then(() => {
+        dispatch(closeLoading());
+      });
+    }
+  }, [dateFilter]);
+
+  function handleFilterPerDate(dateFilter: any) {
+    setDateFilter(dateFilter);
+  }
 
   function handleRefoundSelected(itemId: number) {
     setRefoundSelected(itemId);
@@ -124,6 +167,8 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
 
   function handleRefound(amount: number) {
     if (refoundSelected === undefined) return false;
+
+    /* REVISAR LAS EXPENSAS */
     const newExpense = [
       {
         id: refoundSelected,
@@ -143,7 +188,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
             dispatch<any>(
               updateReportsItems(
                 [refoundSelected],
-                ["Ebay Fees", "Sale"],
+                ["Ebay Fees", "COGS"],
                 reports
               )
             )
@@ -220,16 +265,6 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     });
   }
 
-  function handleFilterPerDate(dateFilter: any) {
-    const year = dateFilter.year.toString();
-    let month = dateFilter.month === "00" ? null : dateFilter.month;
-
-    dispatch(loading());
-    dispatch<any>(getSoldReportData(year, month)).then(() => {
-      dispatch(closeLoading());
-    });
-  }
-
   // Refound
   function handleClose() {
     setRefound(!refound);
@@ -285,7 +320,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
             Filter by:
           </label>
         </div>
-        <DataFilter years={years} handleFilterPerDate={handleFilterPerDate} />
+        <DateFilter years={years} handleFilterPerDate={handleFilterPerDate} />
         <Excel sales={exports} />
         <div>
           <span className={styles.total}>Total items: {totalItems}</span>
@@ -307,7 +342,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         handleDeleteSold={handleDeleteSold}
         handleShowExpensesDetails={handleShowExpensesDetails}
         handleInvoiceDetail={handleInvoiceDetail}
-        />
+      />
     </div>
   );
 }

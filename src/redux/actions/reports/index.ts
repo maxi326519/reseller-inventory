@@ -63,8 +63,8 @@ export function getReports(): ThunkAction<
 }
 
 export function getSoldReportData(
-  year: number,
-  month: number | null
+  year: string,
+  month: string | null
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {

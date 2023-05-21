@@ -29,7 +29,7 @@ export default function NewPurchase() {
   const initialState: Invoice = {
     id: 0,
     type: InvoiceType.Purchase,
-    date: Timestamp.fromDate(new Date()),
+    date: Timestamp.now(),
     items: [],
     form: "Cash",
     source: "0",
@@ -94,11 +94,21 @@ export default function NewPurchase() {
           dispatch(loading());
           dispatch<any>(postInvoice(newInvoice, file))
             .then(() => {
+              const date = invoice.date.toDate();
+              const formattedDate = Number(
+                `${date.getFullYear()}${(date.getMonth() + 1)
+                  .toString()
+                  .padStart(2, "0")}${date
+                  .getDate()
+                  .toString()
+                  .padStart(2, "0")}`
+              );
               dispatch<any>(
                 postItems(
                   items.map((item) => {
                     return {
                       ...item,
+                      id: Number(`${formattedDate}${item.id}`),
                       date: newInvoice.date,
                       invoiceId: newInvoice.id,
                     };

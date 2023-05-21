@@ -22,7 +22,7 @@ export default function Row({ taxesMonth, handleShowOtherCategories }: Props) {
         <span>Other Expenses: {taxesMonth.expenses.otherExpense}</span>
         <span>Ebya Fees: {taxesMonth.expenses.ebayFees}</span>
         <span>COGS: {taxesMonth.expenses.COGS}</span>
-        <button className="btn btn-outline-primary" type="button" onClick={() => handleShowOtherCategories(taxesMonth.expenses.otherCategories)}>View details</button>
+        <button className="btn btn-outline-primary" type="button" onClick={() => handleShowOtherCategories(taxesMonth.expenses.otherCategories)}>View other categories</button>
       </div>
     </div>
   );

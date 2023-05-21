@@ -336,8 +336,8 @@ export default function AddSale({
           id: sale.id,
           date: sale.date,
           price: sale.cost,
-          category: "Sale",
-          description: "Sale cost expense",
+          category: "COGS",
+          description: "COGS expense", 
           invoiceId: 0,
         });
 

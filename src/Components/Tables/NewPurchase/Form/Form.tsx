@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Invoice, Item, RootState } from "../../../../interfaces";
 
 import styles from "../../Tables.module.css";
@@ -53,7 +53,6 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
         allItems.push({
           ...newItem,
           id: createUniqueId(
-            invoice.date.toDate().toISOString().split("T")[0],
             Math.floor(Number(newItem.cost)),
             items.map((i) => i.id)
           ),
@@ -72,9 +71,13 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
 
   function handleInvoice(event: React.ChangeEvent<HTMLInputElement>): void {
     if (event.target.name === "date") {
+      const fechaInput = event.target.value;
+      const fechaUTC = new Date(fechaInput);
+      fechaUTC.setUTCHours(0, 0, 0, 0);
+      const date = Timestamp.fromDate(fechaUTC);
       setInvoice({
         ...invoice,
-        date: Timestamp.fromDate(new Date(event.target.value)),
+        date: date,
       });
     } else {
       setInvoice({ ...invoice, [event.target.name]: event.target.value });
@@ -107,24 +110,10 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     setError({ ...error, [event.target.name]: null });
   }
 
-  function createUniqueId(
-    dateStr: string,
-    price: number,
-    existingIds: number[]
-  ): number {
-    const date = new Date(dateStr);
-    const formattedDate = Number(
-      `${date.getFullYear()}${(date.getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}`
-    );
-    let productId = Number(
-      `${formattedDate}${price}${Math.floor(Math.random() * 1000000)}`
-    );
+  function createUniqueId(price: number, existingIds: number[]): number {
+    let productId = Number(`${price}${Math.floor(Math.random() * 1000000)}`);
     while (existingIds.includes(productId)) {
-      productId = Number(
-        `${formattedDate}${price}${Math.floor(Math.random() * 1000000)}`
-      );
+      productId = Number(`${price}${Math.floor(Math.random() * 1000000)}`);
     }
     return productId;
   }
