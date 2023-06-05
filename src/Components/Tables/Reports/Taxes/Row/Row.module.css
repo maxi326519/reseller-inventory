@@ -1,29 +1,78 @@
-.row{
+.row {
   display: flex;
 }
 
-.row, .col-mdmonth, .sales, .expenses{
+.row,
+.col-mdmonth,
+.sales,
+.expenses {
   outline: 1px solid #ccc;
 }
 
-.month{
+.month {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 200px;
 }
 
-.sales{
+.sales {
   display: flex;
   flex-direction: column;
-  flex-grow: 1; 
+  flex-grow: 1;
   padding: 20px;
 }
 
-.expenses{
+.expenses {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 1fr 1fr;
-  flex-grow: 1; 
+  flex-grow: 1;
   padding: 20px;
+}
+
+@media screen and (max-width: 700px) {
+  .responsive {
+    width: 100%;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 50px max-content max-content;
+  }
+
+  .row b {
+    display: inline-block;
+    width: 150px;
+  }
+
+  .row .month {
+    width: 100%;
+    background-color: #0006;
+  }
+
+  .row .month span {
+    text-align: center;
+    width: 100%;
+  }
+
+  .row .expenses {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row .expenses {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row .expenses span,
+  .row .sales span {
+    margin: 5px;
+  }
+
+  .row button{
+    margin-top: 20px;
+  }
 }

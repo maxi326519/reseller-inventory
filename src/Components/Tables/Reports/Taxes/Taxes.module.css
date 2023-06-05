@@ -74,4 +74,17 @@
     grid-template-rows: 1fr;
     align-items: center;
   }
+
+  .responsive {
+    width: 100%;
+  }
+
+  .head {
+    display: grid;
+    grid-template-rows: repeat(3, max-content);
+  }
+
+  .head span{
+    padding: 10px;
+  }
 }

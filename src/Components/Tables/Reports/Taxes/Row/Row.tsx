@@ -13,16 +13,38 @@ export default function Row({ taxesMonth, handleShowOtherCategories }: Props) {
         <span>{taxesMonth.month.name}</span>
       </div>
       <div className={styles.sales}>
-        <span>Sales: {taxesMonth.sales.sales}</span>
-        <span>Shipment: {taxesMonth.sales.shipment}</span>
+        <span>
+          <b>Sales:</b> {taxesMonth.sales.sales.toFixed(2)}
+        </span>
+        <span>
+          <b>Shipment:</b> {taxesMonth.sales.shipment.toFixed(2)}
+        </span>
       </div>
       <div className={styles.expenses}>
-        <span>Ship Label: {taxesMonth.expenses.shipLabel}</span>
-        <span>Ads Fee: {taxesMonth.expenses.adsFee}</span>
-        <span>Other Expenses: {taxesMonth.expenses.otherExpense}</span>
-        <span>Ebya Fees: {taxesMonth.expenses.ebayFees}</span>
-        <span>COGS: {taxesMonth.expenses.COGS}</span>
-        <button className="btn btn-outline-primary" type="button" onClick={() => handleShowOtherCategories(taxesMonth.expenses.otherCategories)}>View other categories</button>
+        <span>
+          <b>Ship Label:</b> {taxesMonth.expenses.shipLabel.toFixed(2)}
+        </span>
+        <span>
+          <b>Ads Fee:</b> {taxesMonth.expenses.adsFee.toFixed(2)}
+        </span>
+        <span>
+          <b>Other Expenses:</b> {taxesMonth.expenses.otherExpense.toFixed(2)}
+        </span>
+        <span>
+          <b>Ebya Fees:</b> {taxesMonth.expenses.ebayFees.toFixed(2)}
+        </span>
+        <span>
+          <b>COGS:</b> {taxesMonth.expenses.COGS.toFixed(2)}
+        </span>
+        <button
+          className="btn btn-outline-primary"
+          type="button"
+          onClick={() =>
+            handleShowOtherCategories(taxesMonth.expenses.otherCategories)
+          }
+        >
+          View other categories
+        </button>
       </div>
     </div>
   );
