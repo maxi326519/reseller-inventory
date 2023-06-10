@@ -202,56 +202,60 @@ export function deleteInvoice(
         auth.currentUser.uid,
         "Invoices"
       );
-
-      const batch = writeBatch(db);
-
-      // Delete invoice
-      batch.delete(doc(invoiceRef, invoice.id.toString()));
-
-      // Delete items
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
-      invoice.items.forEach((id: any) => {
-        batch.delete(doc(itemsRef, id.toString()));
-      });
-
-      // Get expenses and then delete them
       const expensesRef = collection(
         db,
         "Users",
         auth.currentUser.uid,
         "Expenses"
       );
-      for (let i = 0; i < invoice.items.length; i++) {
+
+      const batch = writeBatch(db);
+
+      // Delete invoice
+      batch.delete(doc(invoiceRef, invoice.id.toString()));
+
+      // Get items
+      const itemsQuery = query(itemsRef, where("invoiceId", "==", invoice.id));
+      const itemSnapshot = await getDocs(itemsQuery);
+
+      // Delete items
+      itemSnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      let itemsId: string[] = [];
+      itemSnapshot.forEach((doc) => itemsId.push(doc.id));
+
+      // Get expenses and then delete them
+      for (let i = 0; i < itemsId.length; i++) {
         // Get sales matching id
-        const expensesQuery = query(
-          expensesRef,
-          where("id", "==", invoice.items[i])
-        );
+        const expensesQuery = query(expensesRef, where("id", "==", itemsId[i]));
         const expensesToDelete = await getDocs(expensesQuery);
         // Delete sales
         if (!expensesToDelete.empty) {
-          expensesToDelete.forEach((docm) => {
-            batch.delete(doc(expensesRef, docm.id));
+          expensesToDelete.forEach((doc) => {
+            batch.delete(doc.ref);
           });
         }
       }
 
       // SALES
       const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
-      for (let i = 0; i < invoice.items.length; i++) {
+      for (let i = 0; i < itemsId.length; i++) {
         // Get sales matching id
-        const salesQuery = query(salesRef, where("id", "==", invoice.items[i]));
+        const salesQuery = query(salesRef, where("id", "==", itemsId[i]));
         const salesToDelete = await getDocs(salesQuery);
 
         // Delete sales
         if (!salesToDelete.empty) {
-          salesToDelete.forEach((docm) => {
-            batch.delete(doc(salesRef, docm.id));
+          salesToDelete.forEach((doc) => {
+            batch.delete(doc.ref);
           });
         }
       }
 
-      batch.commit();
+      await batch.commit();
 
       // Delete the file, invoice image
       if (invoice.imageRef !== "") {

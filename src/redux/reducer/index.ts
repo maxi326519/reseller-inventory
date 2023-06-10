@@ -293,7 +293,7 @@ export const rootReducer = (
         items: {
           ...state.items,
           data: state.items.data.filter(
-            (item) => !action.payload.items.some((id: number) => id === item.id)
+            (item) => item.invoiceId !== action.payload.id
           ),
         },
         sales: {
