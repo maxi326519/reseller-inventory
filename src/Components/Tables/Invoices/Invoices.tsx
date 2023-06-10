@@ -175,6 +175,7 @@ export default function Invoices() {
         <Details
           handleClose={handleClose}
           invoiceType={invoiceType}
+          invoiceId={details[0]?.invoiceId}
           itemsList={details}
           image={image}
         />

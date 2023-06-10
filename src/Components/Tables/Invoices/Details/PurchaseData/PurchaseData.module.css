@@ -3,11 +3,11 @@
   flex-direction: column;
 }
 
-.inputs #id {
-  background-color: red;
-}
-
 .inputContainer {
   display: flex;
   width: 100%;
+}
+
+.bntContainer button:first-child {
+  margin-right: 10px;
 }

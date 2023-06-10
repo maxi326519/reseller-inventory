@@ -5,6 +5,7 @@ import { get, ref } from "firebase/database";
 import {
   Expense,
   ExportSales,
+  InvoiceType,
   Item,
   RootState,
   Sale,
@@ -12,12 +13,12 @@ import {
 } from "../../../../interfaces";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
 import {
-  deleteItemInvoiceDetail,
+  deleteInvoiceDetails,
   deleteSoldItem,
-  getItemInvoiceDetail,
+  getItemsFromInvoice,
   refoundItems,
 } from "../../../../redux/actions/items";
-import { getExpenses, postExpenses } from "../../../../redux/actions/expenses";
+import { postExpenses } from "../../../../redux/actions/expenses";
 import {
   getSoldReportData,
   updateReports,
@@ -33,7 +34,7 @@ import styles from "./ItemsSold.module.css";
 import swal from "sweetalert";
 import Expenses from "./Expenses/Expenses";
 import changeDateFormat from "../../../../functions/changeDateFormat";
-import InvoiceDetails from "../../Inventory/InvoiceDetails/InvoiceDetails";
+import Details from "../../Invoices/Details/Details";
 
 interface Rows {
   item: Item | undefined;
@@ -283,9 +284,9 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   function handleInvoiceDetail(invoiceId?: number) {
     setDetails(!details);
     if (details) {
-      dispatch<any>(deleteItemInvoiceDetail());
+      dispatch<any>(deleteInvoiceDetails());
     } else if (invoiceId) {
-      dispatch<any>(getItemInvoiceDetail(invoiceId));
+      dispatch<any>(getItemsFromInvoice(invoiceId));
     }
   }
 
@@ -298,8 +299,10 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         <Expenses expenses={expenseSelected} handleClose={handleCloseDetails} />
       ) : null}
       {details ? (
-        <InvoiceDetails
+        <Details
           handleClose={handleInvoiceDetail}
+          invoiceType={InvoiceType.Purchase}
+          invoiceId={invoiceDetail.invoice.id}
           itemsList={invoiceDetail.items}
           image={invoiceDetail.invoice.image}
         />

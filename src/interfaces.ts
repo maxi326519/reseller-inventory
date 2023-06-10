@@ -59,6 +59,10 @@ export interface Sale {
   cost: number;
   price: number | string;
   productId: number;
+  refounded: {
+    value: boolean,
+    amount?: number;
+  };
   shipment: Shipment;
   expenses: ExpenseRef[];
 }

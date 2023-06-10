@@ -12,6 +12,8 @@ import {
   DELETE_SOLD_ITEMS,
   GET_ITEMS_INVOICE_DETAILS,
   DELETE_ITEMS_INVOICE_DETAILS,
+  UPDATE_ITEM,
+  DELETE_ITEM,
 } from "../actions/items";
 import {
   POST_INVOICE,
@@ -215,7 +217,7 @@ export const rootReducer = (
         sales: {
           ...state.sales,
           expenses: [...action.payload],
-        }
+        },
       };
 
     case GET_ITEMS_EXPIRED:
@@ -229,6 +231,53 @@ export const rootReducer = (
       return {
         ...state,
         reports: action.payload,
+      };
+
+    case UPDATE_ITEM:
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          data: state.items.data.map((item) =>
+            item.id === action.payload.item.id ? action.payload.item : item
+          ),
+        },
+        invoices: {
+          data: state.invoices.data.map((invoice) =>
+            invoice.id === action.payload.invoice.id
+              ? action.payload.invoice
+              : invoice
+          ),
+          details: state.invoices.details.map((item) =>
+            item.id === action.payload.item.id ? action.payload.item : item
+          ),
+        },
+      };
+
+    case DELETE_ITEM:
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          data: state.items.data.filter(
+            (item) => item.id !== action.payload.item.id
+          ),
+        },
+        invoices: {
+          data:
+            action.payload.invoice.items.length === 0
+              ? state.invoices.data.filter(
+                  (invoice) => invoice.id !== action.payload.invoice.id
+                )
+              : state.invoices.data.map((invoice) =>
+                  invoice.id === action.payload.invoice.id
+                    ? action.payload.invoice
+                    : invoice
+                ),
+          details: state.invoices.details.filter(
+            (item) => item.id !== action.payload.item.id
+          ),
+        },
       };
 
     // DELETE

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ExportExpired,
+  InvoiceType,
   Item,
   RootState,
   YearReport,
@@ -15,14 +16,14 @@ import swal from "sweetalert";
 import DateFilter from "./DateFilter/DateFilter";
 import { updateReportsItems } from "../../../../redux/actions/reports";
 import {
-  deleteItemInvoiceDetail,
+  deleteInvoiceDetails,
   getExpired,
-  getItemInvoiceDetail,
+  getItemsFromInvoice,
   restoreItem,
 } from "../../../../redux/actions/items";
 import Excel from "./Excel/Excel";
 import changeDateFormat from "../../../../functions/changeDateFormat";
-import InvoiceDetails from "../../Inventory/InvoiceDetails/InvoiceDetails";
+import Details from "../../Invoices/Details/Details";
 
 interface Props {
   typeReport: any;
@@ -125,17 +126,19 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
   function handleInvoiceDetail(invoiceId?: number) {
     setDetails(!details);
     if (details) {
-      dispatch<any>(deleteItemInvoiceDetail());
+      dispatch<any>(deleteInvoiceDetails());
     } else if (invoiceId) {
-      dispatch<any>(getItemInvoiceDetail(invoiceId));
+      dispatch<any>(getItemsFromInvoice(invoiceId));
     }
   }
 
   return (
     <div className={styles.itemsSold}>
       {details ? (
-        <InvoiceDetails
+        <Details
           handleClose={handleInvoiceDetail}
+          invoiceType={InvoiceType.Purchase}
+          invoiceId={invoiceDetail.invoice.id}
           itemsList={invoiceDetail.items}
           image={invoiceDetail.invoice.image}
         />

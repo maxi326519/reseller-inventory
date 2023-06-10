@@ -8,6 +8,7 @@ import ExpenseData from "./ExpenseData/ExpenseData";
 interface Props {
   handleClose: () => void;
   invoiceType: InvoiceType;
+  invoiceId: number;
   itemsList: Item[] | Expense[];
   image: string;
 }
@@ -15,19 +16,29 @@ interface Props {
 export default function Details({
   handleClose,
   invoiceType,
+  invoiceId,
   itemsList,
   image,
 }: Props) {
   const [showImage, setShowImage] = useState(false);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    let total = 0;
+    if (invoiceType === InvoiceType.Purchase) {
+      itemsList.forEach((item) => {
+        const data = item as Item;
+        total += Number(data.cost);
+      });
+    }
+
+    setTotal(total);
+  }, [itemsList]);
 
   function localHandleCLose() {
     handleClose();
     setShowImage(false);
   }
-
-  useEffect(() => {
-    console.log(itemsList);
-  });
 
   return (
     <div className={styles.background}>
@@ -54,7 +65,17 @@ export default function Details({
             x
           </button>
         </div>
-        <span>Items: {itemsList.length}</span>
+        <div className={styles.info}>
+          <span>
+            <b>Items:</b> {itemsList.length}
+          </span>
+          <span>
+            <b>Invoice ID:</b> {invoiceId}
+          </span>
+          <span>
+            <b>Total:</b> ${total.toFixed(2)}
+          </span>
+        </div>
         <div className={styles.data}>
           <div className={styles.list}>
             {itemsList.map((item, i) =>

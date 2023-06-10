@@ -2,19 +2,21 @@ import {
   collection,
   doc,
   getDocs,
+  getDoc,
   query,
   updateDoc,
   where,
   writeBatch,
   deleteField,
 } from "@firebase/firestore";
-import { Expense, Item, RootState } from "../../../interfaces";
+import { Expense, Invoice, Item, RootState } from "../../../interfaces";
 import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
 import { Dispatch } from "react";
-import { auth, db } from "../../../firebase";
+import { auth, db, storage } from "../../../firebase";
 import { Timestamp } from "firebase/firestore";
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
+import { deleteObject, ref } from "firebase/storage";
 
 export const POST_ITEMS = "POST_ITEMS";
 export const GET_ITEMS = "GET_ITEMS";
@@ -23,6 +25,8 @@ export const GET_ITEMS_INVOICE_DETAILS = "GET_ITEMS_INVOICE_DETAILS";
 export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
 export const REFOUND_ITEMS = "REFOUND_ITEMS";
 export const RESTORE_ITEMS = "RESTORE_ITEMS";
+export const UPDATE_ITEM = "UPDATE_ITEM";
+export const DELETE_ITEM = "DELETE_ITEM";
 export const DELETE_SOLD_ITEMS = " DELETE_SOLD_ITEMS";
 export const DELETE_ITEMS_INVOICE_DETAILS = "DELETE_ITEMS_INVOICE_DETAILS";
 
@@ -82,7 +86,7 @@ export function getStockItems(): ThunkAction<
   };
 }
 
-export function getItemInvoiceDetail(
+export function getItemsFromInvoice(
   invoiceId: number
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
@@ -128,9 +132,115 @@ export function getItemInvoiceDetail(
   };
 }
 
-export function deleteItemInvoiceDetail() {
-  return {
-    type: DELETE_ITEMS_INVOICE_DETAILS,
+export function updateItem(
+  updatedItem: Item
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
+
+      const batch = writeBatch(db);
+      const uid = auth.currentUser.uid;
+
+      // Collections
+      const itemColl = collection(db, "Users", uid, "Items");
+      const invoiceColl = collection(db, "Users", uid, "Invoices");
+
+      // ID
+      const itemId = updatedItem.id.toString();
+      const invoiceId = updatedItem.invoiceId.toString();
+
+      // Get item and invoice
+      const itemSnapshot = await getDoc(doc(itemColl, itemId));
+      const invoiceSnapshot = await getDoc(doc(invoiceColl, invoiceId));
+      const itemData = itemSnapshot.data();
+      const invoiceData = invoiceSnapshot.data();
+
+      // Validations
+      if (!itemData) throw new Error("Item not found");
+      if (!invoiceData) throw new Error("Invoice not found");
+
+      // Update item and invoice
+      const updatedInvoice = {
+        ...invoiceData,
+        total:
+          Number(invoiceData.total) -
+          Number(itemData.cost) +
+          Number(updatedItem.cost),
+      };
+      batch.update(doc(itemColl, itemId), { ...updatedItem });
+      batch.update(doc(invoiceColl, invoiceId), updatedInvoice);
+
+      await batch.commit();
+
+      dispatch({
+        type: UPDATE_ITEM,
+        payload: {
+          item: updatedItem,
+          invoice: updatedInvoice,
+        },
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function deleteItem(
+  item: Item
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
+
+      const batch = writeBatch(db);
+      const uid = auth.currentUser.uid;
+
+      // Collections
+      const itemColl = collection(db, "Users", uid, "Items");
+      const invoiceColl = collection(db, "Users", uid, "Invoices");
+
+      // ID
+      const itemId = item.id.toString();
+      const invoiceId = item.invoiceId.toString();
+
+      // Get invoice
+      const invoiceSnapshot = await getDoc(doc(invoiceColl, invoiceId));
+      const invoiceData = invoiceSnapshot.data();
+      if (!invoiceData) throw new Error("Invoice not found");
+
+      // Delete item and update invoice
+      const updatedInvoice: any = {
+        ...invoiceData,
+        items: invoiceData.items.filter((itemId: number) => itemId !== item.id),
+        total: Number(invoiceData.total) - Number(item.cost),
+      };
+      batch.delete(doc(itemColl, itemId));
+
+      if (updatedInvoice.items.length === 0) {
+        batch.delete(doc(invoiceColl, invoiceId));
+      } else {
+        batch.update(doc(invoiceColl, invoiceId), updatedInvoice);
+      }
+
+      await batch.commit();
+
+      // Delete the file, invoice image
+      if (updatedInvoice.items.length === 0 && updatedInvoice.imageRef !== "") {
+        const desertRef = ref(storage, updatedInvoice.imageRef);
+        await deleteObject(desertRef);
+      }
+
+      dispatch({
+        type: DELETE_ITEM,
+        payload: {
+          item: item,
+          invoice: updatedInvoice,
+        },
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
   };
 }
 
@@ -262,6 +372,12 @@ export function restoreItem(
     } catch (e: any) {
       throw new Error(e);
     }
+  };
+}
+
+export function deleteInvoiceDetails() {
+  return {
+    type: DELETE_ITEMS_INVOICE_DETAILS,
   };
 }
 

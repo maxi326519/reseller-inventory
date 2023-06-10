@@ -4,12 +4,12 @@ import { Timestamp } from "firebase/firestore";
 import { closeLoading, loading } from "../../../redux/actions/loading";
 import { updateReports } from "../../../redux/actions/reports";
 import {
-  deleteItemInvoiceDetail,
+  deleteInvoiceDetails,
   expiredItems,
-  getItemInvoiceDetail,
+  getItemsFromInvoice,
   getStockItems,
 } from "../../../redux/actions/items";
-import { RootState, Item, Sale } from "../../../interfaces";
+import { RootState, Item, Sale, InvoiceType } from "../../../interfaces";
 import { Link } from "react-router-dom";
 
 import reload from "../../../assets/svg/reload.svg";
@@ -22,8 +22,8 @@ import closeSvg from "../../../assets/svg/close.svg";
 
 import style from "./Inventory.module.css";
 import swal from "sweetalert";
-import InvoiceDetails from "./InvoiceDetails/InvoiceDetails";
 import List from "../../Menu/List/List";
+import Details from "../Invoices/Details/Details";
 
 interface OtherExpenses {
   saleId: number;
@@ -50,6 +50,9 @@ const initialSale: Sale = {
   cost: 0,
   price: 0,
   productId: 0,
+  refounded: {
+    value: false,
+  },
   shipment: {
     value: false,
     amount: "",
@@ -292,9 +295,9 @@ export default function Inventory() {
   function handleInvoiceDetail(invoiceId?: number) {
     setDetails(!details);
     if (details) {
-      dispatch<any>(deleteItemInvoiceDetail());
+      dispatch<any>(deleteInvoiceDetails());
     } else if (invoiceId) {
-      dispatch<any>(getItemInvoiceDetail(invoiceId));
+      dispatch<any>(getItemsFromInvoice(invoiceId));
     }
   }
 
@@ -317,8 +320,10 @@ export default function Inventory() {
         />
       ) : null}
       {details ? (
-        <InvoiceDetails
+        <Details
           handleClose={handleInvoiceDetail}
+          invoiceType={InvoiceType.Purchase}
+          invoiceId={invoiceDetail.invoice.id}
           itemsList={invoiceDetail.items}
           image={invoiceDetail.invoice.image}
         />

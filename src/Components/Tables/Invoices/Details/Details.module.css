@@ -119,6 +119,10 @@
   margin-top: 20px;
 }
 
+.info span{
+  margin-right: 30px;
+}
+
 .data {
   display: flex;
   align-items: center;

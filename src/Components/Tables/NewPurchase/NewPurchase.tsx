@@ -87,22 +87,20 @@ export default function NewPurchase() {
         dangerMode: true,
       }).then((response) => {
         if (response) {
+          const date = invoice.date.toDate();
+          const formattedDate = Number(
+            `${date.getFullYear()}${(date.getMonth() + 1)
+              .toString()
+              .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}`
+          );
           const newInvoice = {
             ...invoice,
             id: generateInvoiceId(new Date().toLocaleDateString()),
+            items: invoice.items.map((id) => Number(`${formattedDate}${id}`)),
           };
           dispatch(loading());
           dispatch<any>(postInvoice(newInvoice, file))
             .then(() => {
-              const date = invoice.date.toDate();
-              const formattedDate = Number(
-                `${date.getFullYear()}${(date.getMonth() + 1)
-                  .toString()
-                  .padStart(2, "0")}${date
-                  .getDate()
-                  .toString()
-                  .padStart(2, "0")}`
-              );
               dispatch<any>(
                 postItems(
                   items.map((item) => {
