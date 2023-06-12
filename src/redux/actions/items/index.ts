@@ -9,7 +9,13 @@ import {
   writeBatch,
   deleteField,
 } from "@firebase/firestore";
-import { Expense, Invoice, Item, RootState } from "../../../interfaces";
+import {
+  Expense,
+  Invoice,
+  Item,
+  Refounded,
+  RootState,
+} from "../../../interfaces";
 import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
 import { Dispatch } from "react";
@@ -335,20 +341,34 @@ export function getExpired(
 }
 
 export function refoundItems(
-  itemID: number
+  item: Item,
+  saleId: number,
+  refounded: Refounded,
+  newExpenses: Expense[]
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
-      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
-      const salesRef = collection(db, "Users", auth.currentUser.uid, "Items");
 
-      await updateDoc(doc(itemsRef, itemID.toString()), { state: "In Stock" });
-      await updateDoc(doc(itemsRef, itemID.toString()), { state: "In Stock" });
+      const batch = writeBatch(db);
+      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
+      const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
+
+      const itemUpdate = {
+        state: "In Stock",
+        sales: item.sales!.map((sale) =>
+          sale.id === saleId ? { ...sale, refounded: true } : sale
+        ),
+      };
+
+      batch.update(doc(itemsRef, item.id.toString()), itemUpdate);
+      batch.update(doc(salesRef, saleId.toString()), { refounded });
+
+/*       batch.commit(); */
 
       dispatch({
         type: REFOUND_ITEMS,
-        payload: itemID,
+        payload: { item, saleId, refounded, itemUpdate, newExpenses },
       });
     } catch (e: any) {
       throw new Error(e);

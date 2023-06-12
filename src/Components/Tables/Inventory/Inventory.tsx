@@ -226,7 +226,7 @@ export default function Inventory() {
     const name: string = event.target.name;
     const value: number | string = event.target.value;
 
-    console.log(name, event.target.checked);
+    console.log(name, event.target.checked, id);
 
     if (name.includes("shipLabel")) {
       setShiping(

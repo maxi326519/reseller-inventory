@@ -12,7 +12,7 @@ interface Rows {
 interface Props {
   rows: Rows[];
   handleClose: () => void;
-  handleRefoundSelected: (id: number) => void;
+  handleRefoundSelected: (item: Item, saleId: number) => void;
   handleDeleteSold: (id: number) => void;
   handleShowExpensesDetails: (productId: number) => void;
   handleInvoiceDetail: (invoiceId: number) => void;

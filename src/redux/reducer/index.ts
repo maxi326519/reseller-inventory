@@ -323,19 +323,23 @@ export const rootReducer = (
           data: [
             ...state.items.data,
             {
-              ...state.sales.items.find((item) => item.id === action.payload),
-              state: "In Stock",
+              ...state.sales.items.find(
+                (item) => item.id === action.payload.item.id
+              ),
+              ...action.payload.itemUpdate,
             },
           ],
         },
         sales: {
-          items: state.sales.items.filter((item) => item.id !== action.payload),
-          sales: state.sales.sales.filter(
-            (sale) => sale.productId !== action.payload
+          items: state.sales.items.filter(
+            (item) => item.id !== action.payload.item.id
           ),
-          expenses: state.sales.expenses.filter(
-            (expense) => expense.id !== action.payload
+          sales: state.sales.sales.map((sale) =>
+            sale.id === action.payload.saleId
+              ? { ...sale, ...action.payload.refounded }
+              : sale
           ),
+          expenses: [...state.sales.expenses, ...action.payload.newExpenses],
         },
       };
 

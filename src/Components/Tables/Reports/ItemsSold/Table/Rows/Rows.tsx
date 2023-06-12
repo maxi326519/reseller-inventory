@@ -8,7 +8,7 @@ interface Props {
   item: Item | undefined;
   sale: Sale;
   handleClose: () => void;
-  handleRefoundSelected: (id: number) => void;
+  handleRefoundSelected: (item: Item, saleId: number) => void;
   handleDeleteSold: (id: number) => void;
   handleShowExpensesDetails: (productId: number) => void;
   handleInvoiceDetail: (invoiceId: number) => void;
@@ -25,7 +25,7 @@ export default function Rows({
 }: Props) {
   function handleClick() {
     if (item) {
-      handleRefoundSelected(item.id);
+      handleRefoundSelected(item, sale.id);
       handleClose();
     }
   }

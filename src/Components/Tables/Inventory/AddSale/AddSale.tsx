@@ -403,7 +403,7 @@ export default function AddSale({
           ))}
         </div>
         <SaleData
-          sale={sales.find((s: Sale) => s.productId === rowSelected.sale)}
+          sale={sales.find((s: Sale) => s.id === rowSelected.sale)}
           errors={
             itemSelected.findIndex((id) => id === rowSelected.item) >= 0
               ? errors[itemSelected.findIndex((id) => id === rowSelected.item)]

@@ -61,7 +61,10 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   const invoiceDetail = useSelector((state: RootState) => state.items.details);
   const [expensesDetails, setExpensesDetails] = useState(false);
   const [refound, setRefound] = useState(false);
-  const [refoundSelected, setRefoundSelected] = useState<number>();
+  const [refoundSelected, setRefoundSelected] = useState<{
+    item: Item | null;
+    saleId: number;
+  }>({ item: null, saleId: 0 });
   const [years, setYears] = useState<number[]>([]);
   const [dateFilter, setDateFilter] = useState({ year: 0, month: 0 });
 
@@ -163,17 +166,17 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     setDateFilter(dateFilter);
   }
 
-  function handleRefoundSelected(itemId: number) {
-    setRefoundSelected(itemId);
+  function handleRefoundSelected(item: Item, saleId: number) {
+    setRefoundSelected({ item, saleId });
   }
 
   function handleRefound(data: Refounded) {
     if (refoundSelected === undefined) return false;
 
     /* REVISAR LAS EXPENSAS */
-    const newExpense = [
+    const newExpenses: Expense[] = [
       {
-        id: refoundSelected,
+        id: refoundSelected.item!.id,
         date: Timestamp.fromDate(new Date()),
         price: data.amount,
         category: "Refound",
@@ -183,19 +186,19 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     ];
 
     dispatch(loading());
-    dispatch<any>(refoundItems(refoundSelected))
+    dispatch<any>(refoundItems(refoundSelected.item!, refoundSelected.saleId, data, newExpenses))
       .then(() => {
-        dispatch<any>(postExpenses(newExpense))
+        dispatch<any>(postExpenses(newExpenses))
           .then(() => {
             dispatch<any>(
               updateReportsItems(
-                [refoundSelected],
+                [refoundSelected.item!.id, refoundSelected.saleId],
                 ["Ebay Fees", "COGS"],
                 reports
               )
             )
               .then(() => {
-                dispatch<any>(updateReports(newExpense, reports, null))
+                dispatch<any>(updateReports(newExpenses, reports, null))
                   .then(() => {
                     swal("Refounded", "Refounded item successfully", "success");
                     dispatch(closeLoading());

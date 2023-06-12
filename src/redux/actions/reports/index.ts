@@ -103,8 +103,12 @@ export function getSoldReportData(
       const itemsQuery = await getDocs(
         query(
           itemsRef,
-          where("saleDate", ">=", startTimeStamp),
-          where("saleDate", "<=", endTimeStamp)
+          where(
+            "sales",
+            "array-contains",
+            (sales: any) =>
+              sales.saleDate >= startDate && sales.saleDate <= endDate
+          )
         )
       );
 
