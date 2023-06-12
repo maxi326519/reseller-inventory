@@ -7,7 +7,7 @@ import styles from "./Table.module.css";
 interface Props {
   items: Item[];
   itemSelected: number[];
-  handleSelected: (id: number, cost: number) => void;
+  handleSelected: (item: Item, cost: number) => void;
   handleInvoiceDetail: (invoiceId: number) => void;
 }
 

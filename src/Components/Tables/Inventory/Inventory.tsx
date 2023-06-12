@@ -50,9 +50,6 @@ const initialSale: Sale = {
   cost: 0,
   price: 0,
   productId: 0,
-  refounded: {
-    value: false,
-  },
   shipment: {
     value: false,
     amount: "",
@@ -199,23 +196,24 @@ export default function Inventory() {
     }
   }
 
-  function handleSelected(id: number, cost: number | null) {
-    if (itemSelected.some((s) => s === id)) {
-      setItemSelected(itemSelected.filter((s) => s !== id));
-      setSales(sales.filter((s) => s.productId !== id));
-      setOther(other.filter((o) => o.saleId !== id));
-      setShiping(shipment.filter((s) => s.saleId !== id));
+  function handleSelected(item: Item, cost: number | null) {
+    if (itemSelected.some((s) => s === item.id)) {
+      setItemSelected(itemSelected.filter((s) => s !== item.id));
+      setSales(sales.filter((s) => s.productId !== item.id));
+      setOther(other.filter((o) => o.saleId !== item.id));
+      setShiping(shipment.filter((s) => s.saleId !== item.id));
     } else if (cost !== null) {
-      setItemSelected([...itemSelected, id]);
-      setOther([...other, { ...initialOtherExpenses, saleId: id }]);
-      setShiping([...shipment, { ...initialShipingExpenses, saleId: id }]);
+      const saleId = Number(`${item.id}${item.sales?.length || 0}`);
+      setItemSelected([...itemSelected, item.id]);
+      setOther([...other, { ...initialOtherExpenses, saleId: saleId }]);
+      setShiping([...shipment, { ...initialShipingExpenses, saleId: saleId }]);
       setSales([
         ...sales,
         {
           ...initialSale,
-          id: id,
+          id: saleId,
           cost: cost,
-          productId: id,
+          productId: item.id,
         },
       ]);
     }
@@ -227,6 +225,8 @@ export default function Inventory() {
   ): void {
     const name: string = event.target.name;
     const value: number | string = event.target.value;
+
+    console.log(name, event.target.checked);
 
     if (name.includes("shipLabel")) {
       setShiping(

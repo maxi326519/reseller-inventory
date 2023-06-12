@@ -62,9 +62,9 @@ export default function SaleData({
   other,
   handleExpense,
 }: Props) {
-  /*   useEffect(() => {
-    console.log(errors);
-  }); */
+    useEffect(() => {
+    console.log(other);
+  }, [other]);
 
   return (
     <div>

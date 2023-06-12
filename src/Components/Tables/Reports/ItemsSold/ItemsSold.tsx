@@ -7,6 +7,7 @@ import {
   ExportSales,
   InvoiceType,
   Item,
+  Refounded,
   RootState,
   Sale,
   YearReport,
@@ -166,7 +167,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     setRefoundSelected(itemId);
   }
 
-  function handleRefound(amount: number) {
+  function handleRefound(data: Refounded) {
     if (refoundSelected === undefined) return false;
 
     /* REVISAR LAS EXPENSAS */
@@ -174,7 +175,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
       {
         id: refoundSelected,
         date: Timestamp.fromDate(new Date()),
-        price: amount,
+        price: data.amount,
         category: "Refound",
         description: "Refound expense",
         invoiceId: 0,

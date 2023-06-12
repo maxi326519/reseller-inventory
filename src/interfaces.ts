@@ -8,7 +8,11 @@ export interface User {
 export interface Item {
   id: number;
   date: Timestamp;
-  saleDate?: Timestamp;
+  sales?: Array<{
+    id: number;
+    saleDate: Timestamp;
+    refounded?: boolean;
+  }>;
   invoiceId: number;
   state: string;
   cost: number | string;
@@ -59,12 +63,14 @@ export interface Sale {
   cost: number;
   price: number | string;
   productId: number;
-  refounded: {
-    value: boolean,
-    amount?: number;
-  };
+  refounded?: Refounded;
   shipment: Shipment;
   expenses: ExpenseRef[];
+}
+
+export interface Refounded {
+  date: string;
+  amount: number;
 }
 
 export interface Expired {
@@ -176,12 +182,12 @@ export interface OtherCategories {
 export interface RootState {
   user: User;
   items: {
-    data: Item[],
+    data: Item[];
     details: {
-      invoice: Invoice,
-      items: Item[]
-    }
-  }
+      invoice: Invoice;
+      items: Item[];
+    };
+  };
   invoices: {
     data: Array<Invoice | InvoiceExpenses>;
     details: Array<Item> | Array<Expense>;

@@ -19,9 +19,9 @@ interface Errors {
 interface Prop {
   item: Item;
   error: Errors | null;
-  rowSelected: number;
-  handleRowSelect: (id: number) => void;
-  handleSelected: (id: number, cost: null) => void;
+  rowSelected: { item: number; sale: number };
+  handleRowSelect: (selected: { item: number; sale: number }) => void;
+  handleSelected: (item: Item, cost: null) => void;
   handleSetPrice: (id: number, price: string) => void;
 }
 
@@ -37,9 +37,9 @@ export default function ItemRow({
     <div
       key={item.id}
       className={`${styles.row}
-      ${item.id === rowSelected ? styles.selected : ""}
+      ${item.id === rowSelected.item ? styles.selected : ""}
       ${error ? styles.error : ""}`}
-      onClick={() => handleRowSelect(item.id)}
+      onClick={() => handleRowSelect(rowSelected)}
     >
       <span>{item.id}</span>
       <span>{item.description}</span>
@@ -53,7 +53,7 @@ export default function ItemRow({
       <button
         className="btn btn-danger"
         type="button"
-        onClick={() => handleSelected(item.id, null)}
+        onClick={() => handleSelected(item, null)}
       >
         -
       </button>

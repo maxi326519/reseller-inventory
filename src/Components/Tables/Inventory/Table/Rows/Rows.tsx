@@ -8,7 +8,7 @@ import invoiceSvg from "../../../../../assets/svg/invoice.svg";
 interface Props {
   item: Item;
   itemSelected: number[];
-  handleSelected: (id: number, cost: number) => void;
+  handleSelected: (item: Item, cost: number) => void;
   handleInvoiceDetail: (invoiceId: number) => void;
 }
 
@@ -18,8 +18,8 @@ export default function Rows({
   handleSelected,
   handleInvoiceDetail,
 }: Props) {
-  function handleCheck(id: number, cost: number | string) {
-    handleSelected(id, Number(cost));
+  function handleCheck(item: Item, cost: number | string) {
+    handleSelected(item, Number(cost));
   }
 
   return (
@@ -30,7 +30,7 @@ export default function Rows({
           id="check"
           type="checkbox"
           checked={itemSelected.some((i) => i === item.id) ? true : false}
-          onChange={() => handleCheck(item.id, item.cost)}
+          onChange={() => handleCheck(item, item.cost)}
         />
       </div>
       <span>

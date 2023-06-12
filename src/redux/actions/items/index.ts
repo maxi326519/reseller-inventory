@@ -341,6 +341,9 @@ export function refoundItems(
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
+      const salesRef = collection(db, "Users", auth.currentUser.uid, "Items");
+
+      await updateDoc(doc(itemsRef, itemID.toString()), { state: "In Stock" });
       await updateDoc(doc(itemsRef, itemID.toString()), { state: "In Stock" });
 
       dispatch({

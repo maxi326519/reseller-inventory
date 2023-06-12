@@ -62,7 +62,7 @@ const initialErrors: Errors = {
 interface Props {
   handleClose: () => void;
   itemSelected: number[];
-  handleSelected: (id: number, cost: null) => void;
+  handleSelected: (item: Item, cost: null) => void;
   sales: Sale[];
   setSales: (sales: Sale[]) => void;
   other: OtherExpenses[];
@@ -83,18 +83,31 @@ export default function AddSale({
   other,
   shipment,
   handleExpense,
-  resetData
+  resetData,
 }: Props) {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.items.data);
   const reports = useSelector((state: RootState) => state.reports);
   const [rows, setRows] = useState<Item[]>([]);
-  const [rowSelected, setSelected] = useState<number>(itemSelected[0]);
+  const [rowSelected, setSelected] = useState<{ item: number; sale: number }>({
+    item: 0,
+    sale: 0,
+  });
   const [errors, setErrors] = useState<Array<Errors | null>>([]);
 
   useEffect(() => {
-    setSelected(itemSelected[0]);
-  }, [itemSelected]);
+    const saleId = sales.find((sale) => sale.productId === itemSelected[0]);
+    if (saleId) {
+      setSelected({
+        item: itemSelected[0],
+        sale: saleId.id,
+      });
+    }
+  }, [itemSelected, sales]);
+
+  useEffect(() => {
+    console.log(rowSelected);
+  }, [rowSelected]);
 
   /* Cargamos los items seleccionados */
   useEffect(() => {
@@ -138,8 +151,8 @@ export default function AddSale({
     }
   }
 
-  function handleRowSelect(id: number) {
-    setSelected(id);
+  function handleRowSelect(selected: { item: number; sale: number }) {
+    setSelected(selected);
   }
 
   function handleSetPrice(id: number, price: string) {
@@ -337,7 +350,7 @@ export default function AddSale({
           date: sale.date,
           price: sale.cost,
           category: "COGS",
-          description: "COGS expense", 
+          description: "COGS expense",
           invoiceId: 0,
         });
 
@@ -390,17 +403,19 @@ export default function AddSale({
           ))}
         </div>
         <SaleData
-          sale={sales.find((s: Sale) => s.productId === rowSelected)}
+          sale={sales.find((s: Sale) => s.productId === rowSelected.sale)}
           errors={
-            itemSelected.findIndex((id) => id === rowSelected) >= 0
-              ? errors[itemSelected.findIndex((id) => id === rowSelected)]
+            itemSelected.findIndex((id) => id === rowSelected.item) >= 0
+              ? errors[itemSelected.findIndex((id) => id === rowSelected.item)]
               : initialErrors
           }
           handleChange={handleChange}
           shipment={shipment.find(
-            (s: ShipingExpenses) => s.saleId === rowSelected
+            (s: ShipingExpenses) => s.saleId === rowSelected.sale
           )}
-          other={other.find((o: OtherExpenses) => o.saleId === rowSelected)}
+          other={other.find(
+            (o: OtherExpenses) => o.saleId === rowSelected.sale
+          )}
           handleExpense={handleExpense}
         />
         <hr></hr>

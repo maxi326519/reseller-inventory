@@ -1,40 +1,60 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./Refound.module.css";
+import { Refounded } from "../../../../../interfaces";
 
 interface Props {
   handleClose: () => void;
-  handleSubmit: (amount: number) => void;
+  handleSubmit: (data: Refounded) => void;
 }
 
+const initError = {
+  date: new Date().toISOString().split("T")[0],
+  amount: "",
+};
+
 export default function Refound({ handleClose, handleSubmit }: Props) {
-  const [amount, setAmount] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<Refounded>({
+    date: new Date().toISOString().split("T")[0],
+    amount: 0,
+  });
+  const [error, setError] = useState(initError);
 
   function handleLocalSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if(handleValidation()){
-      handleSubmit(Number(amount));
+    if (handleValidation()) {
+      handleSubmit(data);
       handleClose();
     }
   }
 
   function handelChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setAmount(event.target.value);
-    setError(null);
+    setData({ ...data, [event.target.name]: event.target.value });
+    setError({ ...error, [event.target.name]: "" });
   }
 
-  function handleValidation(){
-    if(amount === ""){
-      setError("Amount is empty");
+  function handleValidation() {
+    const error = initError;
+
+    if (data.date === "") {
+      error.date = "Amount is empty";
       return false;
     }
-    setError(null);
+
+    if (data.amount === 0) {
+      error.amount = "Amount is empty";
+      return false;
+    }
+
+    setError(error);
     return true;
   }
 
   return (
     <div className={styles.background}>
-      <form className={`toTop ${styles.container}`} onSubmit={handleLocalSubmit}>
+      <form
+        className={`toTop ${styles.container}`}
+        onSubmit={handleLocalSubmit}
+      >
         <div className={styles.close}>
           <h4>Refound item</h4>
           <button
@@ -45,10 +65,28 @@ export default function Refound({ handleClose, handleSubmit }: Props) {
             x
           </button>
         </div>
+
+        {/* DATE */}
+        <div className="mb-3 form-floating">
+          <input
+            id="date"
+            name="date"
+            className={`form-control ${error.date ? "is-invalid" : ""}`}
+            type="date"
+            onChange={handelChange}
+          />
+          <label htmlFor="date" className="form-label">
+            Date:
+          </label>
+          {error.date ? <small>{error.date}</small> : null}
+        </div>
+
+        {/* AMOUNT */}
         <div className="mb-3 form-floating">
           <input
             id="amount"
-            className={`form-control ${error ? "is-invalid" : ""}`}
+            name="amount"
+            className={`form-control ${error.amount ? "is-invalid" : ""}`}
             type="number"
             step="any"
             onChange={handelChange}
@@ -56,8 +94,9 @@ export default function Refound({ handleClose, handleSubmit }: Props) {
           <label htmlFor="amount" className="form-label">
             Amount
           </label>
-          {error ? <small>{ error }</small> : null}
+          {error.amount ? <small>{error.amount}</small> : null}
         </div>
+
         <div className={styles.bntContainer}>
           <button className="btn btn-success" type="submit">
             Refound
