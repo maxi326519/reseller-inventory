@@ -7,7 +7,7 @@ import {
   InvoiceExpenses,
   RootState,
   InvoiceType,
-} from "../../../interfaces";
+} from "../../../interfaces/interfaces";
 import { closeLoading, loading } from "../../../redux/actions/loading";
 import { postInvoice } from "../../../redux/actions/invoices";
 import { postExpenses } from "../../../redux/actions/expenses";

@@ -3,7 +3,7 @@ import {
   InvoiceExpenses,
   InvoiceType,
   RootState,
-} from "../../../../../interfaces";
+} from "../../../../../interfaces/interfaces";
 import changeDateFormat from "../../../../../functions/changeDateFormat";
 import { closeLoading, loading } from "../../../../../redux/actions/loading";
 import { updateReportsItems } from "../../../../../redux/actions/reports";

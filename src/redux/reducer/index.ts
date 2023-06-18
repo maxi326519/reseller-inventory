@@ -1,4 +1,4 @@
-import { InvoiceType, Item, RootState, Sale } from "../../interfaces";
+import { InvoiceType, Item, RootState, Sale } from "../../interfaces/interfaces";
 import { AnyAction } from "redux";
 import { LOADING, CLOSE_LOADING } from "../actions/loading";
 import { POST_SOURCES, POST_CATEGORIES, GET_USER_DATA } from "../actions/user";

@@ -1,4 +1,4 @@
-import { Expense } from "../../../../interfaces";
+import { Expense } from "../../../../interfaces/interfaces";
 
 import Rows from "./Rows/Rows";
 

@@ -2,7 +2,7 @@ import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { db, auth } from "../../../firebase";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import { RootState } from "../../../interfaces";
+import { RootState } from "../../../interfaces/interfaces";
 
 export const POST_CATEGORIES = "POST_CATEGORIES";
 export const POST_SOURCES = "POST_SOURCES";

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../../interfaces";
+import { RootState } from "../../../../interfaces/interfaces";
 import { postCategories } from "../../../../redux/actions/user";
 import { loading, closeLoading } from "../../../../redux/actions/loading";
 import swal from "sweetalert";

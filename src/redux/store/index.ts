@@ -2,7 +2,7 @@ import { /* Action, combineReducers, */ applyMiddleware, createStore } from "red
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk, { /* ThunkMiddleware */ } from "redux-thunk";
 import { rootReducer } from "../reducer";
-/* import { RootState } from "../../interfaces"; */
+/* import { RootState } from "../../interfaces/interfaces"; */
 
 /* export interface DispatchActon extends Action {
   payload: Partial<RootState>;

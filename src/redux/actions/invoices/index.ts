@@ -18,7 +18,7 @@ import {
   query,
   Timestamp,
 } from "firebase/firestore";
-import { Invoice, RootState, InvoiceExpenses } from "../../../interfaces";
+import { Invoice, RootState, InvoiceExpenses } from "../../../interfaces/interfaces";
 
 export const POST_INVOICE = "POST_INVOICE";
 export const GET_INVOICE = "GET_INVOICE";

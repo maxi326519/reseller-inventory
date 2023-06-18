@@ -1,4 +1,4 @@
-import { Item, Sale } from "../../../../../interfaces";
+import { Item, Sale } from "../../../../../interfaces/interfaces";
 
 import Rows from "./Rows/Rows";
 

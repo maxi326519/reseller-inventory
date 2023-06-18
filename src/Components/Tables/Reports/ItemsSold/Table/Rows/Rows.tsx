@@ -1,5 +1,5 @@
 import changeDateFormat from "../../../../../../functions/changeDateFormat";
-import { Item, Sale } from "../../../../../../interfaces";
+import { Item, Sale } from "../../../../../../interfaces/interfaces";
 
 import styles from "../Table.module.css";
 import invoiceSvg from "../../../../../../assets/svg/invoice.svg";
@@ -65,8 +65,13 @@ export default function Rows({
       >
         <img src={invoiceSvg} alt="invoice" />
       </button>
-      <button className="btn btn-success" type="button" onClick={handleClick}>
-        Refound
+      <button
+        className={`btn btn-success ${sale.refounded ? styles.refounded : ""}`}
+        type="button"
+        onClick={handleClick}
+        disabled={sale.refounded ? true : false}
+      >
+        {`${sale.refounded ? "Refounded" : "Refound"}`}
       </button>
       <button
         className="btn btn-primary"

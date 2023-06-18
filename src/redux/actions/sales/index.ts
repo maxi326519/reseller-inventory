@@ -2,7 +2,7 @@ import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { db, auth } from "../../../firebase";
 import { arrayUnion, collection, doc, writeBatch } from "firebase/firestore";
-import { Sale, RootState, Expense } from "../../../interfaces";
+import { Sale, RootState, Expense } from "../../../interfaces/interfaces";
 
 export const POST_SALE = "POST_SALE";
 export const GET_SALES = "GET_SALES";
@@ -28,7 +28,7 @@ export function postSales(
 
       // Set expense
       sales.forEach((sale: Sale) => {
-        batch.set(doc(salesRef), sale);
+        batch.set(doc(salesRef, sale.id.toString()), sale);
         batch.update(doc(itemsRef, sale.productId.toString()), {
           state: "Sold",
           sales: arrayUnion({

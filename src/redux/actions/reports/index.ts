@@ -13,6 +13,8 @@ import {
   where,
   query,
   Timestamp,
+  writeBatch,
+  getDoc,
 } from "firebase/firestore";
 import {
   Expense,
@@ -20,7 +22,7 @@ import {
   RootState,
   YearReport,
   Item,
-} from "../../../interfaces";
+} from "../../../interfaces/interfaces";
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
 
 export const GET_REPORTS = "GET_REPORTS";
@@ -100,18 +102,6 @@ export function getSoldReportData(
       const endTimeStamp = Timestamp.fromDate(utcEndDate);
 
       // Query and get items docs
-      const itemsQuery = await getDocs(
-        query(
-          itemsRef,
-          where(
-            "sales",
-            "array-contains",
-            (sales: any) =>
-              sales.saleDate >= startDate && sales.saleDate <= endDate
-          )
-        )
-      );
-
       const salesQuery = await getDocs(
         query(
           salesRef,
@@ -119,6 +109,11 @@ export function getSoldReportData(
           where("date", "<=", endTimeStamp)
         )
       );
+
+      let sales: Sale[] = [];
+      salesQuery.forEach((doc: any) => {
+        sales.push(doc.data());
+      });
 
       const expensesQuery = await getDocs(
         query(
@@ -130,14 +125,10 @@ export function getSoldReportData(
 
       // Get data to docs
       let items: any = [];
-      itemsQuery.forEach((doc: any) => {
-        items.push(doc.data());
-      });
-
-      let sales: any = [];
-      salesQuery.forEach((doc: any) => {
-        sales.push(doc.data());
-      });
+      for (const sale of sales) {
+        const snapshot = await getDoc(doc(itemsRef, sale.productId.toString()));
+        items.push(snapshot.data());
+      }
 
       let expenses: any = [];
       expensesQuery.forEach((doc: any) => {
@@ -145,10 +136,12 @@ export function getSoldReportData(
       });
 
       const data = {
-        items: items.filter((i: Item) => i.state === "Sold"),
+        items: items,
         sales,
         expenses,
       };
+
+      console.log(items);
 
       dispatch({
         type: GET_SOLD_REPORT_DATA,

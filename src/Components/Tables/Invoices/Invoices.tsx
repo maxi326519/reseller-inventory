@@ -6,7 +6,7 @@ import {
   RootState,
   InvoiceType,
   InvoiceExpenses,
-} from "../../../interfaces";
+} from "../../../interfaces/interfaces";
 import { loading, closeLoading } from "../../../redux/actions/loading";
 import {
   getInvoiceDetails,

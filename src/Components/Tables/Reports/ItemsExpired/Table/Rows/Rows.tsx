@@ -1,4 +1,4 @@
-import { Item } from "../../../../../../interfaces";
+import { Item } from "../../../../../../interfaces/interfaces";
 
 import styles from "../Table.module.css";
 import invoiceSvg from "../../../../../../assets/svg/invoice.svg";

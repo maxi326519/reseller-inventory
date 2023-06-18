@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Item, Invoice, InvoiceType } from "../../../interfaces";
+import { Item, Invoice, InvoiceType } from "../../../interfaces/interfaces";
 import { useDispatch } from "react-redux";
 import { Timestamp } from "@firebase/firestore";
 import { loading, closeLoading } from "../../../redux/actions/loading";

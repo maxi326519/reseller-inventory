@@ -75,6 +75,10 @@
   display: none;
 }
 
+.refounded{
+  background-color: grey !important;
+}
+
 @media screen and (max-width: 700px) {
   .responsive {
     width: 100%;

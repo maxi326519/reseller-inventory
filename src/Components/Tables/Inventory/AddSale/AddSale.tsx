@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Timestamp } from "firebase/firestore";
-import { Item, Sale, RootState, Expense } from "../../../../interfaces";
+import { Item, Sale, RootState, Expense } from "../../../../interfaces/interfaces";
 import { loading, closeLoading } from "../../../../redux/actions/loading";
 import { postSales } from "../../../../redux/actions/sales";
 import { updateReports } from "../../../../redux/actions/reports";
@@ -103,10 +103,10 @@ export default function AddSale({
         sale: saleId.id,
       });
     }
-  }, [itemSelected, sales]);
+  }, [itemSelected]);
 
   useEffect(() => {
-    console.log(rowSelected);
+    console.log("Change in row selected", rowSelected);
   }, [rowSelected]);
 
   /* Cargamos los items seleccionados */
@@ -152,7 +152,10 @@ export default function AddSale({
   }
 
   function handleRowSelect(selected: { item: number; sale: number }) {
-    setSelected(selected);
+    setSelected({
+      item: selected.item,
+      sale: sales.find((sale) => sale.productId === selected.item)?.id || 0,
+    });
   }
 
   function handleSetPrice(id: number, price: string) {

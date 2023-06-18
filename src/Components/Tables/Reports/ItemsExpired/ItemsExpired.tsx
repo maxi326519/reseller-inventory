@@ -6,7 +6,7 @@ import {
   Item,
   RootState,
   YearReport,
-} from "../../../../interfaces";
+} from "../../../../interfaces/interfaces";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
 
 import Table from "./Table/Table";

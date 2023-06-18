@@ -1,4 +1,4 @@
-import { OtherCategories } from "../../../../../../interfaces";
+import { OtherCategories } from "../../../../../../interfaces/interfaces";
 
 import styles from "./ExpenseData.module.css";
 

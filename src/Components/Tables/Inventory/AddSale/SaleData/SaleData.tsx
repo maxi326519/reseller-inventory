@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { Sale } from "../../../../../interfaces";
+import { Sale } from "../../../../../interfaces/interfaces";
 
 import styles from "./SaleData.module.css";
 import "../../../../../animation.css";
@@ -62,9 +62,6 @@ export default function SaleData({
   other,
   handleExpense,
 }: Props) {
-    useEffect(() => {
-    console.log(other);
-  }, [other]);
 
   return (
     <div>

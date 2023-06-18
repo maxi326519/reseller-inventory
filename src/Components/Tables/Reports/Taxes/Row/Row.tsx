@@ -1,4 +1,4 @@
-import { MonthTaxesData, OtherCategories } from "../../../../../interfaces";
+import { MonthTaxesData, OtherCategories } from "../../../../../interfaces/interfaces";
 import styles from "./Row.module.css";
 
 interface Props {

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Timestamp } from "firebase/firestore";
-import { Expense, InvoiceExpenses } from "../../../../interfaces";
-import { RootState } from "../../../../interfaces";
+import { Expense, InvoiceExpenses } from "../../../../interfaces/interfaces";
+import { RootState } from "../../../../interfaces/interfaces";
 
 import styles from "../../Tables.module.css";
 

@@ -1,4 +1,4 @@
-import { Item } from "../../../../../interfaces";
+import { Item } from "../../../../../interfaces/interfaces";
 
 import styles from "./ItemRow.module.css";
 
@@ -39,7 +39,7 @@ export default function ItemRow({
       className={`${styles.row}
       ${item.id === rowSelected.item ? styles.selected : ""}
       ${error ? styles.error : ""}`}
-      onClick={() => handleRowSelect(rowSelected)}
+      onClick={() => handleRowSelect({ item: item.id, sale: 0 })}
     >
       <span>{item.id}</span>
       <span>{item.description}</span>

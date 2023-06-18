@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./Refound.module.css";
-import { Refounded } from "../../../../../interfaces";
+import { Refounded } from "../../../../../interfaces/interfaces";
 
 interface Props {
   handleClose: () => void;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Item, Expense, InvoiceType } from "../../../../interfaces";
+import { Item, Expense, InvoiceType } from "../../../../interfaces/interfaces";
 
 import styles from "./Details.module.css";
 import PurchaseData from "./PurchaseData/PurchaseData";

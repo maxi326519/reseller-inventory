@@ -2,7 +2,7 @@ import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { auth } from "../../../firebase";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { RootState } from "../../../interfaces";
+import { RootState } from "../../../interfaces/interfaces";
 
 export const LOGIN = "LOGIN";
 export const LOGOUT = "LOGOUT";

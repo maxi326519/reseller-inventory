@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Invoice, Item, RootState } from "../../../../interfaces";
+import { Invoice, Item, RootState } from "../../../../interfaces/interfaces";
 
 import styles from "../../Tables.module.css";
 import { useSelector } from "react-redux";

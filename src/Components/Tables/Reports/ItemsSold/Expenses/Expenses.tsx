@@ -1,4 +1,4 @@
-import { Expense } from "../../../../../interfaces";
+import { Expense } from "../../../../../interfaces/interfaces";
 
 import styles from "./Expenses.module.css";
 import ExpenseData from "./ExpenseData/ExpenseData";

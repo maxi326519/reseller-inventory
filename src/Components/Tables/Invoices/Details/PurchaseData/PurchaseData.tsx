@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Item } from "../../../../../interfaces";
+import { Item } from "../../../../../interfaces/interfaces";
 
 import styles from "./PurchaseData.module.css";
 import { useDispatch } from "react-redux";

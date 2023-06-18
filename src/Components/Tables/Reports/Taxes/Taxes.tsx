@@ -9,7 +9,7 @@ import {
   OtherCategories,
   ExportYearTaxesData,
   ExportMonthTaxes,
-} from "../../../../interfaces";
+} from "../../../../interfaces/interfaces";
 
 import Row from "./Row/Row";
 import Excel from "./Excel/Excel.jsx";

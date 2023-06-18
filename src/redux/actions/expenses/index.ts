@@ -10,7 +10,7 @@ import {
   where,
   query,
 } from "firebase/firestore";
-import { Expense, RootState } from "../../../interfaces";
+import { Expense, RootState } from "../../../interfaces/interfaces";
 
 export const GET_SOLD_EXPENSES = "GET_SOLD_EXPENSES";
 export const POST_EXPENSES = "POST_EXPENSES";

@@ -6,7 +6,7 @@ import { loading, closeLoading } from "./redux/actions/loading";
 import { getExpired, getStockItems } from "./redux/actions/items";
 import { getReports, getSoldReportData } from "./redux/actions/reports";
 import { getInvoices } from "./redux/actions/invoices";
-import { RootState } from "./interfaces";
+import { RootState } from "./interfaces/interfaces";
 import { getAuth } from "firebase/auth";
 import swal from "sweetalert";
 

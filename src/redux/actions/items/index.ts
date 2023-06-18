@@ -15,7 +15,7 @@ import {
   Item,
   Refounded,
   RootState,
-} from "../../../interfaces";
+} from "../../../interfaces/interfaces";
 import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
 import { Dispatch } from "react";
@@ -350,6 +350,11 @@ export function refoundItems(
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
+      console.log(item);
+      console.log(saleId);
+      console.log(refounded);
+      console.log(newExpenses);
+
       const batch = writeBatch(db);
       const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
       const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
@@ -364,7 +369,7 @@ export function refoundItems(
       batch.update(doc(itemsRef, item.id.toString()), itemUpdate);
       batch.update(doc(salesRef, saleId.toString()), { refounded });
 
-/*       batch.commit(); */
+      await batch.commit();
 
       dispatch({
         type: REFOUND_ITEMS,
