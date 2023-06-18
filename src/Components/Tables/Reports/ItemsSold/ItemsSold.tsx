@@ -11,7 +11,7 @@ import {
   RootState,
   Sale,
   YearReport,
-} from "../../../../interfaces";
+} from "../../../../interfaces/interfaces";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
 import {
   deleteInvoiceDetails,

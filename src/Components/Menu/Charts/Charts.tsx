@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Chart } from "react-google-charts";
 import { useSelector } from "react-redux";
 import swal from "sweetalert";
-import { RootState } from "../../../interfaces";
+import { RootState } from "../../../interfaces/interfaces";
 
 import styles from "./Charts.module.css";
 

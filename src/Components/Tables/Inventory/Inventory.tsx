@@ -9,7 +9,7 @@ import {
   getItemsFromInvoice,
   getStockItems,
 } from "../../../redux/actions/items";
-import { RootState, Item, Sale, InvoiceType } from "../../../interfaces";
+import { RootState, Item, Sale, InvoiceType } from "../../../interfaces/interfaces";
 import { Link } from "react-router-dom";
 
 import reload from "../../../assets/svg/reload.svg";

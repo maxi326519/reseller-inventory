@@ -1,5 +1,5 @@
 import changeDateFormat from "../../../../../functions/changeDateFormat";
-import { Expense } from "../../../../../interfaces";
+import { Expense } from "../../../../../interfaces/interfaces";
 
 import styles from "../Table.module.css";
 

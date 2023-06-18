@@ -1,4 +1,4 @@
-import { ExportMonthTaxes, ExportYearTaxesData, MonthTaxesData, YearTaxesData } from "../interfaces";
+import { ExportMonthTaxes, ExportYearTaxesData, MonthTaxesData, YearTaxesData } from "../interfaces/interfaces";
 
 export function convertToExportYearTaxesData(yearData: YearTaxesData): ExportYearTaxesData {
     // Obtener un conjunto de todas las categorías únicas

@@ -1,4 +1,4 @@
-import { YearReport, YearTaxesData, MonthTaxesData, Sale, Expense } from "../interfaces";
+import { YearReport, YearTaxesData, MonthTaxesData, Sale, Expense } from "../interfaces/interfaces";
 
 export function createOrUpdateYearTaxesData(
   yearReport: YearReport | number,

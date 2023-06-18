@@ -1,4 +1,4 @@
-import { Invoice, InvoiceExpenses, InvoiceType } from "../../../../interfaces";
+import { Invoice, InvoiceExpenses, InvoiceType } from "../../../../interfaces/interfaces";
 
 import Rows from "./Rows/Rows";
 

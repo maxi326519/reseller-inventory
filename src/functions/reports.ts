@@ -4,7 +4,7 @@ import {
   Expense,
   Sale,
   ReportItem,
-} from "../interfaces";
+} from "../interfaces/interfaces";
 
 export function calculeReports(
   reports: YearReport[],
