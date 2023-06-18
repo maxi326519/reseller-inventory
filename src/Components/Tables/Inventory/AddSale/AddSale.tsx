@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Timestamp } from "firebase/firestore";
-import { Item, Sale, RootState, Expense } from "../../../../interfaces/interfaces";
+import {
+  Item,
+  Sale,
+  RootState,
+  Expense,
+  YearReport,
+} from "../../../../interfaces/interfaces";
 import { loading, closeLoading } from "../../../../redux/actions/loading";
 import { postSales } from "../../../../redux/actions/sales";
 import { updateReports } from "../../../../redux/actions/reports";
@@ -12,6 +18,9 @@ import SaleData from "./SaleData/SaleData";
 
 import styles from "./AddSale.module.css";
 import "../../../../animation.css";
+import useReports from "../../../../hooks/useReports";
+import { ItemType } from "../../../../hooks/useReports/Interfaces";
+import { privateDecrypt } from "crypto";
 
 interface OtherExpenses {
   saleId: number;
@@ -94,6 +103,7 @@ export default function AddSale({
     sale: 0,
   });
   const [errors, setErrors] = useState<Array<Errors | null>>([]);
+  const { reportsState, reportsActions }: any = useReports();
 
   useEffect(() => {
     const saleId = sales.find((sale) => sale.productId === itemSelected[0]);
@@ -126,6 +136,23 @@ export default function AddSale({
       const newData = convertData(sales, other, shipment);
       dispatch<any>(postSales(newData.sales, newData.expenses))
         .then(() => {
+          let newReports: YearReport[] = [];
+          newReports = reportsActions.setItems(
+            newReports,
+            newData.sales.map((sale) => ({
+              id: sale!.id,
+              date: sale?.date.toDate(),
+              price: sale!.price,
+            })),
+            ItemType.sales
+          );
+          newReports = reportsActions.setItems(
+            newReports,
+            newData.expenses,
+            ItemType.expenses
+          );
+
+          console.log(newReports);
           dispatch<any>(updateReports(newData.expenses, reports, newData.sales))
             .then(() => {
               dispatch(closeLoading());

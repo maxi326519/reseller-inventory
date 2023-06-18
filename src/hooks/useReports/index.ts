@@ -3,6 +3,23 @@ import setItem from "./setItem";
 import deleteItem from "./deleteItem";
 import { ItemReport, YearReport, ItemType } from "./Interfaces";
 
+/* export interface ReportsActions {
+  reportsState: YearReport[];
+  reportsActions: {
+    setItems: (
+      reports: YearReport[],
+      items: ItemReport[],
+      type: ItemType
+    ) => YearReport[];
+    delelteItems: (
+      reports: YearReport[],
+      items: ItemReport[],
+      type: ItemType
+    ) => YearReport[];
+    setState: (state: YearReport[]) => void;
+  };
+} */
+
 export default function useReports() {
   const [reportState, setReports] = useState<YearReport[]>([]);
   const reportActions = {
@@ -18,5 +35,5 @@ export default function useReports() {
     /*     save: (reports = reportState) => saveData(reports), */
   };
 
-  return [reportState, reportActions];
+  return {reportState, reportActions};
 }

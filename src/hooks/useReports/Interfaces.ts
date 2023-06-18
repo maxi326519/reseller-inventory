@@ -24,8 +24,7 @@ export interface MonthReport {
 export interface ItemReport {
   id: number;
   date: string;
-  type: string;
-  amount: number;
+  price: number;
 }
 
 export enum ItemType {
