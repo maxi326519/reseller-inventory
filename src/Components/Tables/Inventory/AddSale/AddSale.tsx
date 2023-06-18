@@ -21,6 +21,7 @@ import "../../../../animation.css";
 import useReports from "../../../../hooks/useReports";
 import { ItemType } from "../../../../hooks/useReports/Interfaces";
 import { privateDecrypt } from "crypto";
+import { connectStorageEmulator } from "firebase/storage";
 
 interface OtherExpenses {
   saleId: number;
@@ -103,7 +104,7 @@ export default function AddSale({
     sale: 0,
   });
   const [errors, setErrors] = useState<Array<Errors | null>>([]);
-  const { reportsState, reportsActions }: any = useReports();
+  const [reportsState, reportsActions]: any = useReports();
 
   useEffect(() => {
     const saleId = sales.find((sale) => sale.productId === itemSelected[0]);
@@ -139,10 +140,11 @@ export default function AddSale({
           let newReports: YearReport[] = [];
           newReports = reportsActions.setItems(
             newReports,
-            newData.sales.map((sale) => ({
-              id: sale!.id,
-              date: sale?.date.toDate(),
-              price: sale!.price,
+            newData.expenses.map((sale) => ({
+              id: sale.id,
+              type: sale.category,
+              date: sale.date.toDate(),
+              price: sale.price,
             })),
             ItemType.sales
           );
@@ -406,8 +408,15 @@ export default function AddSale({
     };
   }
 
+  function test() {
+    console.log(useReports);
+    console.log(reportsState);
+    console.log(reportsActions);
+  }
+
   return (
     <div className={styles.background}>
+      <button onClick={test}>Test</button>
       <form className={`toTop ${styles.container}`} onSubmit={handleSubmit}>
         <div className={styles.close}>
           <h4>Items</h4>

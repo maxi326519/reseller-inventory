@@ -23,6 +23,7 @@ export interface MonthReport {
 
 export interface ItemReport {
   id: number;
+  type: string;
   date: string;
   price: number;
 }
