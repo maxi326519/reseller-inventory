@@ -323,8 +323,15 @@ export default function AddSale({
     };
   }
 
+  function test() {
+    console.log(useReports);
+    console.log(reportsState);
+    console.log(reportsActions);
+  }
+
   return (
     <div className={styles.background}>
+      <button onClick={test}>Test</button>
       <form className={`toTop ${styles.container}`} onSubmit={handleSubmit}>
         <div className={styles.close}>
           <h4>Items</h4>
