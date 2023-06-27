@@ -24,7 +24,7 @@ export interface Invoice {
   id: number;
   type: InvoiceType;
   date: Timestamp;
-  items: number[];
+  items: number;
   form: string;
   source: string;
   total: number;
@@ -55,6 +55,7 @@ export interface Expense {
   category: string;
   description: string;
   invoiceId: number;
+  productId: number;
 }
 
 export interface Sale {
@@ -64,8 +65,8 @@ export interface Sale {
   price: number | string;
   productId: number;
   refounded?: Refounded;
+  invoiceId: number;
   shipment: Shipment;
-  expenses: ExpenseRef[];
 }
 
 export interface Refounded {
@@ -77,11 +78,6 @@ export interface Expired {
   date: Timestamp;
   itemId: string;
   expenseId: string;
-}
-
-interface ExpenseRef {
-  id: number;
-  cost: number;
 }
 
 export interface Shipment {
@@ -201,3 +197,16 @@ export interface RootState {
   reports: YearReport[];
   loading: boolean;
 }
+
+export const initSale: Sale = {
+  id: 0,
+  date: Timestamp.fromDate(new Date()),
+  cost: 0,
+  price: 0,
+  productId: 0,
+  invoiceId: 0,
+  shipment: {
+    value: false,
+    amount: "",
+  },
+};

@@ -18,7 +18,11 @@ import {
   query,
   Timestamp,
 } from "firebase/firestore";
-import { Invoice, RootState, InvoiceExpenses } from "../../../interfaces/interfaces";
+import {
+  Invoice,
+  RootState,
+  InvoiceExpenses,
+} from "../../../interfaces/interfaces";
 
 export const POST_INVOICE = "POST_INVOICE";
 export const GET_INVOICE = "GET_INVOICE";
@@ -194,70 +198,52 @@ export function deleteInvoice(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
+      // Check if user loggued in
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
-      const invoiceRef = collection(
-        db,
-        "Users",
-        auth.currentUser.uid,
-        "Invoices"
-      );
-      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
-      const expensesRef = collection(
-        db,
-        "Users",
-        auth.currentUser.uid,
-        "Expenses"
-      );
+      // Create firestore references
+      const userDoc = doc(collection(db, "Users"), auth.currentUser.uid);
+      const invoicesColl = collection(userDoc, "Invoices");
+      const itemsColl = collection(userDoc, "Items");
+      const salesColl = collection(userDoc, "Sales");
+      const expensesColl = collection(userDoc, "Expenses");
 
       const batch = writeBatch(db);
 
-      // Delete invoice
-      batch.delete(doc(invoiceRef, invoice.id.toString()));
+      // Data querys
+      const itemsQuery = query(itemsColl, where("invoiceId", "==", invoice.id));
+      const salesQuery = query(salesColl, where("invoiceId", "==", invoice.id));
+      const expensesQuery = query(
+        expensesColl,
+        where("invoiceId", "==", invoice.id)
+      );
 
-      // Get items
-      const itemsQuery = query(itemsRef, where("invoiceId", "==", invoice.id));
+      // Get items, sales and expenses
+      const expensesSnapshot = await getDocs(expensesQuery);
+      const salesSnapshot = await getDocs(salesQuery);
       const itemSnapshot = await getDocs(itemsQuery);
+
+      // Delete invoice
+      batch.delete(doc(invoicesColl, invoice.id.toString()));
 
       // Delete items
       itemSnapshot.forEach((doc) => {
         batch.delete(doc.ref);
       });
 
-      let itemsId: string[] = [];
-      itemSnapshot.forEach((doc) => itemsId.push(doc.id));
+      // Delete sales
+      salesSnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
 
-      // Get expenses and then delete them
-      for (let i = 0; i < itemsId.length; i++) {
-        // Get sales matching id
-        const expensesQuery = query(expensesRef, where("id", "==", itemsId[i]));
-        const expensesToDelete = await getDocs(expensesQuery);
-        // Delete sales
-        if (!expensesToDelete.empty) {
-          expensesToDelete.forEach((doc) => {
-            batch.delete(doc.ref);
-          });
-        }
-      }
-
-      // SALES
-      const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
-      for (let i = 0; i < itemsId.length; i++) {
-        // Get sales matching id
-        const salesQuery = query(salesRef, where("id", "==", itemsId[i]));
-        const salesToDelete = await getDocs(salesQuery);
-
-        // Delete sales
-        if (!salesToDelete.empty) {
-          salesToDelete.forEach((doc) => {
-            batch.delete(doc.ref);
-          });
-        }
-      }
+      // Delete expenses
+      expensesSnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
 
       await batch.commit();
 
-      // Delete the file, invoice image
+      // Delete invoice image
       if (invoice.imageRef !== "") {
         const desertRef = ref(storage, invoice.imageRef);
         await deleteObject(desertRef);

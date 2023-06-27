@@ -2,13 +2,11 @@ import {
   Invoice,
   InvoiceExpenses,
   InvoiceType,
-  RootState,
 } from "../../../../../interfaces/interfaces";
 import changeDateFormat from "../../../../../functions/changeDateFormat";
 import { closeLoading, loading } from "../../../../../redux/actions/loading";
-import { updateReportsItems } from "../../../../../redux/actions/reports";
 import { deleteInvoice } from "../../../../../redux/actions/invoices";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import swal from "sweetalert";
 
 import styles from "../Table.module.css";
@@ -21,7 +19,6 @@ interface Props {
 
 export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
   const dispatch = useDispatch();
-  const reports = useSelector((state: RootState) => state.reports);
 
   function handleDelete(invoiceId: number) {
     swal({
@@ -37,20 +34,8 @@ export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
         dispatch(loading());
         dispatch<any>(deleteInvoice(invoice))
           .then(() => {
-            dispatch<any>(updateReportsItems(invoice.items, null, reports))
-              .then(() => {
-                swal("Deleted", "Invoice deleted successfully", "success");
-                dispatch(closeLoading());
-              })
-              .catch((error: any) => {
-                console.log(error);
-                dispatch(closeLoading());
-                swal(
-                  "Error",
-                  "Error to update reports, try again leter",
-                  "error"
-                );
-              });
+            swal("Deleted", "Invoice deleted successfully", "success");
+            dispatch(closeLoading());
           })
           .catch((error: any) => {
             console.log(error);
@@ -77,7 +62,7 @@ export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
       </span>
       <span>
         <b>ITEMS: </b>
-        {invoice.items.length}
+        {invoice.items}
       </span>
       <span>
         <b>TOTAL: </b>

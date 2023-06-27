@@ -4,70 +4,37 @@ import { Timestamp } from "firebase/firestore";
 import { closeLoading, loading } from "../../../redux/actions/loading";
 import { updateReports } from "../../../redux/actions/reports";
 import {
+  OtherExpenses,
+  ShipingExpenses,
+  initOtherExpenses,
+  initShipingExpenses,
+} from "../../../interfaces/SaleForm";
+import { Link } from "react-router-dom";
+import {
   deleteInvoiceDetails,
   expiredItems,
   getItemsFromInvoice,
   getStockItems,
 } from "../../../redux/actions/items";
-import { RootState, Item, Sale, InvoiceType } from "../../../interfaces/interfaces";
-import { Link } from "react-router-dom";
-
-import reload from "../../../assets/svg/reload.svg";
+import {
+  RootState,
+  Item,
+  Sale,
+  InvoiceType,
+  initSale,
+  Expense,
+} from "../../../interfaces/interfaces";
+import swal from "sweetalert";
 
 import Table from "./Table/Table";
-import AddSale from "./AddSale/AddSale";
-
-import menuSvg from "../../../assets/svg/menu.svg";
-import closeSvg from "../../../assets/svg/close.svg";
-
-import style from "./Inventory.module.css";
-import swal from "sweetalert";
 import List from "../../Menu/List/List";
 import Details from "../Invoices/Details/Details";
+import AddSale from "./AddSale/AddSale";
 
-interface OtherExpenses {
-  saleId: number;
-  adsFee: {
-    check: boolean;
-    cost: number | string;
-  };
-  other: {
-    check: boolean;
-    description: string;
-    cost: number | string;
-  };
-}
-
-interface ShipingExpenses {
-  saleId: number;
-  shipLabel: number | string;
-  ebayFees: number | string;
-}
-
-const initialSale: Sale = {
-  id: 0,
-  date: Timestamp.fromDate(new Date()),
-  cost: 0,
-  price: 0,
-  productId: 0,
-  shipment: {
-    value: false,
-    amount: "",
-  },
-  expenses: [],
-};
-
-const initialOtherExpenses: OtherExpenses = {
-  saleId: 0,
-  adsFee: { check: false, cost: "" },
-  other: { check: false, description: "", cost: "" },
-};
-
-const initialShipingExpenses: ShipingExpenses = {
-  saleId: 0,
-  shipLabel: "",
-  ebayFees: "",
-};
+import style from "./Inventory.module.css";
+import menuSvg from "../../../assets/svg/menu.svg";
+import closeSvg from "../../../assets/svg/close.svg";
+import reload from "../../../assets/svg/reload.svg";
 
 export default function Inventory() {
   const dispatch = useDispatch();
@@ -112,6 +79,13 @@ export default function Inventory() {
     setTotal(Number(total.toFixed(2)));
     setTotalItems(Number(totalItems.toFixed(2)));
   }, [items, search]);
+
+  useEffect(() => {
+    console.log(itemSelected);
+    console.log(sales);
+    console.log(other);
+    console.log(shipment);
+  }, [itemSelected]);
 
   function handleActive() {
     setActive(!active);
@@ -165,20 +139,22 @@ export default function Inventory() {
           const dataItemSelected = items.filter((item) =>
             itemSelected.some((id) => id === item.id)
           );
-          const newExpenses = dataItemSelected.map((item: Item) => {
-            return {
-              id: item.id,
-              date: Timestamp.fromDate(new Date()),
-              price: item.cost,
-              category: "Expired",
-              description: "Expired item",
-              invoiceId: 0,
-            };
-          });
+          const newExpenses: Expense[] = dataItemSelected.map(
+            (item: Item): Expense => {
+              return {
+                id: item.id,
+                date: Timestamp.fromDate(new Date()),
+                price: item.cost,
+                category: "Expired",
+                description: "Expired item",
+                invoiceId: item.invoiceId,
+                productId: item.id,
+              };
+            }
+          );
           dispatch<any>(loading());
           dispatch<any>(expiredItems(itemSelected, newExpenses))
             .then(() => {
-              dispatch<any>(updateReports(newExpenses, reports, null));
               resetData();
               dispatch(closeLoading());
             })
@@ -197,26 +173,40 @@ export default function Inventory() {
   }
 
   function handleSelected(item: Item, cost: number | null) {
+    // If the item alreay selected, deselected them
     if (itemSelected.some((s) => s === item.id)) {
       setItemSelected(itemSelected.filter((s) => s !== item.id));
       setSales(sales.filter((s) => s.productId !== item.id));
-      setOther(other.filter((o) => o.saleId !== item.id));
-      setShiping(shipment.filter((s) => s.saleId !== item.id));
+      setOther(other.filter((o) => o.itemId !== item.id));
+      setShiping(shipment.filter((s) => s.itemId !== item.id));
     } else if (cost !== null) {
-      const saleId = Number(`${item.id}${item.sales?.length || 0}`);
+      let saleId = findUniqueSaleId(item);
       setItemSelected([...itemSelected, item.id]);
-      setOther([...other, { ...initialOtherExpenses, saleId: saleId }]);
-      setShiping([...shipment, { ...initialShipingExpenses, saleId: saleId }]);
+      setOther([...other, { ...initOtherExpenses, itemId: item.id }]);
+      setShiping([...shipment, { ...initShipingExpenses, itemId: item.id }]);
       setSales([
         ...sales,
         {
-          ...initialSale,
+          ...initSale,
           id: saleId,
           cost: cost,
           productId: item.id,
+          invoiceId: item.invoiceId,
         },
       ]);
     }
+  }
+
+  function findUniqueSaleId(item: Item): number {
+    let salesLength = item.sales ? item.sales.length : 0;
+    let saleId = Number(`${item.id.toString().substring(6)}${salesLength}`);
+
+    while (item.sales?.some((sale) => sale.id === saleId)) {
+      salesLength++;
+      saleId = Number(`${item.id.toString().substring(6)}${salesLength}`);
+    }
+
+    return saleId;
   }
 
   function handleExpense(
@@ -226,12 +216,10 @@ export default function Inventory() {
     const name: string = event.target.name;
     const value: number | string = event.target.value;
 
-    console.log(name, event.target.checked, id);
-
     if (name.includes("shipLabel")) {
       setShiping(
         shipment.map((s) => {
-          if (s.saleId === id) {
+          if (s.itemId === id) {
             return {
               ...s,
               shipLabel: value,
@@ -243,7 +231,7 @@ export default function Inventory() {
     } else if (name.includes("ebayFees")) {
       setShiping(
         shipment.map((s) => {
-          if (s.saleId === id) {
+          if (s.itemId === id) {
             return {
               ...s,
               ebayFees: value,
@@ -255,7 +243,7 @@ export default function Inventory() {
     } else if (name.includes("adsFee")) {
       setOther(
         other.map((o) => {
-          if (o.saleId === id) {
+          if (o.itemId === id) {
             return {
               ...o,
               adsFee: {
@@ -272,7 +260,7 @@ export default function Inventory() {
     } else if (name.includes("other")) {
       setOther(
         other.map((o) => {
-          if (o.saleId === id) {
+          if (o.itemId === id) {
             return {
               ...o,
               other: {

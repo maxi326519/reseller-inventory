@@ -13,7 +13,7 @@ interface Props {
   rows: Rows[];
   handleClose: () => void;
   handleRefoundSelected: (item: Item, saleId: number) => void;
-  handleDeleteSold: (id: number) => void;
+  handleDeleteSale: (sale: Sale) => void;
   handleShowExpensesDetails: (productId: number) => void;
   handleInvoiceDetail: (invoiceId: number) => void;
 }
@@ -22,7 +22,7 @@ export default function Table({
   rows,
   handleClose,
   handleRefoundSelected,
-  handleDeleteSold,
+  handleDeleteSale,
   handleShowExpensesDetails,
   handleInvoiceDetail,
 }: Props) {
@@ -47,7 +47,7 @@ export default function Table({
               sale={row.sale}
               handleClose={handleClose}
               handleRefoundSelected={handleRefoundSelected}
-              handleDeleteSold={handleDeleteSold}
+              handleDeleteSale={handleDeleteSale}
               handleShowExpensesDetails={handleShowExpensesDetails}
               handleInvoiceDetail={handleInvoiceDetail}
             />

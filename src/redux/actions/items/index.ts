@@ -15,6 +15,7 @@ import {
   Item,
   Refounded,
   RootState,
+  Sale,
 } from "../../../interfaces/interfaces";
 import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
@@ -205,6 +206,8 @@ export function deleteItem(
       // Collections
       const itemColl = collection(db, "Users", uid, "Items");
       const invoiceColl = collection(db, "Users", uid, "Invoices");
+      const expensesColl = collection(db, "Users", uid, "Expenses");
+      const salesColl = collection(db, "Users", uid, "Sales");
 
       // ID
       const itemId = item.id.toString();
@@ -215,27 +218,41 @@ export function deleteItem(
       const invoiceData = invoiceSnapshot.data();
       if (!invoiceData) throw new Error("Invoice not found");
 
+      // Get expenses and deleted them
+      const expenseQuery = query(
+        expensesColl,
+        where("productId", "==", item.id)
+      );
+      const expenseSnapshot = await getDocs(expenseQuery);
+      expenseSnapshot.forEach((doc) => batch.delete(doc.ref));
+
+      // Get sale and delete them
+      const salesQuery = query(salesColl, where("productId", "==", item.id));
+      const salesSnapshot = await getDocs(salesQuery);
+      salesSnapshot.forEach((doc) => batch.delete(doc.ref));
+
       // Delete item and update invoice
+      batch.delete(doc(itemColl, itemId));
       const updatedInvoice: any = {
         ...invoiceData,
-        items: invoiceData.items.filter((itemId: number) => itemId !== item.id),
+        items: invoiceData.items - 1,
         total: Number(invoiceData.total) - Number(item.cost),
       };
-      batch.delete(doc(itemColl, itemId));
 
-      if (updatedInvoice.items.length === 0) {
+      // If don't have any items, delete invoice too
+      if (updatedInvoice.items === 0) {
         batch.delete(doc(invoiceColl, invoiceId));
       } else {
         batch.update(doc(invoiceColl, invoiceId), updatedInvoice);
       }
-
-      await batch.commit();
 
       // Delete the file, invoice image
       if (updatedInvoice.items.length === 0 && updatedInvoice.imageRef !== "") {
         const desertRef = ref(storage, updatedInvoice.imageRef);
         await deleteObject(desertRef);
       }
+
+      await batch.commit();
 
       dispatch({
         type: DELETE_ITEM,
@@ -348,17 +365,19 @@ export function refoundItems(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
+      // Check if user id loggued in
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
-      console.log(item);
-      console.log(saleId);
-      console.log(refounded);
-      console.log(newExpenses);
+      // Create collection reference
+      const userDoc = doc(collection(db, "Users"), auth.currentUser.uid);
+      const itemsColl = collection(userDoc, "Items");
+      const salesColl = collection(userDoc, "Sales");
+      const expensesColl = collection(userDoc, "Expenses");
 
+      // Instance batch
       const batch = writeBatch(db);
-      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
-      const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
 
+      // Update item and sale
       const itemUpdate = {
         state: "In Stock",
         sales: item.sales!.map((sale) =>
@@ -366,14 +385,24 @@ export function refoundItems(
         ),
       };
 
-      batch.update(doc(itemsRef, item.id.toString()), itemUpdate);
-      batch.update(doc(salesRef, saleId.toString()), { refounded });
+      batch.update(doc(itemsColl, item.id.toString()), itemUpdate);
+      batch.update(doc(salesColl, saleId.toString()), { refounded });
+
+      // Add expenses
+      newExpenses.forEach((expense) => batch.set(doc(expensesColl), expense));
 
       await batch.commit();
 
       dispatch({
         type: REFOUND_ITEMS,
-        payload: { item, saleId, refounded, itemUpdate, newExpenses },
+        payload: {
+          item: { ...item, ...itemUpdate },
+          saleUpdate: {
+            id: saleId,
+            refounded,
+          },
+          newExpenses,
+        },
       });
     } catch (e: any) {
       throw new Error(e);
@@ -406,60 +435,5 @@ export function restoreItem(
 export function deleteInvoiceDetails() {
   return {
     type: DELETE_ITEMS_INVOICE_DETAILS,
-  };
-}
-
-export function deleteSoldItem(
-  itemID: number
-): ThunkAction<Promise<void>, RootState, null, AnyAction> {
-  return async (dispatch: Dispatch<AnyAction>) => {
-    try {
-      if (auth.currentUser === null) throw new Error("unauthenticated user");
-
-      const batch = writeBatch(db);
-
-      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
-      const salesRef = collection(db, "Users", auth.currentUser.uid, "Sales");
-      const expensesRef = collection(
-        db,
-        "Users",
-        auth.currentUser.uid,
-        "Expenses"
-      );
-
-      // Update item status
-      batch.update(doc(itemsRef, itemID.toString()), {
-        state: "In Stock",
-      });
-
-      // Delete items sales
-      const salesQuery = await getDocs(
-        query(salesRef, where("productId", "==", itemID))
-      );
-      if (!salesQuery.empty) {
-        salesQuery.forEach((doc) => {
-          batch.delete(doc.ref);
-        });
-      }
-
-      // Delete items expenses
-      const expensesQuery = await getDocs(
-        query(expensesRef, where("id", "==", itemID))
-      );
-      if (!expensesQuery.empty) {
-        expensesQuery.forEach((doc) => {
-          batch.delete(doc.ref);
-        });
-      }
-
-      await batch.commit();
-
-      dispatch({
-        type: DELETE_SOLD_ITEMS,
-        payload: itemID,
-      });
-    } catch (e: any) {
-      throw new Error(e);
-    }
   };
 }

@@ -1,16 +1,21 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Timestamp } from "firebase/firestore";
+import { loading, closeLoading } from "../../../../redux/actions/loading";
+import { postSales } from "../../../../redux/actions/sales";
+import { updateReports } from "../../../../redux/actions/reports";
+import {
+  Errors,
+  OtherExpenses,
+  ShipingExpenses,
+  initErrors,
+} from "../../../../interfaces/SaleForm";
 import {
   Item,
   Sale,
   RootState,
   Expense,
-  YearReport,
 } from "../../../../interfaces/interfaces";
-import { loading, closeLoading } from "../../../../redux/actions/loading";
-import { postSales } from "../../../../redux/actions/sales";
-import { updateReports } from "../../../../redux/actions/reports";
 import swal from "sweetalert";
 
 import ItemRow from "./ItemRow/ItemRow";
@@ -18,55 +23,6 @@ import SaleData from "./SaleData/SaleData";
 
 import styles from "./AddSale.module.css";
 import "../../../../animation.css";
-import useReports from "../../../../hooks/useReports";
-import { ItemType } from "../../../../hooks/useReports/Interfaces";
-import { privateDecrypt } from "crypto";
-
-interface OtherExpenses {
-  saleId: number;
-  adsFee: {
-    check: boolean;
-    cost: number | string;
-  };
-  other: {
-    check: boolean;
-    description: string;
-    cost: number | string;
-  };
-}
-interface ShipingExpenses {
-  saleId: number;
-  shipLabel: number | string;
-  ebayFees: number | string;
-}
-
-interface Errors {
-  price: null | string;
-  shipment: null | string;
-  expenses: {
-    shipLabel: null | string;
-    ebayFees: null | string;
-    adsFee: null | string;
-    other: {
-      description: null | string;
-      cost: null | string;
-    };
-  };
-}
-
-const initialErrors: Errors = {
-  price: null,
-  shipment: null,
-  expenses: {
-    shipLabel: null,
-    ebayFees: null,
-    adsFee: null,
-    other: {
-      description: null,
-      cost: null,
-    },
-  },
-};
 
 interface Props {
   handleClose: () => void;
@@ -103,7 +59,6 @@ export default function AddSale({
     sale: 0,
   });
   const [errors, setErrors] = useState<Array<Errors | null>>([]);
-  const { reportsState, reportsActions }: any = useReports();
 
   useEffect(() => {
     const saleId = sales.find((sale) => sale.productId === itemSelected[0]);
@@ -114,10 +69,6 @@ export default function AddSale({
       });
     }
   }, [itemSelected]);
-
-  useEffect(() => {
-    console.log("Change in row selected", rowSelected);
-  }, [rowSelected]);
 
   /* Cargamos los items seleccionados */
   useEffect(() => {
@@ -136,39 +87,10 @@ export default function AddSale({
       const newData = convertData(sales, other, shipment);
       dispatch<any>(postSales(newData.sales, newData.expenses))
         .then(() => {
-          let newReports: YearReport[] = [];
-          newReports = reportsActions.setItems(
-            newReports,
-            newData.sales.map((sale) => ({
-              id: sale!.id,
-              date: sale?.date.toDate(),
-              price: sale!.price,
-            })),
-            ItemType.sales
-          );
-          newReports = reportsActions.setItems(
-            newReports,
-            newData.expenses,
-            ItemType.expenses
-          );
-
-          console.log(newReports);
-          dispatch<any>(updateReports(newData.expenses, reports, newData.sales))
-            .then(() => {
-              dispatch(closeLoading());
-              handleClose();
-              swal("Save", "Items sold successfully", "success");
-              resetData();
-            })
-            .catch((err: any) => {
-              dispatch(closeLoading());
-              swal(
-                "Error",
-                "Error to update reports, try again later",
-                "error"
-              );
-              console.log(err);
-            });
+          dispatch(closeLoading());
+          handleClose();
+          swal("Save", "Items sold successfully", "success");
+          resetData();
         })
         .catch((err: any) => {
           dispatch(closeLoading());
@@ -187,14 +109,14 @@ export default function AddSale({
 
   function handleSetPrice(id: number, price: string) {
     setSales(
-      sales.map((s) => {
-        if (s.id === id) {
+      sales.map((sale) => {
+        if (sale.productId === id) {
           return {
-            ...s,
+            ...sale,
             price: price,
           };
         }
-        return s;
+        return sale;
       })
     );
   }
@@ -329,12 +251,12 @@ export default function AddSale({
     let error: number[] = [];
     let allExpenses: Expense[] = [];
 
-    const newSales = sales.map((sale) => {
+    sales.forEach((sale) => {
       const otherExpenses: OtherExpenses | undefined = other.find(
-        (o) => o.saleId === sale.id
+        (o) => o.itemId === sale.productId
       );
       const shipmentExpenses: ShipingExpenses | undefined = shipment.find(
-        (s) => s.saleId === sale.id
+        (s) => s.itemId === sale.productId
       );
       let expenses: Expense[] = [];
 
@@ -345,7 +267,8 @@ export default function AddSale({
           price: Number(shipmentExpenses.shipLabel),
           category: "Ship Label",
           description: "Ship label expense",
-          invoiceId: 0,
+          invoiceId: sale.invoiceId,
+          productId: sale.productId,
         });
         expenses.push({
           id: sale.id,
@@ -353,7 +276,8 @@ export default function AddSale({
           price: Number(shipmentExpenses.ebayFees),
           category: "Ebay Fees",
           description: "Ebay fees expense",
-          invoiceId: 0,
+          invoiceId: sale.invoiceId,
+          productId: sale.productId,
         });
         if (otherExpenses.adsFee.check) {
           expenses.push({
@@ -362,7 +286,8 @@ export default function AddSale({
             price: Number(otherExpenses.adsFee.cost),
             category: "Ads Fee",
             description: "Ads fee expense",
-            invoiceId: 0,
+            invoiceId: sale.invoiceId,
+            productId: sale.productId,
           });
         }
         if (otherExpenses.other.check) {
@@ -372,7 +297,8 @@ export default function AddSale({
             price: Number(otherExpenses.other.cost),
             category: "Other",
             description: otherExpenses.other.description,
-            invoiceId: 0,
+            invoiceId: sale.invoiceId,
+            productId: sale.productId,
           });
         }
         expenses.push({
@@ -381,27 +307,18 @@ export default function AddSale({
           price: sale.cost,
           category: "COGS",
           description: "COGS expense",
-          invoiceId: 0,
+          invoiceId: sale.invoiceId,
+          productId: sale.productId,
         });
 
         expenses.forEach((ex) => allExpenses.push(ex));
-
-        return {
-          ...sale,
-          expenses: expenses.map((ex) => {
-            return {
-              id: ex.id,
-              cost: ex.price,
-            };
-          }),
-        };
       } else {
         error.push(sale.id);
       }
     });
 
     return {
-      sales: newSales,
+      sales,
       expenses: allExpenses,
     };
   }
@@ -437,21 +354,20 @@ export default function AddSale({
           errors={
             itemSelected.findIndex((id) => id === rowSelected.item) >= 0
               ? errors[itemSelected.findIndex((id) => id === rowSelected.item)]
-              : initialErrors
+              : initErrors
           }
           handleChange={handleChange}
           shipment={shipment.find(
-            (s: ShipingExpenses) => s.saleId === rowSelected.sale
+            (s: ShipingExpenses) => s.itemId === rowSelected.item
           )}
           other={other.find(
-            (o: OtherExpenses) => o.saleId === rowSelected.sale
+            (o: OtherExpenses) => o.itemId === rowSelected.item
           )}
           handleExpense={handleExpense}
         />
         <hr></hr>
         <div>
           <span>Items: {rows.length}</span>
-          {/*           <span>Total: {sale.total}</span> */}
         </div>
         <button className="btn btn-primary" type="submit">
           Add Solds

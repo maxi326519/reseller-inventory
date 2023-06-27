@@ -9,7 +9,7 @@ interface Props {
   sale: Sale;
   handleClose: () => void;
   handleRefoundSelected: (item: Item, saleId: number) => void;
-  handleDeleteSold: (id: number) => void;
+  handleDeleteSale: (sale: Sale) => void;
   handleShowExpensesDetails: (productId: number) => void;
   handleInvoiceDetail: (invoiceId: number) => void;
 }
@@ -19,7 +19,7 @@ export default function Rows({
   sale,
   handleClose,
   handleRefoundSelected,
-  handleDeleteSold,
+  handleDeleteSale,
   handleShowExpensesDetails,
   handleInvoiceDetail,
 }: Props) {
@@ -83,7 +83,7 @@ export default function Rows({
       <button
         className="btn btn-danger"
         type="button"
-        onClick={() => handleDeleteSold(sale.productId)}
+        onClick={() => handleDeleteSale(sale)}
       >
         -
       </button>

@@ -10,6 +10,7 @@ import swal from "sweetalert";
 
 import Form from "./Form/Form";
 import Table from "./Table/Table";
+import List from "../../Menu/List/List";
 import InvoiceImage from "./InvoiceImage/InvoiceImage";
 import AddSource from "./AddSource/AddSource";
 import DownloadExcel from "./DownloadExcel/DownloadExcel";
@@ -19,7 +20,6 @@ import close from "../../../assets/svg/close.svg";
 
 import style from "./NewPurchase.module.css";
 import styles from "../Tables.module.css";
-import List from "../../Menu/List/List";
 interface ExportData {
   id: number;
   description: string;
@@ -30,7 +30,7 @@ export default function NewPurchase() {
     id: 0,
     type: InvoiceType.Purchase,
     date: Timestamp.now(),
-    items: [],
+    items: 0,
     form: "Cash",
     source: "0",
     total: 0,
@@ -93,10 +93,10 @@ export default function NewPurchase() {
               .toString()
               .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}`
           );
-          const newInvoice = {
+          const newInvoice: Invoice = {
             ...invoice,
             id: generateInvoiceId(new Date().toLocaleDateString()),
-            items: invoice.items.map((id) => Number(`${formattedDate}${id}`)),
+            items: items.length,
           };
           dispatch(loading());
           dispatch<any>(postInvoice(newInvoice, file))

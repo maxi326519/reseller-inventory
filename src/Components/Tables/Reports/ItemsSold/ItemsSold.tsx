@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Timestamp, getDocs } from "firebase/firestore";
-import { get, ref } from "firebase/database";
+import { Timestamp } from "firebase/firestore";
+import { deleteSale, getSales } from "../../../../redux/actions/sales";
+import { closeLoading, loading } from "../../../../redux/actions/loading";
 import {
   Expense,
   ExportSales,
@@ -12,30 +13,22 @@ import {
   Sale,
   YearReport,
 } from "../../../../interfaces/interfaces";
-import { closeLoading, loading } from "../../../../redux/actions/loading";
 import {
   deleteInvoiceDetails,
-  deleteSoldItem,
   getItemsFromInvoice,
   refoundItems,
 } from "../../../../redux/actions/items";
-import { postExpenses } from "../../../../redux/actions/expenses";
-import {
-  getSoldReportData,
-  updateReports,
-  updateReportsItems,
-} from "../../../../redux/actions/reports";
+import changeDateFormat from "../../../../functions/changeDateFormat";
+import swal from "sweetalert";
 
 import DateFilter from "./DateFilter/DateFilter";
 import Table from "./Table/Table";
 import Refound from "./Refound/Refound";
-
 import Excel from "./Excel/Excel.jsx";
-import styles from "./ItemsSold.module.css";
-import swal from "sweetalert";
 import Expenses from "./Expenses/Expenses";
-import changeDateFormat from "../../../../functions/changeDateFormat";
 import Details from "../../Invoices/Details/Details";
+
+import styles from "./ItemsSold.module.css";
 
 interface Rows {
   item: Item | undefined;
@@ -66,7 +59,10 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     saleId: number;
   }>({ item: null, saleId: 0 });
   const [years, setYears] = useState<number[]>([]);
-  const [dateFilter, setDateFilter] = useState({ year: 0, month: 0 });
+  const [dateFilter, setDateFilter] = useState({
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+  });
 
   const [rows, setRows] = useState<Rows[]>([]);
   const [totalCost, setTotalCost] = useState(0);
@@ -116,12 +112,13 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     const year = dateFilter.year.toString();
     let month =
       dateFilter.month.toString() === "00" ? null : dateFilter.month.toString();
+
     // Extraer las categorias
     expenses.forEach((expense) => {
       categories[expense.category] = 0;
     });
-    // Traer las expensas
 
+    // Traer las expensas
     const data = rows.map(({ item, sale }) => {
       const data: any = {
         invoiceId: item?.invoiceId || 0,
@@ -156,7 +153,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
           : dateFilter.month.toString();
 
       dispatch(loading());
-      dispatch<any>(getSoldReportData(year, month)).then(() => {
+      dispatch<any>(getSales(year, month)).then(() => {
         dispatch(closeLoading());
       });
     }
@@ -172,54 +169,30 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
 
   function handleRefound(data: Refounded) {
     if (refoundSelected === undefined) return false;
-
-    /* REVISAR LAS EXPENSAS */
     const newExpenses: Expense[] = [
       {
-        id: refoundSelected.item!.id,
+        id: refoundSelected.saleId,
         date: Timestamp.fromDate(new Date()),
         price: data.amount,
         category: "Refound",
         description: "Refound expense",
-        invoiceId: 0,
+        invoiceId: refoundSelected.item?.invoiceId!,
+        productId: refoundSelected.item?.id!,
       },
     ];
 
     dispatch(loading());
-    dispatch<any>(refoundItems(refoundSelected.item!, refoundSelected.saleId, data, newExpenses))
+    dispatch<any>(
+      refoundItems(
+        refoundSelected.item!,
+        refoundSelected.saleId,
+        data,
+        newExpenses
+      )
+    )
       .then(() => {
-        dispatch<any>(postExpenses(newExpenses))
-          .then(() => {
-            dispatch<any>(
-              updateReportsItems(
-                [refoundSelected.item!.id, refoundSelected.saleId],
-                ["Ebay Fees", "COGS"],
-                reports
-              )
-            )
-              .then(() => {
-                dispatch<any>(updateReports(newExpenses, reports, null))
-                  .then(() => {
-                    swal("Refounded", "Refounded item successfully", "success");
-                    dispatch(closeLoading());
-                  })
-                  .catch((err: any) => {});
-              })
-              .catch((err: any) => {
-                swal(
-                  "Error",
-                  "Error to update reports, try again later",
-                  "error"
-                );
-                dispatch(closeLoading());
-                console.log(err);
-              });
-          })
-          .catch((err: any) => {
-            swal("Error", "Error to refound item, try again later", "error");
-            dispatch(closeLoading());
-            console.log(err);
-          });
+        swal("Refounded", "Refounded item successfully", "success");
+        dispatch(closeLoading());
       })
       .catch((err: any) => {
         swal("Error", "Error to refound item, try again later", "error");
@@ -228,7 +201,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
       });
   }
 
-  function handleDeleteSold(itemId: number) {
+  function handleDeleteSale(sale: Sale) {
     swal({
       title: "Atention!",
       text: "Are you sure are you want to delete this sale? \n This action is irreversible",
@@ -240,22 +213,10 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     }).then((response) => {
       if (response === "Accept") {
         dispatch(loading());
-        dispatch<any>(deleteSoldItem(itemId))
+        dispatch<any>(deleteSale(sale))
           .then(() => {
-            dispatch<any>(updateReportsItems([itemId], null, reports))
-              .then(() => {
-                dispatch(closeLoading());
-                swal("Deleted", "Sold deleted successfully", "success");
-              })
-              .catch((err: any) => {
-                swal(
-                  "Error",
-                  "Error to update reports, try again later",
-                  "error"
-                );
-                dispatch(closeLoading());
-                console.log(err);
-              });
+            dispatch(closeLoading());
+            swal("Deleted", "Sold deleted successfully", "success");
           })
           .catch((err: any) => {
             swal(
@@ -270,7 +231,6 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     });
   }
 
-  // Refound
   function handleClose() {
     setRefound(!refound);
   }
@@ -346,7 +306,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         rows={rows}
         handleClose={handleClose}
         handleRefoundSelected={handleRefoundSelected}
-        handleDeleteSold={handleDeleteSold}
+        handleDeleteSale={handleDeleteSale}
         handleShowExpensesDetails={handleShowExpensesDetails}
         handleInvoiceDetail={handleInvoiceDetail}
       />

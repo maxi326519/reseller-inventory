@@ -26,9 +26,9 @@ export default function deleteItem(
         ].filter((listItem) => {
           if (listItem.id === item.id) {
             if (item.type) {
-              if (item.type === listItem.type) {
+/*               if (item.type === listItem.type) {
                 return false;
-              } else return true;
+              } else return true; */
             } else return false;
           } else return true;
         });

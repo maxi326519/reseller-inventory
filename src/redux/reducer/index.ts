@@ -1,4 +1,9 @@
-import { InvoiceType, Item, RootState, Sale } from "../../interfaces/interfaces";
+import {
+  InvoiceType,
+  Item,
+  RootState,
+  Sale,
+} from "../../interfaces/interfaces";
 import { AnyAction } from "redux";
 import { LOADING, CLOSE_LOADING } from "../actions/loading";
 import { POST_SOURCES, POST_CATEGORIES, GET_USER_DATA } from "../actions/user";
@@ -21,11 +26,10 @@ import {
   DELETE_INVOICE,
   GET_INVOICE_DETAILS,
 } from "../actions/invoices";
-import { POST_SALE } from "../actions/sales";
+import { DELETE_SALE, GET_SALES, POST_SALE } from "../actions/sales";
 import { POST_EXPENSES, GET_SOLD_EXPENSES } from "../actions/expenses";
 import {
   GET_REPORTS,
-  GET_SOLD_REPORT_DATA,
   GET_EXPIRED_ITEMS,
   UPDATE_REPORTS,
   DELETE_ITEMS_REPORTS,
@@ -44,7 +48,7 @@ const initialState: RootState = {
         id: 0,
         type: InvoiceType.Purchase,
         date: Timestamp.now(),
-        items: [],
+        items: 0,
         form: "",
         source: "",
         total: 0,
@@ -202,7 +206,7 @@ export const rootReducer = (
         ...state,
         reports: action.payload,
       };
-    case GET_SOLD_REPORT_DATA:
+    case GET_SALES:
       return {
         ...state,
         sales: {
@@ -265,7 +269,7 @@ export const rootReducer = (
         },
         invoices: {
           data:
-            action.payload.invoice.items.length === 0
+            action.payload.invoice.items === 0
               ? state.invoices.data.filter(
                   (invoice) => invoice.id !== action.payload.invoice.id
                 )
@@ -274,10 +278,22 @@ export const rootReducer = (
                     ? action.payload.invoice
                     : invoice
                 ),
-          details: state.invoices.details,
-          /*           details: state.invoices.details.filter((item) =>
-            item.id === action.payload.item.id ? action.payload.item : item
-          ), */
+          details: [
+            ...state.invoices.details.filter(
+              (item) => item.id !== action.payload.item.id
+            ),
+          ],
+        },
+        sales: {
+          items: state.sales.items.filter(
+            (item) => item.id !== action.payload.item.id
+          ),
+          sales: state.sales.sales.filter(
+            (sale) => sale.id !== action.payload.item.id
+          ),
+          expenses: state.sales.expenses.filter(
+            (expense) => expense.id !== action.payload.item.id
+          ),
         },
       };
 
@@ -299,13 +315,14 @@ export const rootReducer = (
         },
         sales: {
           items: state.sales.items.filter(
-            (item) => !action.payload.items.some((id: number) => id === item.id)
+            (item) => item.invoiceId !== action.payload.id
           ),
           sales: state.sales.sales.filter(
-            (sale) =>
-              !action.payload.items.some((id: number) => id === sale.productId)
+            (sale) => sale.invoiceId !== action.payload.id
           ),
-          expenses: [],
+          expenses: state.sales.expenses.filter(
+            (expense) => expense.invoiceId !== action.payload.id
+          ),
         },
       };
 
@@ -315,31 +332,45 @@ export const rootReducer = (
         reports: action.payload,
       };
 
-    case DELETE_SOLD_ITEMS:
+    case DELETE_SALE:
+      let itemsData: Item[] = state.items.data;
+      console.log(1);
+
+      // if sale is not refounded
+      if (!action.payload.refounded) {
+        console.log(2);
+        // Get item to restore
+        const restoreItem: Item = state.sales.items.find((item) =>
+          item.sales?.some((sale) => sale.id === action.payload.id)
+        )!;
+        console.log(3);
+        // Update items list
+        itemsData = [
+          ...state.items.data,
+          {
+            ...restoreItem,
+            state: "In Stock",
+            sales: restoreItem.sales?.filter(
+              (sale) => sale.id !== action.payload.id
+            ),
+          },
+        ];
+      }
+      console.log(4);
       return {
         ...state,
         items: {
           ...state.items,
-          data: [
-            ...state.items.data,
-            {
-              ...state.sales.items.find(
-                (item) => item.id === action.payload.item.id
-              ),
-              ...action.payload.itemUpdate,
-            },
-          ],
+          data: itemsData,
         },
         sales: {
-          items: state.sales.items.filter(
-            (item) => item.id !== action.payload.item.id
+          ...state.sales,
+          sales: state.sales.sales.filter(
+            (sale) => sale.id !== action.payload.id
           ),
-          sales: state.sales.sales.map((sale) =>
-            sale.id === action.payload.saleId
-              ? { ...sale, ...action.payload.refounded }
-              : sale
+          expenses: state.sales.expenses.filter(
+            (expense) => expense.id !== action.payload.id
           ),
-          expenses: [...state.sales.expenses, ...action.payload.newExpenses],
         },
       };
 
@@ -388,17 +419,18 @@ export const rootReducer = (
         ...state,
         items: {
           ...state.items,
-          data: [
-            ...state.items.data,
-            {
-              ...state.sales.sales.find((i) => action.payload === i.id),
-              state: "In Stock",
-            },
-          ],
+          data: [...state.items.data, action.payload.item],
         },
         sales: {
-          ...state.sales,
-          sales: state.sales.sales.filter((e) => e.id !== action.payload),
+          items: state.sales.items.map((item) =>
+            item.id === action.payload.item.id ? action.payload.item : item
+          ),
+          sales: state.sales.sales.map((sale) =>
+            sale.id === action.payload.saleUpdate.id
+              ? { ...sale, ...action.payload.saleUpdate }
+              : sale
+          ),
+          expenses: [...state.sales.expenses, ...action.payload.newExpenses],
         },
       };
 

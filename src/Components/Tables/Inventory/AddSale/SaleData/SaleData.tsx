@@ -1,43 +1,9 @@
-import { useEffect } from "react";
-
+import { Errors, OtherExpenses, ShipingExpenses } from "../../../../../interfaces/SaleForm";
+import { Timestamp } from "firebase/firestore";
 import { Sale } from "../../../../../interfaces/interfaces";
 
 import styles from "./SaleData.module.css";
 import "../../../../../animation.css";
-import { Timestamp } from "firebase/firestore";
-
-interface OtherExpenses {
-  saleId: number;
-  adsFee: {
-    check: boolean;
-    cost: number | string;
-  };
-  other: {
-    check: boolean;
-    description: string;
-    cost: number | string;
-  };
-}
-
-interface ShipingExpenses {
-  saleId: number;
-  shipLabel: number | string;
-  ebayFees: number | string;
-}
-
-interface Errors {
-  price: null | string;
-  shipment: null | string;
-  expenses: {
-    shipLabel: null | string;
-    ebayFees: null | string;
-    adsFee: null | string;
-    other: {
-      description: null | string;
-      cost: null | string;
-    };
-  };
-}
 
 interface Props {
   sale: Sale | undefined;
@@ -62,7 +28,6 @@ export default function SaleData({
   other,
   handleExpense,
 }: Props) {
-
   return (
     <div>
       <div className="mb-3 form-floating">
@@ -129,7 +94,7 @@ export default function SaleData({
               step="any"
               value={shipment?.shipLabel}
               placeholder="$ 0.00"
-              onChange={(e) => handleExpense(e, sale?.id)}
+              onChange={(e) => handleExpense(e, sale?.productId)}
             />
             {errors?.expenses.shipLabel ? (
               <small>{errors.expenses.shipLabel}</small>
@@ -147,7 +112,7 @@ export default function SaleData({
               step="any"
               value={shipment?.ebayFees}
               placeholder="$ 0.00"
-              onChange={(e) => handleExpense(e, sale?.id)}
+              onChange={(e) => handleExpense(e, sale?.productId)}
             />
             {errors?.expenses.ebayFees ? (
               <small>{errors?.expenses.ebayFees}</small>
@@ -163,7 +128,7 @@ export default function SaleData({
                 name="adsFeeCheck"
                 type="checkbox"
                 checked={other?.adsFee.check}
-                onChange={(e) => handleExpense(e, sale?.id)}
+                onChange={(e) => handleExpense(e, sale?.productId)}
               />
               <label htmlFor="adsFeeCheck">Ads Fee</label>
             </div>
@@ -180,7 +145,7 @@ export default function SaleData({
                 type="number"
                 name="adsFeeCost"
                 value={other?.adsFee.cost}
-                onChange={(e) => handleExpense(e, sale?.id)}
+                onChange={(e) => handleExpense(e, sale?.productId)}
               />
               {errors?.expenses.adsFee ? (
                 <small>{errors?.expenses.adsFee}</small>
@@ -194,7 +159,7 @@ export default function SaleData({
                 name="otherCheck"
                 type="checkbox"
                 checked={other?.other.check}
-                onChange={(e) => handleExpense(e, sale?.id)}
+                onChange={(e) => handleExpense(e, sale?.productId)}
               />
               <label htmlFor="otherCheck">Other expenses</label>
             </div>
@@ -216,7 +181,7 @@ export default function SaleData({
                 type="text"
                 name="otherDescription"
                 value={other?.other.description}
-                onChange={(e) => handleExpense(e, sale?.id)}
+                onChange={(e) => handleExpense(e, sale?.productId)}
               />
               {errors?.expenses.other.description ? (
                 <small>{errors?.expenses.other.description}</small>
@@ -229,7 +194,7 @@ export default function SaleData({
                 type="number"
                 name="otherCost"
                 value={other?.other.cost}
-                onChange={(e) => handleExpense(e, sale?.id)}
+                onChange={(e) => handleExpense(e, sale?.productId)}
               />
               {errors?.expenses.other.cost ? (
                 <small>{errors?.expenses.other.cost}</small>

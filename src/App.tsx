@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { getUserData } from "./redux/actions/user";
 import { loading, closeLoading } from "./redux/actions/loading";
 import { getExpired, getStockItems } from "./redux/actions/items";
-import { getReports, getSoldReportData } from "./redux/actions/reports";
+import { getReports } from "./redux/actions/reports";
 import { getInvoices } from "./redux/actions/invoices";
 import { RootState } from "./interfaces/interfaces";
 import { getAuth } from "firebase/auth";
@@ -21,6 +21,7 @@ import Loading from "./Components/Loading/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+import { getSales } from "./redux/actions/sales";
 
 function App() {
   const redirect = useNavigate();
@@ -38,7 +39,7 @@ function App() {
           dispatch<any>(getReports()),
           dispatch<any>(getInvoices(year, null)),
           dispatch<any>(getStockItems()),
-          dispatch<any>(getSoldReportData(year.toString(), null)),
+          dispatch<any>(getSales(year.toString(), null)),
           dispatch<any>(getExpired(year, null)),
         ])
           .then(() => {

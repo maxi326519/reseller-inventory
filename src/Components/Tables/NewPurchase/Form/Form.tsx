@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Invoice, Item, RootState } from "../../../../interfaces/interfaces";
 
 import styles from "../../Tables.module.css";
@@ -60,10 +60,6 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
       }
 
       setItems([...items, ...allItems]);
-      setInvoice({
-        ...invoice,
-        items: [...invoice.items, ...allItems.map((i) => i.id)],
-      });
       setNewItems(initialState);
       setAmount("");
     }

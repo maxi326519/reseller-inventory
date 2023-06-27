@@ -5,6 +5,7 @@ import styles from "./PurchaseData.module.css";
 import { useDispatch } from "react-redux";
 import { deleteItem, updateItem } from "../../../../../redux/actions/items";
 import swal from "sweetalert";
+import { closeLoading, loading } from "../../../../../redux/actions/loading";
 
 interface Props {
   item: Item;
@@ -33,17 +34,21 @@ export default function PurchaseData({ item }: Props) {
   }
 
   function handleSubmitEdit() {
+    dispatch(loading());
     dispatch<any>(updateItem(data))
       .then(() => {
+        dispatch(closeLoading());
         serDisabled(false);
       })
       .catch((error: any) => {
         console.log(error);
+        dispatch(closeLoading());
         swal("Error", "Error editing the item, try again later", "error");
       });
   }
 
   function handleDelete() {
+    dispatch(loading());
     swal({
       text: "Are you sure you want to delete this item? This process is irreversible.",
       icon: "warning",
@@ -52,13 +57,16 @@ export default function PurchaseData({ item }: Props) {
         Cancel: true,
       },
     }).then((response) => {
+      console.log(response);
       if (response === "Accept") {
         dispatch<any>(deleteItem(data))
           .then(() => {
+            dispatch(closeLoading());
             serDisabled(false);
           })
           .catch((error: any) => {
             console.log(error);
+            dispatch(closeLoading());
             swal("Error", "Error deleting the item, try again later", "error");
           });
       }
@@ -108,7 +116,9 @@ export default function PurchaseData({ item }: Props) {
             Description:
           </label>
         </div>
-        {disabled ? (
+        {item.state === "Sold" ? (
+          <span>SOLD</span>
+        ) : disabled ? (
           <div className={styles.bntContainer}>
             <button
               className="btn btn-outline-success"
