@@ -3,17 +3,9 @@ import { useSelector } from "react-redux";
 import { Timestamp } from "firebase/firestore";
 import { Expense, InvoiceExpenses } from "../../../../interfaces/interfaces";
 import { RootState } from "../../../../interfaces/interfaces";
+import { initExpense } from "../../../../interfaces/Expenses";
 
 import styles from "../../Tables.module.css";
-
-const initialState: Expense = {
-  id: 0,
-  date: Timestamp.fromDate(new Date()),
-  category: "0",
-  description: "",
-  price: "",
-  invoiceId: 0,
-};
 
 interface Error {
   category: null | string;
@@ -40,7 +32,7 @@ export default function Form({
   setAmount,
 }: Props) {
   const maxDate = new Date().toISOString().split("T")[0];
-  const [expense, setExpense] = useState<Expense>(initialState);
+  const [expense, setExpense] = useState<Expense>(initExpense);
   const categories: string[] = useSelector(
     (state: RootState) => state.user.categories
   );
@@ -69,7 +61,7 @@ export default function Form({
         });
       }
       setExpenses([...expenses, ...allExpenses]);
-      setExpense(initialState);
+      setExpense(initExpense);
       setAmount("");
     }
   }

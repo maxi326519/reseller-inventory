@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { Chart } from "react-google-charts";
 import { useSelector } from "react-redux";
-import swal from "sweetalert";
 import { RootState } from "../../../interfaces/interfaces";
 
 import styles from "./Charts.module.css";
+import useReports from "../../../hooks/useReports";
 
 const headData: Array<string> = ["Year", "Sales", "Expenses"];
 
-const initialData: Array<Array<any>> = [
+const initialData: Array<Array<string | number>> = [
   ["Year", "Sales", "Expenses"],
   ["Enero", 0, 0],
   ["Febrero", 0, 0],
@@ -65,37 +65,184 @@ const options = {
 };
 
 export default function Charts() {
-  const reports = useSelector((state: RootState) => state.reports);
+  const reports = useReports();
+  const reportsRedux = useSelector((state: RootState) => state.reports);
   const [yearsData, setYearData] = useState<any>([]);
   const [data, setData] = useState(initialData);
   const [year, setYear] = useState("");
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const newData = reports.map((r) => {
-      return {
-        year: r.year,
-        data: [
-          ["Year", "Sales", "Expenses"],
-          ...r.month.map((m) => [m.month, m.totalSales, m.totalExpenses]),
-        ],
-      };
-    });
-    const currentYear = newData.find(
-      (y: any) => y.year.toString() === new Date().getFullYear().toString()
-    );
-    if (currentYear) {
-      setData(currentYear.data);
-      setYear(currentYear.year);
-      setError(false);
+    if (reports.list.length > 0) {
+      let newData: Array<Array<string | number>> = [
+        ["Year", "Sales", "Expenses"],
+      ];
+      newData.push([
+        "Enero",
+        reports.list[0].months?.[1].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[1].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Febrer",
+        reports.list[0].months?.[2].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[2].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Marzo",
+        reports.list[0].months?.[3].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[3].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Abril",
+        reports.list[0].months?.[4].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[4].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Mayo",
+        reports.list[0].months?.[5].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[5].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Junio",
+        reports.list[0].months?.[6].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[6].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Julio",
+        reports.list[0].months?.[7].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[7].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Agosto",
+        reports.list[0].months?.[8].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[8].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Septiembre",
+        reports.list[0].months?.[9].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[9].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Octubre",
+        reports.list[0].months?.[10].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[10].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Noviembre",
+        reports.list[0].months?.[11].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[11].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      newData.push([
+        "Diciembre",
+        reports.list[0].months?.[12].sales.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+        reports.list[0].months?.[12].expenses.reduce(
+          (acumulator, item) => acumulator + item.price,
+          0
+        ),
+      ]);
+
+      console.log(reports);
+      console.log(newData);
+
+      setData(newData);
     }
-    setYearData(newData);
-  }, [reports]);
+  }, [reportsRedux]);
 
   function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const selected = event.target.value;
     setYear(selected);
     setData(yearsData.find((y: any) => y.year.toString() === selected).data);
+  }
+
+  function handleUpdateChart() {
+    reports
+      .updateReports(reports.list)
+      .then((reports) => {
+        console.log("Nuevo reporte", reports);
+      })
+      .catch((error: Error) => {
+        console.log(error.message);
+      });
   }
 
   return (
@@ -131,6 +278,13 @@ export default function Charts() {
           Year:
         </label>
       </div>
+      <button
+        className="btn btn-outline-primary"
+        type="button"
+        onClick={handleUpdateChart}
+      >
+        Actualizar
+      </button>
     </div>
   );
 }

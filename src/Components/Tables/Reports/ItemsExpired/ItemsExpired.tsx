@@ -5,7 +5,6 @@ import {
   InvoiceType,
   Item,
   RootState,
-  YearReport,
 } from "../../../../interfaces/interfaces";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
 
@@ -24,6 +23,7 @@ import {
 import Excel from "./Excel/Excel";
 import changeDateFormat from "../../../../functions/changeDateFormat";
 import Details from "../../Invoices/Details/Details";
+import { YearReport } from "../../../../hooks/useReports/Interfaces";
 
 interface Props {
   typeReport: any;

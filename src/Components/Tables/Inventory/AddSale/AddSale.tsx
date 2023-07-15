@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { Timestamp } from "firebase/firestore";
 import { loading, closeLoading } from "../../../../redux/actions/loading";
 import { postSales } from "../../../../redux/actions/sales";
-import { updateReports } from "../../../../redux/actions/reports";
 import {
   Errors,
   OtherExpenses,
@@ -52,7 +51,6 @@ export default function AddSale({
 }: Props) {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.items.data);
-  const reports = useSelector((state: RootState) => state.reports);
   const [rows, setRows] = useState<Item[]>([]);
   const [rowSelected, setSelected] = useState<{ item: number; sale: number }>({
     item: 0,
@@ -323,15 +321,8 @@ export default function AddSale({
     };
   }
 
-  function test() {
-    console.log(useReports);
-    console.log(reportsState);
-    console.log(reportsActions);
-  }
-
   return (
     <div className={styles.background}>
-      <button onClick={test}>Test</button>
       <form className={`toTop ${styles.container}`} onSubmit={handleSubmit}>
         <div className={styles.close}>
           <h4>Items</h4>

@@ -11,7 +11,6 @@ import {
   Refounded,
   RootState,
   Sale,
-  YearReport,
 } from "../../../../interfaces/interfaces";
 import {
   deleteInvoiceDetails,
@@ -29,6 +28,7 @@ import Expenses from "./Expenses/Expenses";
 import Details from "../../Invoices/Details/Details";
 
 import styles from "./ItemsSold.module.css";
+import { YearReport } from "../../../../hooks/useReports/Interfaces";
 
 interface Rows {
   item: Item | undefined;
@@ -236,7 +236,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   }
 
   function handleShowExpensesDetails(productId: number) {
-    const data: Expense[] = expenses.filter((e) => e.id === productId);
+    const data: Expense[] = expenses.filter((e) => e.productId === productId);
     setExpenseSelected(data);
     handleCloseDetails();
   }

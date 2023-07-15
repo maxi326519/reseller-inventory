@@ -14,7 +14,6 @@ import {
   REFOUND_ITEMS,
   GET_ITEMS_EXPIRED,
   RESTORE_ITEMS,
-  DELETE_SOLD_ITEMS,
   GET_ITEMS_INVOICE_DETAILS,
   DELETE_ITEMS_INVOICE_DETAILS,
   UPDATE_ITEM,
@@ -278,11 +277,9 @@ export const rootReducer = (
                     ? action.payload.invoice
                     : invoice
                 ),
-          details: [
-            ...state.invoices.details.filter(
-              (item) => item.id !== action.payload.item.id
-            ),
-          ],
+          details: state.invoices.details
+            .map((item) => item)
+            .filter((item) => item.id !== action.payload.item.id),
         },
         sales: {
           items: state.sales.items.filter(

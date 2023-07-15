@@ -11,12 +11,11 @@ import {
 } from "@firebase/firestore";
 import {
   Expense,
-  Invoice,
   Item,
   Refounded,
   RootState,
-  Sale,
 } from "../../../interfaces/interfaces";
+
 import { ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
 import { Dispatch } from "react";
@@ -27,15 +26,17 @@ import { deleteObject, ref } from "firebase/storage";
 
 export const POST_ITEMS = "POST_ITEMS";
 export const GET_ITEMS = "GET_ITEMS";
+export const UPDATE_ITEM = "UPDATE_ITEM";
+export const DELETE_ITEM = "DELETE_ITEM";
+
 export const GET_ITEMS_EXPIRED = "GET_ITEMS_EXPIRED";
 export const GET_ITEMS_INVOICE_DETAILS = "GET_ITEMS_INVOICE_DETAILS";
+export const DELETE_ITEMS_INVOICE_DETAILS = "DELETE_ITEMS_INVOICE_DETAILS";
+
 export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
 export const REFOUND_ITEMS = "REFOUND_ITEMS";
 export const RESTORE_ITEMS = "RESTORE_ITEMS";
-export const UPDATE_ITEM = "UPDATE_ITEM";
-export const DELETE_ITEM = "DELETE_ITEM";
-export const DELETE_SOLD_ITEMS = " DELETE_SOLD_ITEMS";
-export const DELETE_ITEMS_INVOICE_DETAILS = "DELETE_ITEMS_INVOICE_DETAILS";
+
 
 export function postItems(
   items: Item[]

@@ -39,9 +39,9 @@ export default function Taxes({ typeReport, handleChange }: Props) {
 
   /* Update Taxes data */
   useEffect(() => {
-    setTaxesData(
+/*     setTaxesData(
       reports.map((report) => createOrUpdateYearTaxesData(report, null))
-    );
+    ); */
   }, [reports]);
 
   /* Save all year of taxes data */

@@ -22,6 +22,7 @@ import Loading from "./Components/Loading/Loading";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { getSales } from "./redux/actions/sales";
+import useReports from "./hooks/useReports";
 
 function App() {
   const redirect = useNavigate();
@@ -33,6 +34,7 @@ function App() {
     setTimeout(() => {
       const auth = getAuth();
       if (auth.currentUser) {
+
         const year = new Date().getFullYear();
         Promise.all([
           dispatch<any>(getUserData()),

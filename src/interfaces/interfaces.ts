@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import { YearReport as YearReport2 } from "../hooks/useReports/Interfaces";
 
 export interface User {
   categories: string[];
@@ -194,7 +195,7 @@ export interface RootState {
     expenses: Expense[];
   };
   expired: Item[];
-  reports: YearReport[];
+  reports: YearReport2[];
   loading: boolean;
 }
 
