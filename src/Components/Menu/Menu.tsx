@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useState } from "react";
 
 import List from "./List/List";
 
@@ -8,7 +8,6 @@ import menu from "../../assets/svg/menu.svg";
 import close from "../../assets/svg/close.svg";
 
 import style from "./Menu.module.css";
-import useReports from "../../hooks/useReports";
 
 export default function Menu() {
   const [active, setActive] = useState<boolean>(false);

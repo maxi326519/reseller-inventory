@@ -7,9 +7,7 @@ import styles from "./Charts.module.css";
 import useReports from "../../../hooks/useReports";
 import { closeLoading, loading } from "../../../redux/actions/loading";
 
-const headData: Array<string> = ["Year", "Sales", "Expenses"];
-
-const initialData: Array<Array<string | number>> = [
+const initialData = (): Array<Array<string | number>> => [
   ["Year", "Sales", "Expenses"],
   ["Enero", 0, 0],
   ["Febrero", 0, 0],
@@ -69,10 +67,9 @@ export default function Charts() {
   const reports = useReports();
   const dispatch = useDispatch();
   const reportsRedux = useSelector((state: RootState) => state.reports);
-  const [yearsData, setYearData] = useState<number[]>([]);
-  const [data, setData] = useState(initialData);
+  const [years, setYears] = useState<number[]>([]);
   const [year, setYear] = useState("");
-  const [error, setError] = useState(false);
+  const [data, setData] = useState(initialData());
 
   // Set last year
   useEffect(() => {
@@ -84,170 +81,39 @@ export default function Charts() {
         return 0;
       });
 
-    setYearData(years);
+    setYears(years);
+    if (years.length > 0) setYear(years[0].toString());
   }, [reportsRedux]);
 
   // Set data
   useEffect(() => {
+    // Check data and year selected
     if (reports.list?.length > 0 && year !== "") {
+      // Create new chart data
+      const newData = initialData();
+
+      // Find yesr report
       let dataSelected = reports.list.find(
         (report) => report.year.toString() === year.toString()
       );
 
-      if (dataSelected) {
-        let newData: Array<Array<string | number>> = [
-          ["Year", "Sales", "Expenses"],
-        ];
-        newData.push([
-          "Enero",
-          dataSelected.months?.[1].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[1].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
+      // Check if year report exist
+      if (dataSelected !== undefined) {
 
-        newData.push([
-          "Febrero",
-          dataSelected.months?.[2].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[2].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-
-        newData.push([
-          "Marzo",
-          dataSelected.months?.[3].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[3].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-
-        newData.push([
-          "Abril",
-          dataSelected.months?.[4].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[4].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-
-        newData.push([
-          "Mayo",
-          dataSelected.months?.[5].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[5].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-
-        newData.push([
-          "Junio",
-          dataSelected.months?.[6].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[6].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-
-        newData.push([
-          "Julio",
-          dataSelected.months?.[7].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[7].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-
-        newData.push([
-          "Agosto",
-          dataSelected.months?.[8].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[8].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-
-        newData.push([
-          "Septiembre",
-          dataSelected.months?.[9].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[9].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-
-        newData.push([
-          "Octubre",
-          dataSelected.months?.[10].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[10].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-
-        newData.push([
-          "Noviembre",
-          dataSelected.months?.[11].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[11].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-
-        newData.push([
-          "Diciembre",
-          dataSelected.months?.[12].sales.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-          dataSelected.months?.[12].expenses.reduce(
-            (acumulator, item) => acumulator + item.price,
-            0
-          ),
-        ]);
-        console.log(reports);
-        console.log(newData);
-
-        setData(newData);
+        // Iterate year report and update new chart data
+        newData.forEach((data, i) => {
+          // Skip the first iteration, because it's the header
+          if (i !== 0) {
+            data[1] = dataSelected!.months?.[i].sales.reduce((acumulator, item) => acumulator + item.price, 0);
+            data[2] = dataSelected!.months?.[i].expenses.reduce((acumulator, item) => acumulator + item.price, 0);
+          }
+        });
       }
+
+      // Save report
+      setData(newData);
     }
-  }, [year]);
+  }, [year, reportsRedux]);
 
   function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setYear(event.target.value);
@@ -258,7 +124,6 @@ export default function Charts() {
     reports
       .updateReports(reports.list)
       .then((reports) => {
-        console.log("Nuevo reporte", reports);
         dispatch(closeLoading());
       })
       .catch((error: Error) => {
@@ -287,7 +152,7 @@ export default function Charts() {
             value={year}
             onChange={handleChange}
           >
-            {yearsData.map((y: any) => (
+            {years.map((y: any) => (
               <option key={y} value={y}>
                 {y}
               </option>

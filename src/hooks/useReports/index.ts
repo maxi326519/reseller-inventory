@@ -9,10 +9,10 @@ export default function useReports() {
   const dispatch = useDispatch();
   const list = useSelector((state: RootState) => state.reports);
 
-  async function updateReports(reports: YearReport[]) {
+  async function updateReports() {
     const sales: Sale[] = [];
     const expenses: Expense[] = [];
-    let newReports: YearReport[] = [...reports];
+    let newReports: YearReport[] = [];
 
     // Data ref
     const userColl = collection(db, `Users`);
@@ -59,8 +59,6 @@ export default function useReports() {
       // Get dates
       const year: number = new Date(item.date).getFullYear();
       const month: number = new Date(item.date).getMonth() + 1;
-
-      console.log("Expenses year: ", year);
 
       // Get year report
       let yearReport = newReport.find((report) => report.year === year);
