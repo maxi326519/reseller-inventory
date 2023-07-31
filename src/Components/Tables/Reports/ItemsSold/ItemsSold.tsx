@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Timestamp } from "firebase/firestore";
 import { deleteSale, getSales } from "../../../../redux/actions/sales";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
+import { YearReport } from "../../../../hooks/useReports/Interfaces";
 import {
   Expense,
   ExportSales,
@@ -28,7 +29,6 @@ import Expenses from "./Expenses/Expenses";
 import Details from "../../Invoices/Details/Details";
 
 import styles from "./ItemsSold.module.css";
-import { YearReport } from "../../../../hooks/useReports/Interfaces";
 
 interface Rows {
   item: Item | undefined;
@@ -144,7 +144,8 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     setExports(data);
   }, [rows]);
 
-  useEffect(() => {
+
+  function handleFilterPerDate(dateFilter: any) {
     if (dateFilter.year !== 0) {
       const year = dateFilter.year.toString();
       let month =
@@ -157,10 +158,6 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         dispatch(closeLoading());
       });
     }
-  }, [dateFilter]);
-
-  function handleFilterPerDate(dateFilter: any) {
-    setDateFilter(dateFilter);
   }
 
   function handleRefoundSelected(item: Item, saleId: number) {

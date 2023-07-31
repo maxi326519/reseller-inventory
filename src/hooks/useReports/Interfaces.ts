@@ -13,6 +13,7 @@ export interface MonthReport {
 export interface ItemReport {
   id: number;
   type: ItemType;
+  category?: string;
   date: string;
   price: number;
 }

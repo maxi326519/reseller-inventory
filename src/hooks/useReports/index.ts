@@ -1,6 +1,6 @@
 import { ItemReport, YearReport, ItemType, initYearReport } from "./Interfaces";
 import { Expense, RootState, Sale } from "../../interfaces/interfaces";
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { collection, doc, getDocs } from "firebase/firestore";
 import { auth, db } from "../../firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { postReports } from "../../redux/actions/reports";
@@ -29,7 +29,9 @@ export default function useReports() {
     (await getDocs(salesColl)).forEach((doc) => sales.push(doc.data() as Sale));
 
     // Convert data
-    const saleItems: ItemReport[] = sales.map((sale) => saleToItem(sale));
+    const saleItems: ItemReport[] = [];
+    sales.forEach((sale) => saleToItem(sale).forEach(data => saleItems.push(data)));
+
     const expenseItems: ItemReport[] = expenses.map((expense) =>
       expenseToItem(expense)
     );
@@ -139,11 +141,11 @@ export default function useReports() {
     const itemsFiltered =
       type === "SALE"
         ? monthReport.sales.map((item) =>
-            item.id === newItem.id ? newItem : item
-          )
+          item.id === newItem.id ? newItem : item
+        )
         : monthReport.expenses.map((item) =>
-            item.id === newItem.id ? newItem : item
-          );
+          item.id === newItem.id ? newItem : item
+        );
 
     // Save items filtered
     monthReport[`${type === "SALE" ? "sales" : "expenses"}`] = itemsFiltered;
@@ -151,19 +153,35 @@ export default function useReports() {
     return newReport;
   }
 
-  function saleToItem(data: Sale): ItemReport {
-    return {
+  function saleToItem(data: Sale): ItemReport[] {
+    // Create sale item
+    let items = [{
       id: data.id,
       type: ItemType.sales,
+      category: "Sale",
       date: data.date.toDate().toISOString().split("T")[0],
       price: Number(data.price),
-    };
+    }];
+
+    // Check if the sale have shipment and push
+    if (data.shipment.value) {
+      items.push({
+        id: data.id,
+        type: ItemType.sales,
+        category: "Shipment",
+        date: data.date.toDate().toISOString().split("T")[0],
+        price: Number(data.shipment.amount),
+      });
+    }
+
+    return items;
   }
 
   function expenseToItem(data: Expense): ItemReport {
     return {
       id: data.id,
       type: ItemType.expenses,
+      category: data.category,
       date: data.date.toDate().toISOString().split("T")[0],
       price: Number(data.price),
     };
