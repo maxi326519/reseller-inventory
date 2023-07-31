@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { YearReport as YearReport2 } from "../hooks/useReports/Interfaces";
+import { YearReport } from "../hooks/useReports/Interfaces";
 
 export interface User {
   categories: string[];
@@ -86,59 +86,6 @@ export interface Shipment {
   amount: number | string;
 }
 
-/* REPORTS */
-export interface YearReport {
-  year: string;
-  month: MonthReport[];
-}
-
-export interface MonthReport {
-  month: string;
-  expenses: ReportItem[];
-  sales: ReportItem[];
-  totalExpenses: number;
-  totalSales: number;
-}
-
-export interface ReportItem {
-  id: number;
-  type: string;
-  amount: number;
-}
-
-export interface YearTaxesData {
-  year: number;
-  month: MonthTaxesData[];
-}
-
-export interface MonthTaxesData {
-  month: {
-    number: number;
-    name: string;
-  };
-  sales: {
-    total: number;
-    sales: number;
-    shipment: number;
-  };
-  expenses: {
-    total: number;
-    COGS: number;
-    shipLabel: number;
-    ebayFees: number;
-    adsFee: number;
-    otherExpense: number;
-    otherCategories: OtherCategories[];
-  };
-}
-
-export interface ExportYearTaxesData {
-  salesTotal: number;
-  expensesTotal: number;
-  profitTotal: number;
-  months: ExportMonthTaxes[];
-}
-
 export interface ExportMonthTaxes {
   month: string;
   salesTotal: number;
@@ -195,7 +142,7 @@ export interface RootState {
     expenses: Expense[];
   };
   expired: Item[];
-  reports: YearReport2[];
+  reports: YearReport[];
   loading: boolean;
 }
 

@@ -22,11 +22,14 @@ import Loading from "./Components/Loading/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+import useTaxes from "./hooks/useTaxes";
 
 function App() {
   const redirect = useNavigate();
   const dispatch = useDispatch();
   const setLoading = useSelector((state: RootState) => state.loading);
+
+  const taxes = useTaxes();
 
   useEffect(() => {
     dispatch(loading());
@@ -49,6 +52,7 @@ function App() {
           .then(() => {
             redirect("/");
             dispatch(closeLoading());
+            setTimeout(taxes.update, 500)
           })
           .catch((err: any) => {
             dispatch(closeLoading());

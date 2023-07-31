@@ -64,9 +64,8 @@ const options = {
 };
 
 export default function Charts() {
-  const reports = useReports();
   const dispatch = useDispatch();
-  const reportsRedux = useSelector((state: RootState) => state.reports);
+  const reports = useReports();
   const [years, setYears] = useState<number[]>([]);
   const [year, setYear] = useState("");
   const [data, setData] = useState(initialData());
@@ -83,7 +82,7 @@ export default function Charts() {
 
     setYears(years);
     if (years.length > 0) setYear(years[0].toString());
-  }, [reportsRedux]);
+  }, [reports.list]);
 
   // Set data
   useEffect(() => {
@@ -113,7 +112,7 @@ export default function Charts() {
       // Save report
       setData(newData);
     }
-  }, [year, reportsRedux]);
+  }, [year, reports.list]);
 
   function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setYear(event.target.value);
@@ -122,8 +121,8 @@ export default function Charts() {
   function handleUpdateChart() {
     dispatch(loading());
     reports
-      .updateReports(reports.list)
-      .then((reports) => {
+      .updateReports()
+      .then(() => {
         dispatch(closeLoading());
       })
       .catch((error: Error) => {
