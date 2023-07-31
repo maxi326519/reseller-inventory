@@ -32,10 +32,12 @@ import {
   GET_EXPIRED_ITEMS,
   UPDATE_REPORTS,
   DELETE_ITEMS_REPORTS,
+  POST_REPORTS,
 } from "../actions/reports";
 import { Timestamp } from "firebase/firestore";
+import { LOGOUT } from "../actions/login";
 
-const initialState: RootState = {
+const initialState = (): RootState => ({
   user: {
     categories: ["General"],
     sources: [],
@@ -69,13 +71,16 @@ const initialState: RootState = {
   expired: [],
   reports: [],
   loading: false,
-};
+});
 
 export const rootReducer = (
-  state: RootState = initialState,
+  state: RootState = initialState(),
   action: AnyAction
 ) => {
   switch (action.type) {
+    case LOGOUT:
+      return initialState();
+
     /* LOADING */
     case LOADING:
       return {
@@ -198,6 +203,12 @@ export const rootReducer = (
             items: action.payload.items,
           },
         },
+      };
+
+    case POST_REPORTS:
+      return {
+        ...state,
+        reports: action.payload,
       };
 
     case GET_REPORTS:

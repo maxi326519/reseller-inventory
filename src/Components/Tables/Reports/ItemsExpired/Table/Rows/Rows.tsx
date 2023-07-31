@@ -18,6 +18,10 @@ export default function Rows({
     <div key={item.id} className={styles.rows}>
       <span>
         <b>ID: </b>
+        {item.invoiceId}
+      </span>
+      <span>
+        <b>ID: </b>
         {item.id}
       </span>
       <span>

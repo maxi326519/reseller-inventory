@@ -1,19 +1,18 @@
-import { useState } from "react";
 import { ItemReport, YearReport, ItemType, initYearReport } from "./Interfaces";
 import { Expense, RootState, Sale } from "../../interfaces/interfaces";
 import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { postReports } from "../../redux/actions/reports";
 
 export default function useReports() {
+  const dispatch = useDispatch();
   const list = useSelector((state: RootState) => state.reports);
 
   async function updateReports(reports: YearReport[]) {
     const sales: Sale[] = [];
     const expenses: Expense[] = [];
     let newReports: YearReport[] = [...reports];
-
-    console.log("Actualizando");
 
     // Data ref
     const userColl = collection(db, `Users`);
@@ -40,11 +39,7 @@ export default function useReports() {
     newReports = setItems(newReports, expenseItems, "EXPENSE");
 
     // POST new reports
-    const reportColl = collection(userDoc, "Reports");
-    const reportDoc = doc(reportColl, newReports[0].year.toString());
-    await setDoc(reportDoc, newReports[0]);
-
-    console.log("Actualizado");
+    await dispatch<any>(postReports(newReports));
 
     // Return report
     return newReports;
@@ -62,6 +57,8 @@ export default function useReports() {
       // Get dates
       const year: number = new Date(item.date).getFullYear();
       const month: number = new Date(item.date).getMonth() + 1;
+
+      console.log("Expenses year: ", year);
 
       // Get year report
       let yearReport = newReport.find((report) => report.year === year);
@@ -95,6 +92,8 @@ export default function useReports() {
       // Get dates
       const year: number = new Date(itemToDelete.date).getFullYear();
       const month: number = new Date(itemToDelete.date).getMonth() + 1;
+
+      console.log("Sales year: ", year);
 
       // Get year report
       let yearReport = newReport.find((report) => report.year === year);

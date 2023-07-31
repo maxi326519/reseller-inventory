@@ -173,7 +173,7 @@ export function getInvoiceDetails(
       let snapshot = await getDocs(
         query(
           isItem ? itemsRef : expensesRef,
-          where("invoiceId", "==", invoiceId)
+          where("invoiceId", "==", Number(invoiceId))
         )
       );
 

@@ -6,6 +6,7 @@ import { loading, closeLoading } from "./redux/actions/loading";
 import { getExpired, getStockItems } from "./redux/actions/items";
 import { getReports } from "./redux/actions/reports";
 import { getInvoices } from "./redux/actions/invoices";
+import { getSales } from "./redux/actions/sales";
 import { RootState } from "./interfaces/interfaces";
 import { getAuth } from "firebase/auth";
 import swal from "sweetalert";
@@ -21,8 +22,6 @@ import Loading from "./Components/Loading/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import { getSales } from "./redux/actions/sales";
-import useReports from "./hooks/useReports";
 
 function App() {
   const redirect = useNavigate();
@@ -34,6 +33,7 @@ function App() {
     setTimeout(() => {
       const auth = getAuth();
       if (auth.currentUser) {
+        console.log(auth.currentUser);
 
         const year = new Date().getFullYear();
         Promise.all([
@@ -53,6 +53,7 @@ function App() {
             swal("Error", "Error to load info, try again later", "error");
             console.log(err);
           });
+        dispatch(closeLoading());
       } else {
         redirect("/login");
         dispatch(closeLoading());

@@ -1,19 +1,54 @@
-import { Dispatch, AnyAction } from "redux";
-import { ThunkAction } from "redux-thunk";
-import { db, auth } from "../../../firebase";
-import { collection, doc, setDoc, getDocs } from "firebase/firestore";
 import { Expense, Sale, RootState } from "../../../interfaces/interfaces";
-import { YearReport } from "../../../hooks/useReports/Interfaces";
+import { Dispatch, AnyAction } from "redux";
 import {
-  calculeReports,
-  deleteDataAndUpdateTotals,
-} from "../../../functions/reports";
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  writeBatch,
+} from "firebase/firestore";
+import { ThunkAction } from "redux-thunk";
+import { YearReport } from "../../../hooks/useReports/Interfaces";
+import { db, auth } from "../../../firebase";
 
+export const POST_REPORTS = "POST_REPORTS";
 export const GET_REPORTS = "GET_REPORTS";
 export const GET_SOLD_REPORT_DATA = "GET_SOLD_REPORT_DATA";
 export const GET_EXPIRED_ITEMS = "GET_EXPIRED_ITEMS";
 export const UPDATE_REPORTS = "UPDATE_REPORTS";
 export const DELETE_ITEMS_REPORTS = "DELETE_ITEMS_REPORTS";
+
+export function postReports(
+  reports: YearReport[]
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
+
+      const reportRef = collection(
+        db,
+        "Users",
+        auth.currentUser.uid,
+        "Reports"
+      );
+
+      const batch = writeBatch(db);
+
+      reports.map((report) =>
+        batch.set(doc(reportRef, report.year.toString()), report)
+      );
+
+      batch.commit();
+
+      dispatch({
+        type: POST_REPORTS,
+        payload: reports,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
 
 export function getReports(): ThunkAction<
   Promise<void>,
@@ -55,7 +90,7 @@ export function updateReports(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-/*       let response = calculeReports(reports, expenses, true);
+      /*       let response = calculeReports(reports, expenses, true);
       if (sales) response = calculeReports(response.reports, sales, false);
       const newReports = response.reports;
       const years = response.years;
@@ -80,7 +115,7 @@ export function updateReports(
       } */
       dispatch({
         type: UPDATE_REPORTS,
-/*         payload: newReports, */
+        /*         payload: newReports, */
       });
     } catch (e: any) {
       throw new Error(e);
@@ -95,7 +130,7 @@ export function updateReportsItems(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
-/*       const { updatedReports, editedYears } = deleteDataAndUpdateTotals(
+      /*       const { updatedReports, editedYears } = deleteDataAndUpdateTotals(
         dataId,
         category,
         reports
@@ -121,7 +156,7 @@ export function updateReportsItems(
 
       dispatch({
         type: DELETE_ITEMS_REPORTS,
-  /*       payload: updatedReports, */
+        /*       payload: updatedReports, */
       });
     } catch (e: any) {
       throw new Error(e);

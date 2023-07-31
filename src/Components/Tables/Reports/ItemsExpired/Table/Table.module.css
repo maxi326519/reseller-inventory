@@ -43,7 +43,7 @@
 
 .rows {
   display: grid;
-  grid-template-columns: 160px 110px 150px 1fr 160px 100px;
+  grid-template-columns: 110px 160px 150px 1fr 1fr 160px 100px;
   width: 100%;
   text-align: center;
   border-bottom: 1px solid #ccc;

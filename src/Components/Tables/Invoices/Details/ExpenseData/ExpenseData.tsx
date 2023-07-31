@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Expense } from "../../../../../interfaces/interfaces";
 
 import styles from "./ExpenseData.module.css";
@@ -8,10 +7,6 @@ interface Props {
 }
 
 export default function ExpenseData({ item }: Props) {
-
-  useEffect(() => {
-    console.log(item);
-  }, [])
 
   return (
     <div key={item.id} className={styles.inputs}>

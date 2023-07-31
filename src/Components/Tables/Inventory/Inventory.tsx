@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Timestamp } from "firebase/firestore";
 import { closeLoading, loading } from "../../../redux/actions/loading";
-import { updateReports } from "../../../redux/actions/reports";
 import {
   OtherExpenses,
   ShipingExpenses,
@@ -40,7 +39,6 @@ export default function Inventory() {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.items.data);
   const invoiceDetail = useSelector((state: RootState) => state.items.details);
-  const reports = useSelector((state: RootState) => state.reports);
   const [rows, setRows] = useState<Item[]>([]);
   const [search, setSearch] = useState<string>("");
   const [totalItems, setTotalItems] = useState(0);
@@ -70,7 +68,7 @@ export default function Inventory() {
             return true;
           return false;
         })
-        .sort((a, b) => b.date.toMillis()! - a.date.toMillis())
+        .sort((a, b) => b.date?.toMillis() - a.date?.toMillis())
     );
     items.forEach((i) =>
       i.state === "In Stock" ? (total += Number(i.cost)) : null
@@ -79,13 +77,6 @@ export default function Inventory() {
     setTotal(Number(total.toFixed(2)));
     setTotalItems(Number(totalItems.toFixed(2)));
   }, [items, search]);
-
-  useEffect(() => {
-    console.log(itemSelected);
-    console.log(sales);
-    console.log(other);
-    console.log(shipment);
-  }, [itemSelected]);
 
   function handleActive() {
     setActive(!active);

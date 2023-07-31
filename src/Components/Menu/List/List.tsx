@@ -1,4 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { closeLoading, loading } from "../../../redux/actions/loading";
+import { logOut } from "../../../redux/actions/login";
+import swal from "sweetalert";
 
 import style from "./List.module.css";
 
@@ -7,8 +11,33 @@ interface Prop {
 }
 
 export default function List({ active }: Prop) {
+  const dispatch = useDispatch();
+  const redirect = useNavigate();
+
+  function handleLogOut() {
+    swal({
+      text: "¿Are you sure you want to log out?",
+      buttons: {
+        Yes: true,
+        No: true
+      }
+    }).then((response) => {
+      if (response === "Yes") {
+        dispatch(loading());
+        dispatch<any>(logOut())
+          .then(() => {
+            dispatch(closeLoading());
+            redirect("/login");
+          })
+          .catch(() => {
+            dispatch(closeLoading());
+          });
+      }
+    });
+  }
+
   return (
-    <ul className={`${style.btnContainer} ${active ? style.menu : ""}`}>
+    <div className={`${style.btnContainer} ${active ? style.menu : ""}`}>
       <Link className="btn btn-primary" to="/newPurchase">
         Add New Purchase
       </Link>
@@ -24,6 +53,9 @@ export default function List({ active }: Prop) {
       <Link className="btn btn-primary" to="/reports">
         Reports
       </Link>
-    </ul>
+      <button className="btn btn-primary" type="button" onClick={handleLogOut}>
+        Logout
+      </button>
+    </div>
   );
 }
