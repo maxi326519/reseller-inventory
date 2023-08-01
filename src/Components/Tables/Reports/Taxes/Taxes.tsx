@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { createOrUpdateYearTaxesData } from "../../../../functions/createOrUpdateYearTaxesData";
-import { convertToExportYearTaxesData } from "../../../../functions/convertToExportYearTaxesData";
 import {
-  YearTaxesData,
-  MonthTaxesData,
   RootState,
   OtherCategories,
-  ExportYearTaxesData,
-  ExportMonthTaxes,
 } from "../../../../interfaces/interfaces";
 
 import Row from "./Row/Row";
@@ -16,6 +10,8 @@ import Excel from "./Excel/Excel.jsx";
 import Details from "./Details/Details";
 
 import styles from "./Taxes.module.css";
+import useTaxes from "../../../../hooks/useTaxes";
+import { MonthTaxesData } from "../../../../hooks/useTaxes/interfaces";
 
 interface Props {
   typeReport: any;
@@ -23,121 +19,87 @@ interface Props {
 }
 
 export default function Taxes({ typeReport, handleChange }: Props) {
-  const reports = useSelector((state: RootState) => state.reports);
-  const [taxesData, setTaxesData] = useState<YearTaxesData[] | null>(null); // YearTaxesData list
-  const [taxesYear, setTaxesYear] = useState<number[]>([]); // Taxes year list
-  const [TaxesYearIndex, setTaxesYearIndex] = useState<number | null>(null); // Selected YearTaxesData Index
-  const [excelData, setExcelData] = useState<any>();
+  const taxes = useTaxes();
+  const [year, setYear] = useState<number>(0);
+
   const [otherCategories, setOtherCategories] = useState<OtherCategories[]>([]);
-  const [otherCategoriesDetails, setOtherCategoriesDetails] =
-    useState<boolean>(false);
+  const [categoriesView, setCategoriesView] = useState<boolean>(false);
+
+  const [excelData, setExcelData] = useState<any>();
   const [totals, setTotals] = useState({
     Sales: 0,
     Expenses: 0,
     Profit: 0,
   });
 
-  /* Update Taxes data */
+  // Update and ser data
   useEffect(() => {
-/*     setTaxesData(
-      reports.map((report) => createOrUpdateYearTaxesData(report, null))
-    ); */
-  }, [reports]);
+    taxes.update()
+  }, []);
 
-  /* Save all year of taxes data */
+  // Set last year
   useEffect(() => {
-    if (taxesData != null) setTaxesYear(taxesData?.map((taxes) => taxes.year));
-  }, [taxesData]);
+    if (taxes.list) {
+      const years = taxes.list
+        .map(taxe => taxe.year)
+        .sort((a, b) => {
+          if (a < b) return 1;
+          if (a > b) return -1;
+          return 0;
+        });
 
-  /* Update the index to the last year of taxes data */
-  useEffect(() => {
-    if (taxesYear.length > 0 && taxesData != null) {
-      const year = taxesYear[0];
-      const yearIndex = taxesData.findIndex(
-        (y) => Number(y.year) === Number(year)
-      );
-      setTaxesYearIndex(yearIndex);
+      setYear(years[0]);
+      console.log("asdasdasd");
     }
-  }, [taxesData, taxesYear]);
+  }, [taxes.list]);
 
-  /* Calculate Totals */
-  useEffect(() => {
-    if (taxesData !== null && TaxesYearIndex !== null) {
-      let sales = 0;
-      let expenses = 0;
-
-      taxesData[TaxesYearIndex].month.forEach((month) => {
-        sales += Number(month.sales.total);
-        expenses += Number(month.expenses.total);
-      });
-
-      setTotals({
-        Sales: sales,
-        Expenses: expenses,
-        Profit: Number(sales) - Number(expenses),
-      });
-    }
-  }, [taxesData, TaxesYearIndex]);
-
-  // Data to export
-  useEffect(() => {
-    let newData: any = null;
-
-    if (TaxesYearIndex !== null && taxesData)
-      newData = convertToExportYearTaxesData(taxesData[TaxesYearIndex]);
-
-    if (newData) {
-      newData = desglosarOtherCategories(newData);
-      console.log(newData);
-      setExcelData(newData);
-    }
-  }, [taxesData, TaxesYearIndex]);
-
-  function desglosarOtherCategories(taxes: ExportYearTaxesData): void {
-    let data: any = taxes;
-    for (let i = 0; i < data.months.length; i++) {
-      const month = data.months[i];
-      for (let j = 0; j < month.otherCategories.length; j++) {
-        const category = month.otherCategories[j];
-        const propertyName = toCamelCase(category.category);
-        month[propertyName] = category.total;
+  /*   // Data to export
+    useEffect(() => {
+      let newData: any = null;
+  
+      if (TaxesYearIndex !== null && taxesData)
+        newData = convertToExportYearTaxesData(taxesData[TaxesYearIndex]);
+  
+      if (newData) {
+        newData = desglosarOtherCategories(newData);
+        console.log(newData);
+        setExcelData(newData);
       }
-      delete month.otherCategories;
-    }
-    return data;
-  }
+    }, [taxesData, TaxesYearIndex]); */
 
-  function toCamelCase(text: string): string {
-    return text
-      .replace(/[-_]+/g, " ")
-      .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
-        return index === 0 ? word.toLowerCase() : word.toUpperCase();
-      })
-      .replace(/\s+/g, "");
-  }
+  /*   function desglosarOtherCategories(taxes: ExportYearTaxesData): void {
+      let data: any = taxes;
+      for (let i = 0; i < data.months.length; i++) {
+        const month = data.months[i];
+        for (let j = 0; j < month.otherCategories.length; j++) {
+          const category = month.otherCategories[j];
+          const propertyName = toCamelCase(category.category);
+          month[propertyName] = category.total;
+        }
+        delete month.otherCategories;
+      }
+      return data;
+    } */
 
-  const handleYearSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    if (taxesData === null) return false;
-    const year = parseInt(event.target.value, 10);
-    const yearIndex = taxesData.findIndex((y) => y.year === year);
-    setTaxesYearIndex(yearIndex);
+  function handleChangeYear(event: React.ChangeEvent<HTMLSelectElement>): void {
+    setYear(Number(event.target.value))
   };
 
   function handleShowOtherCategories(data: OtherCategories[] | null) {
     if (data) setOtherCategories(data);
     else setOtherCategories([]);
 
-    setOtherCategoriesDetails(!otherCategoriesDetails);
+    setCategoriesView(!categoriesView);
   }
 
   return (
     <div className={styles.container}>
-      {otherCategoriesDetails ? (
+      {categoriesView && (
         <Details
           expenses={otherCategories}
           handleClose={handleShowOtherCategories}
         />
-      ) : null}
+      )}
       <div className={styles.controls}>
         <div className="form-floating">
           <select
@@ -155,10 +117,14 @@ export default function Taxes({ typeReport, handleChange }: Props) {
           </label>
         </div>
         <div className="mb-3 form-floating">
-          <select id="year" className="form-select" onChange={handleYearSelect}>
-            {taxesYear.map((year: number) => (
-              <option key={year} value={year}>
-                {year}
+          <select id="year" value={year} className="form-select" onChange={handleChangeYear}>
+            {taxes.list.sort((a, b) => {
+              if (a.year < b.year) return 1;
+              if (a.year > b.year) return -1;
+              return 0;
+            }).map((taxe) => (
+              <option key={taxe.year} value={taxe.year}>
+                {taxe.year}
               </option>
             ))}
           </select>
@@ -176,19 +142,18 @@ export default function Taxes({ typeReport, handleChange }: Props) {
         </div>
         <div className={styles.responsive}>
           <div className={styles.scroll}>
-            {TaxesYearIndex !== null && taxesData
-              ? taxesData[TaxesYearIndex].month.map(
-                  (taxesMonth: MonthTaxesData) => {
-                    return (
-                      <Row
-                        key={taxesMonth.month.number}
-                        taxesMonth={taxesMonth}
-                        handleShowOtherCategories={handleShowOtherCategories}
-                      />
-                    );
-                  }
-                )
-              : null}
+            {taxes.list && taxes.list.find(taxe => taxe.year === Number(year))?.month.map(
+              (month: MonthTaxesData) => {
+                return (
+                  <Row
+                    key={month.month.number}
+                    taxesMonth={month}
+                    handleShowOtherCategories={handleShowOtherCategories}
+                  />
+                );
+              }
+            )
+            }
           </div>
         </div>
       </div>

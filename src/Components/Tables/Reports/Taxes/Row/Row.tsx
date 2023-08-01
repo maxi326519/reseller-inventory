@@ -1,4 +1,5 @@
-import { MonthTaxesData, OtherCategories } from "../../../../../interfaces/interfaces";
+import { MonthTaxesData } from "../../../../../hooks/useTaxes/interfaces";
+import { OtherCategories } from "../../../../../interfaces/interfaces";
 import styles from "./Row.module.css";
 
 interface Props {
@@ -28,7 +29,7 @@ export default function Row({ taxesMonth, handleShowOtherCategories }: Props) {
           <b>Ads Fee:</b> {taxesMonth.expenses.adsFee.toFixed(2)}
         </span>
         <span>
-          <b>Other Expenses:</b> {taxesMonth.expenses.otherExpense.toFixed(2)}
+          <b>Other Expenses:</b> {taxesMonth.expenses.otherExpenses.toFixed(2)}
         </span>
         <span>
           <b>Ebya Fees:</b> {taxesMonth.expenses.ebayFees.toFixed(2)}

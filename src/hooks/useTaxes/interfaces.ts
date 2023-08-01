@@ -20,7 +20,7 @@ export interface MonthTaxesData {
     shipLabel: number;
     ebayFees: number;
     adsFee: number;
-    otherExpense: number;
+    otherExpenses: number;
     otherCategories: OtherCategories[];
   };
 }
@@ -62,7 +62,7 @@ export const initMonthTaxesData = (month: number): MonthTaxesData => ({
     shipLabel: 0,
     ebayFees: 0,
     adsFee: 0,
-    otherExpense: 0,
+    otherExpenses: 0,
     otherCategories: [],
   },
 })
