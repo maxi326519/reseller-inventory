@@ -42,12 +42,10 @@ function App() {
         Promise.all([
           dispatch<any>(getReports()),
           dispatch<any>(getStockItems()),
-          /*           
           dispatch<any>(getUserData()),
           dispatch<any>(getInvoices(year, null)),
           dispatch<any>(getSales(year.toString(), null)),
           dispatch<any>(getExpired(year, null)),
-          */
         ])
           .then(() => {
             redirect("/");
