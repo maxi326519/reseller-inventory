@@ -87,19 +87,7 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
         dispatch<any>(restoreItem(id))
           .then(() => {
             dispatch(closeLoading());
-            dispatch<any>(updateReportsItems([id], ["Expired"], reports))
-              .then(() => {
-                dispatch(closeLoading());
-                swal("Restored", "Item restores successfully", "success");
-              })
-              .catch((e: any) => {
-                swal(
-                  "Error",
-                  "Error trying to update reports, try again leter",
-                  "error"
-                );
-                console.log(e);
-              });
+            swal("Restored", "Item restores successfully", "success");
           })
           .catch((e: any) => {
             swal(

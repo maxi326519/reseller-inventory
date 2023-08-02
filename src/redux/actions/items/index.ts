@@ -386,8 +386,35 @@ export function refoundItems(
         ),
       };
 
+      const saleUpdate = {
+        refounded,
+        cost: 0,
+      };
+
+      // Querys COGS Y Ebay Fees
+      const queryCOGS = query(
+        expensesColl,
+        where("productId", "==", item.id),
+        where("category", "==", "COGS")
+      );
+
+      const queryEbayFees = query(
+        expensesColl,
+        where("productId", "==", item.id),
+        where("category", "==", "Ebay Fees")
+      );
+
+      // Get expensas
+      const snapExpenseCOGS = await getDocs(queryCOGS);
+      const snapExpenseFees = await getDocs(queryEbayFees);
+
+      // Delete expensas
+      snapExpenseCOGS.forEach((doc) => batch.delete(doc.ref));
+      snapExpenseFees.forEach((doc) => batch.delete(doc.ref));
+
+      // Actualizar venta para que quede en 0 el unit cost
       batch.update(doc(itemsColl, item.id.toString()), itemUpdate);
-      batch.update(doc(salesColl, saleId.toString()), { refounded });
+      batch.update(doc(salesColl, saleId.toString()), saleUpdate);
 
       // Add expenses
       newExpenses.forEach((expense) => batch.set(doc(expensesColl), expense));
@@ -400,7 +427,7 @@ export function refoundItems(
           item: { ...item, ...itemUpdate },
           saleUpdate: {
             id: saleId,
-            refounded,
+            ...saleUpdate
           },
           newExpenses,
         },
@@ -412,20 +439,42 @@ export function refoundItems(
 }
 
 export function restoreItem(
-  itemID: number
+  itemId: number
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
-      const itemsRef = collection(db, "Users", auth.currentUser.uid, "Items");
-      await updateDoc(doc(itemsRef, itemID.toString()), {
+
+      // Batch
+      const batch = writeBatch(db);
+
+      // Firebase collections
+      const itemsColl = collection(db, "Users", auth.currentUser.uid, "Items");
+      const expensesColl = collection(db, "Users", auth.currentUser.uid, "Expenses");
+
+      // Data to update
+      const itemUpdated = {
         state: "In Stock",
         expired: deleteField(),
-      });
+      }
+
+      // Get expense to remove
+      const expenseSnap = await getDocs(query(expensesColl,
+        where("productId", "==", Number(itemId)),
+        where("category", "==", "Expired")
+      ))
+
+      // Set the remove
+      expenseSnap.forEach((doc) => batch.delete(doc.ref));
+
+      // Set the update
+      batch.update(doc(itemsColl, itemId.toString()), itemUpdated);
+
+      batch.commit();
 
       dispatch({
         type: RESTORE_ITEMS,
-        payload: itemID,
+        payload: itemId,
       });
     } catch (e: any) {
       throw new Error(e);

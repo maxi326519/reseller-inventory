@@ -49,7 +49,6 @@ export default function Taxes({ typeReport, handleChange }: Props) {
         });
 
       setYear(years[0]);
-      console.log("asdasdasd");
     }
   }, [taxes.list]);
 

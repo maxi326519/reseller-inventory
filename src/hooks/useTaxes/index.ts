@@ -30,40 +30,41 @@ export default function useTaxes() {
 
           // Check the category and add price to total
           if (sale.category === "Sale") {
-            currentTaxes.month[i - 1].sales.sales += sale.price;
+            currentTaxes.month[i].sales.sales += sale.price;
           } else if (sale.category === "Shipment") {
-            currentTaxes.month[i - 1].sales.shipment += sale.price;
+            currentTaxes.month[i].sales.shipment += sale.price;
           }
 
           // Add price to total
-          currentTaxes.month[i - 1].sales.total += sale.price;
+          currentTaxes.month[i].sales.total += sale.price;
         });
 
         // Iterate month expenses
         report.months[i].expenses.forEach((expense) => {
+          const taxesIndex = i - 1;
 
           // Check the category and add price to total
           if (expense.category === "COGS") {
-            currentTaxes.month[i - 1].expenses.COGS += expense.price;
+            currentTaxes.month[taxesIndex].expenses.COGS += expense.price;
           } else if (expense.category === "Ship Label") {
-            currentTaxes.month[i - 1].expenses.shipLabel += expense.price;
+            currentTaxes.month[taxesIndex].expenses.shipLabel += expense.price;
           } else if (expense.category === "Ebay Fees") {
-            currentTaxes.month[i - 1].expenses.ebayFees += expense.price;
+            currentTaxes.month[taxesIndex].expenses.ebayFees += expense.price;
           } else if (expense.category === "Ads Fee") {
-            currentTaxes.month[i - 1].expenses.adsFee += expense.price;
+            currentTaxes.month[taxesIndex].expenses.adsFee += expense.price;
           } else {
-            currentTaxes.month[i - 1].expenses.otherExpenses += expense.price;
+            currentTaxes.month[taxesIndex].expenses.otherExpenses += expense.price;
 
             // Check if the category already exist, else create them
-            const name = toCamelCase(expense.category);
-            let category = currentTaxes.month[i - 1].expenses.otherCategories.find((category) => category.category === name);
+            const name = expense.category;
+            let category = currentTaxes.month[taxesIndex].expenses.otherCategories.find((category) => category.category === name);
 
             // If exist, add price
             if (category) {
               category.total += expense.price;
             } else {
               // Else create new category               
-              currentTaxes.month[i - 1].expenses.otherCategories.push({
+              currentTaxes.month[taxesIndex].expenses.otherCategories.push({
                 category: expense.category,
                 total: expense.price,
               });
@@ -71,7 +72,7 @@ export default function useTaxes() {
           }
 
           // Add price to total
-          currentTaxes.month[i - 1].expenses.total += expense.price;
+          currentTaxes.month[taxesIndex].expenses.total += expense.price;
         });
       }
 
@@ -81,7 +82,7 @@ export default function useTaxes() {
       newTaxesReports.push(currentTaxes);
     });
 
-    console.log(newTaxesReports);
+    console.log("Taxes report:", newTaxesReports);
 
     // Saves th enew taxes reports data
     setTaxes(newTaxesReports);

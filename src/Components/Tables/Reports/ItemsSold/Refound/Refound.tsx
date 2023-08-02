@@ -1,42 +1,54 @@
 import { useState } from "react";
-import styles from "./Refound.module.css";
 import { Refounded } from "../../../../../interfaces/interfaces";
+
+import styles from "./Refound.module.css";
 
 interface Props {
   handleClose: () => void;
-  handleSubmit: (data: Refounded) => void;
+  handleSubmit: (data: Refounded, returnShipLabel: number | null) => void;
 }
 
-const initError = {
-  date: new Date().toISOString().split("T")[0],
+const initError = () => ({
+  date: "",
   amount: "",
-};
+  returnShipLabel: "",
+});
 
 export default function Refound({ handleClose, handleSubmit }: Props) {
   const [data, setData] = useState<Refounded>({
-    date: new Date().toISOString().split("T")[0],
+    date: "",
     amount: 0,
   });
-  const [error, setError] = useState(initError);
+  const [returnShipLabel, setReturnShipLabel] = useState<number>(0);
+  const [returnCheck, setReturnCheck] = useState<boolean>(false);
+  const [error, setError] = useState(initError());
 
   function handleLocalSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (handleValidation()) {
-      handleSubmit(data);
+      handleSubmit(data, returnCheck ? returnShipLabel : null);
       handleClose();
     }
   }
 
-  function handelChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleCheck() {
+    setReturnCheck(!returnCheck);
+  }
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setData({ ...data, [event.target.name]: event.target.value });
     setError({ ...error, [event.target.name]: "" });
   }
 
+  function handleReturnShipLabel(event: React.ChangeEvent<HTMLInputElement>) {
+    setReturnShipLabel(Number(event.target.value));
+  }
+
   function handleValidation() {
-    const error = initError;
+    const error = initError();
 
     if (data.date === "") {
-      error.date = "Amount is empty";
+      error.date = "Date is empty";
       return false;
     }
 
@@ -73,7 +85,8 @@ export default function Refound({ handleClose, handleSubmit }: Props) {
             name="date"
             className={`form-control ${error.date ? "is-invalid" : ""}`}
             type="date"
-            onChange={handelChange}
+            value={data.date}
+            onChange={handleChange}
           />
           <label htmlFor="date" className="form-label">
             Date:
@@ -89,13 +102,48 @@ export default function Refound({ handleClose, handleSubmit }: Props) {
             className={`form-control ${error.amount ? "is-invalid" : ""}`}
             type="number"
             step="any"
-            onChange={handelChange}
+            value={data.amount}
+            onChange={handleChange}
           />
           <label htmlFor="amount" className="form-label">
             Amount
           </label>
           {error.amount ? <small>{error.amount}</small> : null}
         </div>
+
+        {/* RETURN SHIP LABEL */}
+        <div className="form-check">
+          <input
+            id="returnCheck"
+            name="returnCheck"
+            className="form-check-input"
+            type="checkbox"
+            checked={returnCheck}
+            onChange={handleCheck}
+          />
+          <label htmlFor="returnCheck" className="form-check-label">
+            Return ship label
+          </label>
+        </div>
+
+        {/* RETURN SHIP LABEL */}
+        {returnCheck &&
+          (<div className={`mb-3 form-floating ${styles.check}`}>
+            <input
+              id="returnShipLabel"
+              name="returnShipLabel"
+              className={`form-control ${error.returnShipLabel ? "is-invalid" : ""}`}
+              type="number"
+              step="any"
+              value={returnShipLabel}
+              onChange={handleReturnShipLabel}
+            />
+            <label htmlFor="returnShipLabel" className="form-label">
+              Return ship label
+            </label>
+            {error.returnShipLabel ? <small>{error.returnShipLabel}</small> : null}
+          </div>)
+        }
 
         <div className={styles.bntContainer}>
           <button className="btn btn-success" type="submit">

@@ -164,7 +164,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     setRefoundSelected({ item, saleId });
   }
 
-  function handleRefound(data: Refounded) {
+  function handleRefound(data: Refounded, returnShipLabel: number | null) {
     if (refoundSelected === undefined) return false;
     const newExpenses: Expense[] = [
       {
@@ -178,13 +178,25 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
       },
     ];
 
+    if (returnShipLabel) {
+      newExpenses.push({
+        id: refoundSelected.saleId,
+        date: Timestamp.fromDate(new Date()),
+        price: returnShipLabel,
+        category: "Ship label",
+        description: "Return ship label expense",
+        invoiceId: refoundSelected.item?.invoiceId!,
+        productId: refoundSelected.item?.id!,
+      });
+    }
+
     dispatch(loading());
     dispatch<any>(
       refoundItems(
         refoundSelected.item!,
         refoundSelected.saleId,
         data,
-        newExpenses
+        newExpenses,
       )
     )
       .then(() => {

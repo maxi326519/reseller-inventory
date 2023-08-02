@@ -281,13 +281,13 @@ export const rootReducer = (
           data:
             action.payload.invoice.items === 0
               ? state.invoices.data.filter(
-                  (invoice) => invoice.id !== action.payload.invoice.id
-                )
+                (invoice) => invoice.id !== action.payload.invoice.id
+              )
               : state.invoices.data.map((invoice) =>
-                  invoice.id === action.payload.invoice.id
-                    ? action.payload.invoice
-                    : invoice
-                ),
+                invoice.id === action.payload.invoice.id
+                  ? action.payload.invoice
+                  : invoice
+              ),
           details: state.invoices.details
             .map((item) => item)
             .filter((item) => item.id !== action.payload.item.id),
@@ -438,7 +438,11 @@ export const rootReducer = (
               ? { ...sale, ...action.payload.saleUpdate }
               : sale
           ),
-          expenses: [...state.sales.expenses, ...action.payload.newExpenses],
+          expenses: [...state.sales.expenses, ...action.payload.newExpenses]
+            .filter((expense) =>
+              !(expense.productId === action.payload.item.id &&
+                (expense.category === "Ebay Fees" ||
+                  expense.category === "COGS"))),
         },
       };
 

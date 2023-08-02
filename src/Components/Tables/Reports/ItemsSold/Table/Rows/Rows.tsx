@@ -44,7 +44,7 @@ export default function Rows({
       </span>
       <span>
         <b>COST: </b>
-        {item?.cost}
+        {sale.cost}
       </span>
       <span>
         <b>PRICE: </b>
