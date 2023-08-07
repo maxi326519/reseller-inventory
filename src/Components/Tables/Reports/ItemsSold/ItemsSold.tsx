@@ -58,6 +58,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     item: Item | null;
     saleId: number;
   }>({ item: null, saleId: 0 });
+
   const [years, setYears] = useState<number[]>([]);
   const [dateFilter, setDateFilter] = useState({
     year: new Date().getFullYear(),
@@ -71,6 +72,8 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   const [shipmentTotal, setShipmentTotal] = useState(0);
   const [exports, setExports] = useState<ExportSales[]>([]);
   const [details, setDetails] = useState<boolean>(false);
+
+  const [expenseTotal, setExpenseTotals] = useState<number>(0);
 
   useEffect(() => {
     const rows: Rows[] = sales.map(
@@ -94,6 +97,9 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     setTotalCost(totalCost);
     setOrderTotal(orderTotal);
     setShipmentTotal(shipmentTotal);
+
+    setExpenseTotals(expenses.reduce((a, b) => a += Number(b.price), 0))
+
     setRows(
       rows
         .filter((row) => row.item)
@@ -308,6 +314,9 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
           </span>
           <span className={styles.total}>
             Shipment income: ${Number(shipmentTotal).toFixed(2)}
+          </span>
+          <span className={styles.total}>
+            Total expenses: ${Number(expenseTotal).toFixed(2)}
           </span>
         </div>
       </div>

@@ -57,8 +57,12 @@ export default function useReports() {
     // Save the expenses
     for (const item of items) {
       // Get dates
-      const year: number = new Date(item.date).getFullYear();
-      const month: number = new Date(item.date).getMonth() + 1;
+      const year: number = new Date(`${item.date} 00:00:00`).getFullYear();
+      const month: number = new Date(`${item.date} 00:00:00`).getMonth() + 1;
+
+      console.log(item.date);
+      console.log(year);
+      console.log(month);
 
       // Get year report
       let yearReport = newReport.find((report) => report.year === year);
@@ -90,10 +94,8 @@ export default function useReports() {
 
     for (const itemToDelete of items) {
       // Get dates
-      const year: number = new Date(itemToDelete.date).getFullYear();
-      const month: number = new Date(itemToDelete.date).getMonth() + 1;
-
-      console.log("Sales year: ", year);
+      const year: number = new Date(`${itemToDelete.date} 00:00:00`).getFullYear();
+      const month: number = new Date(`${itemToDelete.date} 00:00:00`).getMonth() + 1;
 
       // Get year report
       let yearReport = newReport.find((report) => report.year === year);
