@@ -1,26 +1,25 @@
 import { useState, useEffect } from "react";
+import { closeLoading, loading } from "../../../redux/actions/loading";
 import { Chart } from "react-google-charts";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../interfaces/interfaces";
+import { useDispatch } from "react-redux";
 
 import styles from "./Charts.module.css";
 import useReports from "../../../hooks/useReports";
-import { closeLoading, loading } from "../../../redux/actions/loading";
 
 const initialData = (): Array<Array<string | number>> => [
   ["Year", "Sales", "Expenses"],
-  ["Enero", 0, 0],
-  ["Febrero", 0, 0],
-  ["Marzo", 0, 0],
-  ["Abril", 0, 0],
-  ["Mayo", 0, 0],
-  ["Junio", 0, 0],
-  ["Julio", 0, 0],
-  ["Agosto", 0, 0],
-  ["Septiembre", 0, 0],
-  ["Octubre", 0, 0],
-  ["Noviembre", 0, 0],
-  ["Diciembre", 0, 0],
+  ["January", 0, 0],
+  ["February", 0, 0],
+  ["March", 0, 0],
+  ["April", 0, 0],
+  ["May", 0, 0],
+  ["June", 0, 0],
+  ["July", 0, 0],
+  ["August", 0, 0],
+  ["September", 0, 0],
+  ["Octuber", 0, 0],
+  ["November", 0, 0],
+  ["December", 0, 0],
 ];
 
 const options = {

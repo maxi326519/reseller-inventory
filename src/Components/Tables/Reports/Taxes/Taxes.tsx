@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { MonthTaxesData } from "../../../../hooks/useTaxes/interfaces";
 import {
-  RootState,
   OtherCategories,
 } from "../../../../interfaces/interfaces";
 
@@ -11,7 +10,6 @@ import Details from "./Details/Details";
 
 import styles from "./Taxes.module.css";
 import useTaxes from "../../../../hooks/useTaxes";
-import { MonthTaxesData } from "../../../../hooks/useTaxes/interfaces";
 
 interface Props {
   typeReport: any;
