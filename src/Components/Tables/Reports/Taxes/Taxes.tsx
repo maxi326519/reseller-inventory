@@ -44,7 +44,7 @@ export default function Taxes({ typeReport, handleChange }: Props) {
     }
   }, [taxes.list]);
 
-  /*   // Data to export
+/*     // Data to export
     useEffect(() => {
       let newData: any = null;
   
@@ -56,9 +56,9 @@ export default function Taxes({ typeReport, handleChange }: Props) {
         console.log(newData);
         setExcelData(newData);
       }
-    }, [taxesData, TaxesYearIndex]); */
+    }, [taxesData, TaxesYearIndex]);
 
-  /*   function desglosarOtherCategories(taxes: ExportYearTaxesData): void {
+    function desglosarOtherCategories(taxes: ExportYearTaxesData): void {
       let data: any = taxes;
       for (let i = 0; i < data.months.length; i++) {
         const month = data.months[i];

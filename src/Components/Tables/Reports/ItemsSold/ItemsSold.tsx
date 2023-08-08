@@ -189,7 +189,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         id: refoundSelected.saleId,
         date: Timestamp.fromDate(new Date()),
         price: returnShipLabel,
-        category: "Ship label",
+        category: "Return ship label",
         description: "Return ship label expense",
         invoiceId: refoundSelected.item?.invoiceId!,
         productId: refoundSelected.item?.id!,
