@@ -19,16 +19,10 @@ interface Props {
 export default function Taxes({ typeReport, handleChange }: Props) {
   const taxes = useTaxes();
   const [year, setYear] = useState<number>(0);
-
-  const [otherCategories, setOtherCategories] = useState<OtherCategories[]>([]);
   const [categoriesView, setCategoriesView] = useState<boolean>(false);
 
+  const [otherCategories, setOtherCategories] = useState<OtherCategories[]>([]);
   const [excelData, setExcelData] = useState<any>();
-  const [totals, setTotals] = useState({
-    Sales: 0,
-    Expenses: 0,
-    Profit: 0,
-  });
 
   // Update and ser data
   useEffect(() => {
@@ -133,9 +127,9 @@ export default function Taxes({ typeReport, handleChange }: Props) {
       </div>
       <div className={styles.table}>
         <div className={styles.head}>
-          <span>{`Total Sales and Shipment: ${totals.Sales.toFixed(2)}`}</span>
-          <span>{`Total Expenses: ${totals.Expenses.toFixed(2)}`}</span>
-          <span>{`Total Profit: ${totals.Profit.toFixed(2)}`}</span>
+          <span>{`Total Sales and Shipment: ${taxes.totals.find((total) => total.year === year)?.sales.toFixed(2)}`}</span>
+          <span>{`Total Expenses: ${taxes.totals.find((total) => total.year === year)?.expenses.toFixed(2)}`}</span>
+          <span>{`Total Profit: ${taxes.totals.find((total) => total.year === year)?.profit.toFixed(2)}`}</span>
         </div>
         <div className={styles.responsive}>
           <div className={styles.scroll}>

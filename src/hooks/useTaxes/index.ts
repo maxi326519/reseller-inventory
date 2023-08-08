@@ -1,20 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../interfaces/interfaces";
 import { YearTaxesData, initYearTaxesData } from "./interfaces";
 
+interface Totals {
+  year: number;
+  sales: number;
+  expenses: number;
+  profit: number;
+}
+
 export default function useTaxes() {
   const reports = useSelector((state: RootState) => state.reports);
   const [taxes, setTaxes] = useState<YearTaxesData[]>([]);
+  const [totals, setTotals] = useState<Totals[]>([]);
 
-  function toCamelCase(text: string): string {
-    return text
-      .replace(/[-_]+/g, " ")
-      .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
-        return index === 0 ? word.toLowerCase() : word.toUpperCase();
-      })
-      .replace(/\s+/g, "");
-  };
+  useEffect(() => {
+    let totals: Totals[] = [];
+
+    taxes.forEach((tax) => {
+      // Create a new taxes data
+      const currentTotals = {
+        year: tax.year,
+        sales: 0,
+        expenses: 0,
+        profit: 0,
+      }
+
+      // Calculate totals
+      currentTotals.sales = tax.month.reduce((acumulator, month) => acumulator += month.sales.total, 0);
+      currentTotals.expenses = tax.month.reduce((acumulator, month) => acumulator += month.expenses.total, 0);
+      currentTotals.profit = currentTotals.sales - currentTotals.expenses;
+
+      // Save totals
+      totals.push(currentTotals)
+    });
+
+    setTotals(totals);
+
+    console.log("Totals", totals);
+  }, [taxes])
 
   function update() {
     // Create new taxes array
@@ -27,16 +52,17 @@ export default function useTaxes() {
       // Iterate month reports
       for (let i = 1; i <= 12; i++) {
         report.months[i].sales.forEach((sale) => {
+          const taxesIndex = i - 1;
 
           // Check the category and add price to total
           if (sale.category === "Sale") {
-            currentTaxes.month[i].sales.sales += sale.price;
+            currentTaxes.month[taxesIndex].sales.sales += sale.price;
           } else if (sale.category === "Shipment") {
-            currentTaxes.month[i].sales.shipment += sale.price;
+            currentTaxes.month[taxesIndex].sales.shipment += sale.price;
           }
 
           // Add price to total
-          currentTaxes.month[i].sales.total += sale.price;
+          currentTaxes.month[taxesIndex].sales.total += sale.price;
         });
 
         // Iterate month expenses
@@ -90,6 +116,7 @@ export default function useTaxes() {
 
   return {
     list: taxes,
+    totals,
     update
   };
 }

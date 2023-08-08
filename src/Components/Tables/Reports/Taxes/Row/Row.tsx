@@ -32,7 +32,7 @@ export default function Row({ taxesMonth, handleShowOtherCategories }: Props) {
           <b>Other Expenses:</b> {taxesMonth.expenses.otherExpenses.toFixed(2)}
         </span>
         <span>
-          <b>Ebya Fees:</b> {taxesMonth.expenses.ebayFees.toFixed(2)}
+          <b>Ebay Fees:</b> {taxesMonth.expenses.ebayFees.toFixed(2)}
         </span>
         <span>
           <b>COGS:</b> {taxesMonth.expenses.COGS.toFixed(2)}

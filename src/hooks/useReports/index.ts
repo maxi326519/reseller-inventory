@@ -60,10 +60,6 @@ export default function useReports() {
       const year: number = new Date(`${item.date} 00:00:00`).getFullYear();
       const month: number = new Date(`${item.date} 00:00:00`).getMonth() + 1;
 
-      console.log(item.date);
-      console.log(year);
-      console.log(month);
-
       // Get year report
       let yearReport = newReport.find((report) => report.year === year);
 

@@ -36,8 +36,6 @@ function App() {
     setTimeout(() => {
       const auth = getAuth();
       if (auth.currentUser) {
-        console.log(auth.currentUser);
-
         const year = new Date().getFullYear();
         Promise.all([
           dispatch<any>(getReports()),
@@ -50,7 +48,6 @@ function App() {
           .then(() => {
             redirect("/");
             dispatch(closeLoading());
-            setTimeout(taxes.update, 500)
           })
           .catch((err: any) => {
             dispatch(closeLoading());
