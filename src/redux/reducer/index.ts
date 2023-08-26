@@ -1,4 +1,5 @@
 import {
+  Expense,
   InvoiceType,
   Item,
   RootState,
@@ -121,16 +122,21 @@ export const rootReducer = (
         },
       };
     case POST_SALE:
-      const salesData = action.payload.sales;
-      const expensesData = action.payload.expenses;
+      const salesData: Sale[] = action.payload.sales;
+      const expensesData: Expense[] = action.payload.expenses;
       let stockItems: Item[] = [];
       let soldItems: Item[] = [];
 
       state.items.data.forEach((item) => {
-        if (salesData.some((sale: Sale) => sale.productId === item.id)) {
+        const currentSale = salesData.find((sale: Sale) => sale.productId === item.id);
+        if (currentSale) {
           soldItems.push({
             ...item,
             state: "Sold",
+            sales: [{
+              id: currentSale.id,
+              saleDate: currentSale.date,
+            }]
           });
         } else {
           stockItems.push(item);

@@ -101,7 +101,7 @@ export function getItemsFromInvoice(
     try {
       if (auth.currentUser === null) throw new Error("unauthenticated user");
 
-      let invoice = {};
+      let invoice: any = {};
       let items: any = [];
 
       // Get invoice
@@ -111,12 +111,8 @@ export function getItemsFromInvoice(
         auth.currentUser.uid,
         "Invoices"
       );
-      const newQueryInvoice = query(invoiceRef, where("id", "==", invoiceId));
-      const invoiceResponse = await getDocs(newQueryInvoice);
-
-      invoiceResponse.forEach((doc) => {
-        invoice = doc.data();
-      });
+      const invoiceResponse = await getDoc(doc(invoiceRef, invoiceId.toString()));
+      invoice = invoiceResponse.data();
 
       // Get items
       const itemRef = collection(db, "Users", auth.currentUser.uid, "Items");

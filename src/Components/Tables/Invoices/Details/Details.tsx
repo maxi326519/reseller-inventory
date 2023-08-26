@@ -35,6 +35,13 @@ export default function Details({
     setTotal(total);
   }, [itemsList]);
 
+  useEffect(() => {
+    console.log(invoiceType);
+    console.log(invoiceId);
+    console.log(itemsList);
+    console.log(image);
+  }, []);
+
   function localHandleCLose() {
     handleClose();
     setShowImage(false);

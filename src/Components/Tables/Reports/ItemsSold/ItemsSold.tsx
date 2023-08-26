@@ -124,7 +124,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
       categories[expense.category] = 0;
     });
 
-    // Traer las expensas
+    // Iterate the items, get the data and add the expenses
     const data = rows.map(({ item, sale }) => {
       const data: any = {
         invoiceId: item?.invoiceId || 0,
@@ -137,16 +137,21 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         ...categories,
       };
 
-      // Cargar los datos de las expensas
+      // Get the item expenses
       const itemsExpenses = expenses.filter(
-        (expense) => expense.id === item?.id
+        (expense) => expense.productId === item?.id
       );
 
+      // Set values
       itemsExpenses.forEach(
         (expense) => (data[expense.category] = expense.price)
       );
+
       return data;
     });
+
+    console.log(data);
+
     setExports(data);
   }, [rows]);
 
@@ -175,7 +180,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     const newExpenses: Expense[] = [
       {
         id: refoundSelected.saleId,
-        date: Timestamp.fromDate(new Date()),
+        date: Timestamp.fromDate(new Date(data.date)),
         price: data.amount,
         category: "Refound",
         description: "Refound expense",
@@ -187,7 +192,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     if (returnShipLabel) {
       newExpenses.push({
         id: refoundSelected.saleId,
-        date: Timestamp.fromDate(new Date()),
+        date: Timestamp.fromDate(new Date(data.date)),
         price: returnShipLabel,
         category: "Return ship label",
         description: "Return ship label expense",

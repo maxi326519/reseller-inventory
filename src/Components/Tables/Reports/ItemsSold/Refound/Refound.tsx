@@ -32,6 +32,8 @@ export default function Refound({ handleClose, handleSubmit }: Props) {
   }
 
   function handleCheck() {
+    // If returnCheck is false set return shiping label in 0
+    if (!returnCheck) setReturnShipLabel(0);
     setReturnCheck(!returnCheck);
   }
 
