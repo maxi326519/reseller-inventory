@@ -143,6 +143,7 @@ export default function SaleData({
                 }`}
                 placeholder="$ 0.00"
                 type="number"
+                step="0.01"
                 name="adsFeeCost"
                 value={other?.adsFee.cost}
                 onChange={(e) => handleExpense(e, sale?.productId)}
