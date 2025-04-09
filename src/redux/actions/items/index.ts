@@ -1,10 +1,16 @@
+import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
+import { auth, db, storage } from "../../../firebase";
+import { deleteObject, ref } from "firebase/storage";
+import { ThunkAction } from "redux-thunk";
+import { Timestamp } from "firebase/firestore";
+import { AnyAction } from "redux";
+import { Dispatch } from "react";
 import {
   collection,
   doc,
   getDocs,
   getDoc,
   query,
-  updateDoc,
   where,
   writeBatch,
   deleteField,
@@ -16,17 +22,10 @@ import {
   RootState,
 } from "../../../interfaces/interfaces";
 
-import { ThunkAction } from "redux-thunk";
-import { AnyAction } from "redux";
-import { Dispatch } from "react";
-import { auth, db, storage } from "../../../firebase";
-import { Timestamp } from "firebase/firestore";
-import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
-import { deleteObject, ref } from "firebase/storage";
-
 export const POST_ITEMS = "POST_ITEMS";
 export const GET_ITEMS = "GET_ITEMS";
 export const UPDATE_ITEM = "UPDATE_ITEM";
+export const UPDATE_LOCATION = "UPDATE_LOCATION";
 export const DELETE_ITEM = "DELETE_ITEM";
 
 export const GET_ITEMS_EXPIRED = "GET_ITEMS_EXPIRED";
@@ -36,7 +35,6 @@ export const DELETE_ITEMS_INVOICE_DETAILS = "DELETE_ITEMS_INVOICE_DETAILS";
 export const EXPIRED_ITEMS = "EXPIRED_ITEMS";
 export const REFOUND_ITEMS = "REFOUND_ITEMS";
 export const RESTORE_ITEMS = "RESTORE_ITEMS";
-
 
 export function postItems(
   items: Item[]
@@ -111,7 +109,9 @@ export function getItemsFromInvoice(
         auth.currentUser.uid,
         "Invoices"
       );
-      const invoiceResponse = await getDoc(doc(invoiceRef, invoiceId.toString()));
+      const invoiceResponse = await getDoc(
+        doc(invoiceRef, invoiceId.toString())
+      );
       invoice = invoiceResponse.data();
 
       // Get items
@@ -423,7 +423,7 @@ export function refoundItems(
           item: { ...item, ...itemUpdate },
           saleUpdate: {
             id: saleId,
-            ...saleUpdate
+            ...saleUpdate,
           },
           newExpenses,
         },
@@ -446,19 +446,27 @@ export function restoreItem(
 
       // Firebase collections
       const itemsColl = collection(db, "Users", auth.currentUser.uid, "Items");
-      const expensesColl = collection(db, "Users", auth.currentUser.uid, "Expenses");
+      const expensesColl = collection(
+        db,
+        "Users",
+        auth.currentUser.uid,
+        "Expenses"
+      );
 
       // Data to update
       const itemUpdated = {
         state: "In Stock",
         expired: deleteField(),
-      }
+      };
 
       // Get expense to remove
-      const expenseSnap = await getDocs(query(expensesColl,
-        where("productId", "==", Number(itemId)),
-        where("category", "==", "Expired")
-      ))
+      const expenseSnap = await getDocs(
+        query(
+          expensesColl,
+          where("productId", "==", Number(itemId)),
+          where("category", "==", "Expired")
+        )
+      );
 
       // Set the remove
       expenseSnap.forEach((doc) => batch.delete(doc.ref));

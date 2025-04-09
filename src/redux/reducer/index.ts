@@ -1,13 +1,22 @@
 import {
+  POST_SOURCES,
+  POST_CATEGORIES,
+  GET_USER_DATA,
+  POST_LOCATIONS,
+} from "../actions/user";
+import { DELETE_SALE, GET_SALES, POST_SALE } from "../actions/sales";
+import { POST_EXPENSES, GET_SOLD_EXPENSES } from "../actions/expenses";
+import { LOADING, CLOSE_LOADING } from "../actions/loading";
+import { Timestamp } from "firebase/firestore";
+import { AnyAction } from "redux";
+import { LOGOUT } from "../actions/login";
+import {
   Expense,
   InvoiceType,
   Item,
   RootState,
   Sale,
 } from "../../interfaces/interfaces";
-import { AnyAction } from "redux";
-import { LOADING, CLOSE_LOADING } from "../actions/loading";
-import { POST_SOURCES, POST_CATEGORIES, GET_USER_DATA } from "../actions/user";
 import {
   POST_ITEMS,
   GET_ITEMS,
@@ -26,8 +35,6 @@ import {
   DELETE_INVOICE,
   GET_INVOICE_DETAILS,
 } from "../actions/invoices";
-import { DELETE_SALE, GET_SALES, POST_SALE } from "../actions/sales";
-import { POST_EXPENSES, GET_SOLD_EXPENSES } from "../actions/expenses";
 import {
   GET_REPORTS,
   GET_EXPIRED_ITEMS,
@@ -35,13 +42,12 @@ import {
   DELETE_ITEMS_REPORTS,
   POST_REPORTS,
 } from "../actions/reports";
-import { Timestamp } from "firebase/firestore";
-import { LOGOUT } from "../actions/login";
 
 const initialState = (): RootState => ({
   user: {
     categories: ["General"],
     sources: [],
+    locations: [],
   },
   items: {
     data: [],
@@ -105,6 +111,11 @@ export const rootReducer = (
         ...state,
         user: { ...state.user, sources: action.payload },
       };
+    case POST_LOCATIONS:
+      return {
+        ...state,
+        user: { ...state.user, locations: action.payload },
+      };
     case POST_ITEMS:
       return {
         ...state,
@@ -128,15 +139,19 @@ export const rootReducer = (
       let soldItems: Item[] = [];
 
       state.items.data.forEach((item) => {
-        const currentSale = salesData.find((sale: Sale) => sale.productId === item.id);
+        const currentSale = salesData.find(
+          (sale: Sale) => sale.productId === item.id
+        );
         if (currentSale) {
           soldItems.push({
             ...item,
             state: "Sold",
-            sales: [{
-              id: currentSale.id,
-              saleDate: currentSale.date,
-            }]
+            sales: [
+              {
+                id: currentSale.id,
+                saleDate: currentSale.date,
+              },
+            ],
           });
         } else {
           stockItems.push(item);
@@ -287,13 +302,13 @@ export const rootReducer = (
           data:
             action.payload.invoice.items === 0
               ? state.invoices.data.filter(
-                (invoice) => invoice.id !== action.payload.invoice.id
-              )
+                  (invoice) => invoice.id !== action.payload.invoice.id
+                )
               : state.invoices.data.map((invoice) =>
-                invoice.id === action.payload.invoice.id
-                  ? action.payload.invoice
-                  : invoice
-              ),
+                  invoice.id === action.payload.invoice.id
+                    ? action.payload.invoice
+                    : invoice
+                ),
           details: state.invoices.details
             .map((item) => item)
             .filter((item) => item.id !== action.payload.item.id),
@@ -444,11 +459,17 @@ export const rootReducer = (
               ? { ...sale, ...action.payload.saleUpdate }
               : sale
           ),
-          expenses: [...state.sales.expenses, ...action.payload.newExpenses]
-            .filter((expense) =>
-              !(expense.productId === action.payload.item.id &&
+          expenses: [
+            ...state.sales.expenses,
+            ...action.payload.newExpenses,
+          ].filter(
+            (expense) =>
+              !(
+                expense.productId === action.payload.item.id &&
                 (expense.category === "Ebay Fees" ||
-                  expense.category === "COGS"))),
+                  expense.category === "COGS")
+              )
+          ),
         },
       };
 

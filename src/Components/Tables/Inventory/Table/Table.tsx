@@ -25,6 +25,7 @@ export default function Table({
           <span>Item ID</span>
           <span>Date</span>
           <span>Description</span>
+          <span>Location</span>
           <span>Unit cost</span>
           <span>Invoice</span>
         </div>

@@ -43,6 +43,7 @@ export default function ItemRow({
     >
       <span>{item.id}</span>
       <span>{item.description}</span>
+      <span>{item.location || "-"}</span>
       <input
         className="form-control"
         type="number"

@@ -14,12 +14,13 @@ import List from "../../Menu/List/List";
 import InvoiceImage from "./InvoiceImage/InvoiceImage";
 import AddSource from "./AddSource/AddSource";
 import DownloadExcel from "./DownloadExcel/DownloadExcel";
-
-import menu from "../../../assets/svg/menu.svg";
-import close from "../../../assets/svg/close.svg";
+import AddLocations from "./AddLocations/AddLocations";
 
 import style from "./NewPurchase.module.css";
 import styles from "../Tables.module.css";
+import menu from "../../../assets/svg/menu.svg";
+import close from "../../../assets/svg/close.svg";
+
 interface ExportData {
   id: number;
   description: string;
@@ -42,6 +43,7 @@ export default function NewPurchase() {
   const [invoice, setInvoice] = useState<Invoice>(initialState);
   const [file, setFile] = useState<File | null>(null);
   const [source, setSource] = useState(false);
+  const [location, setLocation] = useState(false);
   const [excel, setExcel] = useState(false);
   const [exportData, setExportData] = useState<ExportData[]>([]);
   const [active, setActive] = useState<boolean>(false);
@@ -164,6 +166,10 @@ export default function NewPurchase() {
     setSource(!source);
   }
 
+  function handleCloseLocation() {
+    setLocation(!location);
+  }
+
   function handleCloseExcel() {
     setExcel(!excel);
   }
@@ -174,6 +180,7 @@ export default function NewPurchase() {
         <List active={active} />
       </div>
       {source ? <AddSource handleClose={handleCloseSource} /> : null}
+      {location ? <AddLocations handleClose={handleCloseLocation} /> : null}
       {excel ? (
         <DownloadExcel handleClose={handleCloseExcel} data={exportData} />
       ) : null}
@@ -223,6 +230,13 @@ export default function NewPurchase() {
               onClick={handleCloseSource}
             >
               Source
+            </button>
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={handleCloseLocation}
+            >
+              Location
             </button>
             <span>{`Total:  $${invoice.total}`}</span>
           </div>

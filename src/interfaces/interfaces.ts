@@ -4,6 +4,7 @@ import { YearReport } from "../hooks/useReports/Interfaces";
 export interface User {
   categories: string[];
   sources: string[];
+  locations: string[];
 }
 
 export interface Item {
@@ -19,6 +20,7 @@ export interface Item {
   cost: number | string;
   description: string;
   expired?: Timestamp;
+  location: string;
 }
 
 export interface Invoice {

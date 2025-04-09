@@ -1,11 +1,12 @@
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import { db, auth } from "../../../firebase";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { RootState } from "../../../interfaces/interfaces";
+import { db, auth } from "../../../firebase";
 
 export const POST_CATEGORIES = "POST_CATEGORIES";
 export const POST_SOURCES = "POST_SOURCES";
+export const POST_LOCATIONS = "POST_LOCATIONS";
 export const GET_USER_DATA = "GET_USER_DATA";
 
 export function postCategories(
@@ -43,6 +44,27 @@ export function postSources(
       dispatch({
         type: POST_SOURCES,
         payload: sources,
+      });
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  };
+}
+
+export function postLocations(
+  locations: string[]
+): ThunkAction<Promise<void>, RootState, null, AnyAction> {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    try {
+      if (auth.currentUser === null) throw new Error("unauthenticated user");
+
+      await updateDoc(doc(db, "Users", auth.currentUser.uid), {
+        locations,
+      });
+
+      dispatch({
+        type: POST_LOCATIONS,
+        payload: locations,
       });
     } catch (e: any) {
       throw new Error(e);

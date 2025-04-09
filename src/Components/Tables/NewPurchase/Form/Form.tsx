@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { Invoice, Item, RootState } from "../../../../interfaces/interfaces";
-
-import styles from "../../Tables.module.css";
 import { useSelector } from "react-redux";
 import { Timestamp } from "@firebase/firestore";
+import { useState } from "react";
+
+import styles from "../../Tables.module.css";
 
 interface Props {
   invoice: Invoice;
@@ -14,6 +14,7 @@ interface Props {
 
 interface Error {
   source: null | string;
+  location: null | string;
   description: null | string;
   cost: null | string;
   amount: null | string;
@@ -26,6 +27,9 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
   const sources: string[] = useSelector(
     (state: RootState) => state.user.sources
   );
+  const locations: string[] = useSelector(
+    (state: RootState) => state.user.locations
+  );
   const initialState: Item = {
     id: 0,
     date: invoice.date,
@@ -33,11 +37,13 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
     state: "In Stock",
     cost: "",
     description: "",
+    location: "",
   };
   const [newItem, setNewItems] = useState<Item>(initialState);
 
   const [error, setError] = useState<Error>({
     source: null,
+    location: null,
     description: null,
     cost: null,
     amount: null,
@@ -99,6 +105,13 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
       });
       setError({ ...error, [event.target.name]: null });
     }
+  }
+
+  function handleNewItemsSelect(
+    event: React.ChangeEvent<HTMLSelectElement>
+  ): void {
+    setNewItems({ ...newItem, [event.target.name]: event.target.value });
+    setError({ ...error, [event.target.name]: null });
   }
 
   function handleAmount(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -209,6 +222,26 @@ export default function Form({ invoice, setInvoice, items, setItems }: Props) {
       <hr />
       <h4>Items</h4>
 
+      <div className="form-floating mb-3">
+        <select
+          id="location"
+          name="location"
+          className={`form-select ${error.location ? "is-invalid" : null}`}
+          value={newItem.location}
+          onChange={handleNewItemsSelect}
+        >
+          <option value="0">Select</option>
+          {locations.map((location) => (
+            <option key={location} value={location}>
+              {location}
+            </option>
+          ))}
+        </select>
+        <label className="form-label" htmlFor="location">
+          Location:
+        </label>
+        {!error.location ? null : <small>{error.location}</small>}
+      </div>
       <div className="form-floating mb-3">
         <input
           id="description"

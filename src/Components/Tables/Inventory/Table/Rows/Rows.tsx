@@ -46,6 +46,10 @@ export default function Rows({
         {item.description}
       </span>
       <span>
+        <b>LOCATION: </b>
+        {item.location}
+      </span>
+      <span>
         <b>COST: </b>
         {item.cost}
       </span>

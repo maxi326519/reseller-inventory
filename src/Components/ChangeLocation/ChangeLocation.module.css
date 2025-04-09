@@ -1,0 +1,35 @@
+.background {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 100%;
+  width: 400px;
+  background-color: #222;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.btnContainer {
+  display: flex;
+  justify-content: end;
+  gap: 10px;
+}

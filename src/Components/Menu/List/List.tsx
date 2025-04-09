@@ -8,9 +8,10 @@ import style from "./List.module.css";
 
 interface Prop {
   active: boolean;
+  openModal?: () => void;
 }
 
-export default function List({ active }: Prop) {
+export default function List({ active, openModal }: Prop) {
   const dispatch = useDispatch();
   const redirect = useNavigate();
 
@@ -19,8 +20,8 @@ export default function List({ active }: Prop) {
       text: "¿Are you sure you want to log out?",
       buttons: {
         Yes: true,
-        No: true
-      }
+        No: true,
+      },
     }).then((response) => {
       if (response === "Yes") {
         dispatch(loading());
@@ -44,6 +45,11 @@ export default function List({ active }: Prop) {
       <Link className="btn btn-primary" to="/inventory">
         Inventory
       </Link>
+      {openModal && (
+        <button className="btn btn-primary" onClick={() => openModal()}>
+          Change Location
+        </button>
+      )}
       <Link className="btn btn-primary" to="/invoices">
         Invoices
       </Link>

@@ -1,13 +1,13 @@
-import { useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { getUserData } from "./redux/actions/user";
-import { loading, closeLoading } from "./redux/actions/loading";
 import { getExpired, getStockItems } from "./redux/actions/items";
-import { getReports } from "./redux/actions/reports";
+import { useSelector, useDispatch } from "react-redux";
+import { loading, closeLoading } from "./redux/actions/loading";
+import { getUserData } from "./redux/actions/user";
 import { getInvoices } from "./redux/actions/invoices";
-import { getSales } from "./redux/actions/sales";
+import { getReports } from "./redux/actions/reports";
 import { RootState } from "./interfaces/interfaces";
+import { useEffect } from "react";
+import { getSales } from "./redux/actions/sales";
 import { getAuth } from "firebase/auth";
 import swal from "sweetalert";
 
@@ -22,14 +22,11 @@ import Loading from "./Components/Loading/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import useTaxes from "./hooks/useTaxes";
 
 function App() {
   const redirect = useNavigate();
   const dispatch = useDispatch();
   const setLoading = useSelector((state: RootState) => state.loading);
-
-  const taxes = useTaxes();
 
   useEffect(() => {
     dispatch(loading());

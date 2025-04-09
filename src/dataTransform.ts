@@ -1,3 +1,5 @@
+import { Expense, Invoice, Item, Sale } from "./interfaces/interfaces";
+import { db } from "./firebase";
 import {
   Timestamp,
   collection,
@@ -5,11 +7,8 @@ import {
   getDocs,
   writeBatch,
 } from "firebase/firestore";
-import { Expense, Invoice, Item, Sale } from "./interfaces/interfaces";
-import { db } from "./firebase";
 
 export function getAllData() {
-  // GET DATA
   // User ref
   const usersColl = collection(db, "Users");
   const userDoc = doc(usersColl, "IyCaesiBamPlOhsecDJm4G72uww2");
@@ -50,8 +49,6 @@ export function getAllData() {
 }
 
 export function updateItems() {
-  let invoices = JSON.parse(localStorage.getItem("Invoices") || "");
-  let expenses = JSON.parse(localStorage.getItem("Expenses") || "");
   let items = JSON.parse(localStorage.getItem("Items") || "");
   let sales = JSON.parse(localStorage.getItem("Sales") || "");
 
@@ -65,6 +62,7 @@ export function updateItems() {
       cost: Number(data.cost),
       description: data.description,
       invoiceId: Number(data.invoiceId),
+      location: data.location,
     };
 
     console.log(data.date);
@@ -115,14 +113,14 @@ export function updateItems() {
 
   let counter = 0;
 
-  /*   newItems.forEach((data: Item) => {
+  newItems.forEach((data: Item) => {
     if (counter < 450) {
       batch.update(doc(newitemsColl, data.id.toString()), { ...data });
     } else {
       batch2.update(doc(newitemsColl, data.id.toString()), { ...data });
     }
     counter++;
-  }); */
+  });
 }
 
 export function updateData() {
@@ -155,6 +153,7 @@ export function updateData() {
       cost: Number(data.cost),
       description: data.description,
       invoiceId: Number(data.invoiceId),
+      location: data.location,
     };
 
     // If saleDate exist

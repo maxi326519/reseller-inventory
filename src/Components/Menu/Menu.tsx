@@ -8,9 +8,11 @@ import menu from "../../assets/svg/menu.svg";
 import close from "../../assets/svg/close.svg";
 
 import style from "./Menu.module.css";
+import ChangeLocation from "../ChangeLocation/ChangeLocation";
 
 export default function Menu() {
   const [active, setActive] = useState<boolean>(false);
+  const [location, setLocation] = useState<boolean>(false);
 
   function handleActive() {
     setActive(!active);
@@ -18,6 +20,7 @@ export default function Menu() {
 
   return (
     <div className={style.container}>
+      {location && <ChangeLocation onClose={() => setLocation(false)} />}
       <img className={style.image} src={img} alt="logo" />
       <div className={style.dataContainer}>
         <div className={style.navBar} onClick={handleActive}>
@@ -27,7 +30,7 @@ export default function Menu() {
             <img src={active ? close : menu} alt="menu" />
           )}
         </div>
-        <List active={active} />
+        <List active={active} openModal={() => setLocation(true)} />
         <Charts />
       </div>
     </div>
