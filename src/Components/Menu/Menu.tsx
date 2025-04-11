@@ -30,7 +30,11 @@ export default function Menu() {
             <img src={active ? close : menu} alt="menu" />
           )}
         </div>
-        <List active={active} openModal={() => setLocation(true)} />
+        <List
+          active={active}
+          onClose={() => setActive(false)}
+          openModal={() => setLocation(true)}
+        />
         <Charts />
       </div>
     </div>

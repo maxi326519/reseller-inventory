@@ -2,7 +2,7 @@ import { getStockItems, updateItem } from "../../redux/actions/items";
 import { useDispatch, useSelector } from "react-redux";
 import { closeLoading, loading } from "../../redux/actions/loading";
 import { useEffect, useState } from "react";
-import { Item, RootState } from "../../interfaces/interfaces";
+import { RootState } from "../../interfaces/interfaces";
 
 import styles from "./ChangeLocation.module.css";
 
@@ -16,21 +16,12 @@ export default function ChangeLocation({ onClose }: Props) {
   const locations = useSelector((state: RootState) => state.user.locations);
   const [location, setLocation] = useState<string>("");
   const [itemId, setItemId] = useState<string>("");
-  const [itemsFiltred, setItemsFiltred] = useState<Item[]>([]);
 
   useEffect(() => {
     if (items.data.length > 0) dispatch<any>(getStockItems());
   }, []);
 
-  useEffect(() => {
-    setItemsFiltred(
-      items.data.filter((item) => (itemId ? item.id === Number(itemId) : true))
-    );
-  }, [itemId, items.data]);
-
-  const handleChangeLocation = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleChangeLocation = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLocation(event.target.value);
   };
 
@@ -66,29 +57,37 @@ export default function ChangeLocation({ onClose }: Props) {
             </label>
           </div>
 
-          <div className="form-floating mb-3">
-            <select
-              className="form-select"
-              id="form"
-              value={location}
-              placeholder="Select a location"
-              onChange={handleChangeLocation}
-            >
-              <option value="">Select</option>
-              {locations.map((location) => (
-                <option value={location}>{location}</option>
-              ))}
-            </select>
-            <label className="form-label" htmlFor="form">
-              Form of Purchase:
-            </label>
+          <div className={styles.dropDown}>
+            <div className="form-floating mb-3">
+              <input
+                className="form-control"
+                value={location}
+                placeholder="Write the code"
+                onChange={handleChangeLocation}
+              />
+              <label className="form-label" htmlFor="date">
+                Location:
+              </label>
+            </div>
+            <div className={styles.options}>
+              {locations
+                .filter((item) =>
+                  item.toLowerCase().includes(location.toLowerCase())
+                )
+                .map((location) => (
+                  <span onClick={() => setLocation(location)}>{location}</span>
+                ))}
+            </div>
           </div>
+
           <div className={styles.items}>
-            {itemsFiltred.map((item) => (
-              <div>
-                {item.id} - {item.description} ({item.location || "-"})
-              </div>
-            ))}
+            {items.data
+              .filter((item) => item.id.toString().includes(itemId))
+              .map((item) => (
+                <div onClick={() => setItemId(item.id?.toString())}>
+                  {item.id} - {item.description} ({item.location || "-"})
+                </div>
+              ))}
           </div>
           <div className={styles.btnContainer}>
             <button className="btn btn-primary" onClick={onClose}>
@@ -97,7 +96,10 @@ export default function ChangeLocation({ onClose }: Props) {
             <button
               className="btn btn-primary"
               onClick={handleSubmit}
-              disabled={!location}
+              disabled={
+                !locations.some((loc) => loc === location) ||
+                !items.data.some((item) => item.id === Number(itemId))
+              }
             >
               Save
             </button>

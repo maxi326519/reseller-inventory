@@ -8,10 +8,11 @@ import style from "./List.module.css";
 
 interface Prop {
   active: boolean;
+  onClose: () => void;
   openModal?: () => void;
 }
 
-export default function List({ active, openModal }: Prop) {
+export default function List({ active, onClose, openModal }: Prop) {
   const dispatch = useDispatch();
   const redirect = useNavigate();
 
@@ -46,7 +47,13 @@ export default function List({ active, openModal }: Prop) {
         Inventory
       </Link>
       {openModal && (
-        <button className="btn btn-primary" onClick={() => openModal()}>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            openModal();
+            onClose();
+          }}
+        >
           Change Location
         </button>
       )}
