@@ -1,9 +1,12 @@
 .background {
   position: fixed;
-  z-index: 1000;
+  z-index: 1300;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #0006;
 }
 
 .modal {
@@ -18,6 +21,16 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.close {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.close h4 {
+  flex-grow: 1;
 }
 
 .items {

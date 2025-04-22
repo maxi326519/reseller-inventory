@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Timestamp } from "firebase/firestore";
-import { deleteSale, getSales } from "../../../../redux/actions/sales";
 import { closeLoading, loading } from "../../../../redux/actions/loading";
+import { deleteSale, getSales } from "../../../../redux/actions/sales";
+import { useEffect, useState } from "react";
 import { YearReport } from "../../../../hooks/useReports/Interfaces";
+import { Timestamp } from "firebase/firestore";
 import {
   Expense,
   ExportSales,
@@ -98,7 +98,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
     setOrderTotal(orderTotal);
     setShipmentTotal(shipmentTotal);
 
-    setExpenseTotals(expenses.reduce((a, b) => a += Number(b.price), 0))
+    setExpenseTotals(expenses.reduce((a, b) => (a += Number(b.price)), 0));
 
     setRows(
       rows
@@ -126,13 +126,13 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
 
     // Iterate the items, get the data and add the expenses
     const data = rows.map(({ item, sale }) => {
-      const data: any = {
-        invoiceId: item?.invoiceId || 0,
-        itemId: item?.id || 0,
+      const data: ExportSales = {
+        invoiceId: item?.invoiceId.toString() || "",
+        itemId: item?.id.toString() || "",
         date: changeDateFormat(sale.date.toDate().toISOString().split("T")[0]),
-        unitCost: item ? Number(item.cost) : 0, // El signo + convierte un string a un número
-        price: Number(sale.price),
-        shipmentIncome: Number(sale.shipment.amount),
+        unitCost: (item ? Number(item.cost) : 0).toString(),
+        price: sale.price.toString(),
+        shipmentIncome: sale.shipment.amount.toString(),
         description: item?.description || "",
         ...categories,
       };
@@ -144,7 +144,10 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
 
       // Set values
       itemsExpenses.forEach(
-        (expense) => (data[expense.category] = expense.price)
+        (expense) =>
+          (data[
+            expense.category as keyof ExportSales
+          ] = expense.price as string)
       );
 
       return data;
@@ -154,7 +157,6 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
 
     setExports(data);
   }, [rows]);
-
 
   function handleFilterPerDate(dateFilter: any) {
     if (dateFilter.year !== 0) {
@@ -207,7 +209,7 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
         refoundSelected.item!,
         refoundSelected.saleId,
         data,
-        newExpenses,
+        newExpenses
       )
     )
       .then(() => {
@@ -224,7 +226,8 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   function handleDeleteSale(sale: Sale) {
     swal({
       title: "Atention!",
-      text: "Are you sure are you want to delete this sale? \n This action is irreversible",
+      text:
+        "Are you sure are you want to delete this sale? \n This action is irreversible",
       icon: "warning",
       buttons: {
         Accept: true,

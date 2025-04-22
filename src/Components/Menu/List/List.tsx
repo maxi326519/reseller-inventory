@@ -8,7 +8,7 @@ import style from "./List.module.css";
 
 interface Prop {
   active: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   openModal?: () => void;
 }
 
@@ -51,14 +51,14 @@ export default function List({ active, onClose, openModal }: Prop) {
           className="btn btn-primary"
           onClick={() => {
             openModal();
-            onClose();
+            onClose && onClose();
           }}
         >
           Change Location
         </button>
       )}
       <Link className="btn btn-primary" to="/invoices">
-        Invoices
+        Purchase Orders
       </Link>
       <Link className="btn btn-primary" to="/addExpense">
         Add Business Expense

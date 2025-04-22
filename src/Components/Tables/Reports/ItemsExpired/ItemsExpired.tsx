@@ -13,7 +13,6 @@ import Table from "./Table/Table";
 import styles from "./ItemsExpired.module.css";
 import swal from "sweetalert";
 import DateFilter from "./DateFilter/DateFilter";
-import { updateReportsItems } from "../../../../redux/actions/reports";
 import {
   deleteInvoiceDetails,
   getExpired,
@@ -62,7 +61,7 @@ export default function ItemsExpired({ typeReport, handleChange }: Props) {
   useEffect(() => {
     const data = rows.map((item) => {
       const data: ExportExpired = {
-        id: item.id,
+        id: item.id.toString(),
         invoiceId: item.invoiceId,
         date: item.expired
           ? changeDateFormat(item.expired?.toDate().toISOString().split("T")[0])

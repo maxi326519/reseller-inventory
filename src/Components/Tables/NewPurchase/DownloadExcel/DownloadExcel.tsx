@@ -4,8 +4,11 @@ import Excel from "./Excel/Excel";
 interface Props {
   handleClose: () => void;
   data: Array<{
-    id: number;
+    id: string;
     description: string;
+    date: string;
+    cost: string;
+    source: string;
   }>;
 }
 

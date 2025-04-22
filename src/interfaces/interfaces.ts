@@ -103,17 +103,17 @@ export interface ExportMonthTaxes {
 }
 
 export interface ExportSales {
-  invoiceId: number;
-  itemId: number;
+  invoiceId: string;
+  itemId: string;
   date: string;
-  unitCost: number;
-  price: number;
-  shipmentIncome: number;
+  unitCost: string;
+  price: string;
+  shipmentIncome: string;
   description: string;
 }
 
 export interface ExportExpired {
-  id: number;
+  id: string;
   invoiceId: number;
   date: string;
   unitCost: number;

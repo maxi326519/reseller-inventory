@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Item, Invoice, InvoiceType } from "../../../interfaces/interfaces";
-import { useDispatch } from "react-redux";
-import { Timestamp } from "@firebase/firestore";
 import { loading, closeLoading } from "../../../redux/actions/loading";
-import { postItems } from "../../../redux/actions/items";
+import { useEffect, useState } from "react";
 import { postInvoice } from "../../../redux/actions/invoices";
+import { useDispatch } from "react-redux";
+import { postItems } from "../../../redux/actions/items";
+import { Timestamp } from "@firebase/firestore";
+import { Link } from "react-router-dom";
 import swal from "sweetalert";
 
 import Form from "./Form/Form";
@@ -22,8 +22,11 @@ import menu from "../../../assets/svg/menu.svg";
 import close from "../../../assets/svg/close.svg";
 
 interface ExportData {
-  id: number;
+  id: string;
   description: string;
+  date: string;
+  cost: string;
+  source: string;
 }
 
 export default function NewPurchase() {
@@ -122,9 +125,17 @@ export default function NewPurchase() {
                   icon: "success",
                 }).then(() => handleCloseExcel());
                 setExportData(
-                  items.map((item) => {
-                    return { id: item.id, description: item.description };
-                  })
+                  items.map(
+                    (item: Item): ExportData => {
+                      return {
+                        id: item.id.toString(),
+                        description: item.description,
+                        date: item.date.toDate().toLocaleDateString(),
+                        cost: item.cost.toString(),
+                        source: invoice.source,
+                      };
+                    }
+                  )
                 );
                 setItems([]);
                 setFile(null);
