@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { loading, closeLoading } from "../../redux/actions/loading";
-import { getUserData } from "../../redux/actions/user";
-import { logIn } from "../../redux/actions/login";
 import { getExpired, getStockItems } from "../../redux/actions/items";
-import { getReports } from "../../redux/actions/reports";
+import { loading, closeLoading } from "../../redux/actions/loading";
+import { useDispatch } from "react-redux";
+import { getUserData } from "../../redux/actions/user";
 import { getInvoices } from "../../redux/actions/invoices";
 import { useNavigate } from "react-router-dom";
+import { getReports } from "../../redux/actions/reports";
+import { getSales } from "../../redux/actions/sales";
+import { useState } from "react";
+import { logIn } from "../../redux/actions/login";
+import swal from "sweetalert";
 
 import "./Login.css";
-import swal from "sweetalert";
-import { getSales } from "../../redux/actions/sales";
 
 interface Error {
   email: string | null;
@@ -35,10 +35,10 @@ export default function Signin() {
     const name: string = e.target.name;
     const value: string = e.target.value;
     setUser({ ...user, [name]: value });
-    handleValidations(name, value);
+    handleValidations(name);
   }
 
-  function handleValidations(name: string, value: string) {
+  function handleValidations(name: string) {
     if (name === "email") {
       setError({ ...error, email: null });
     } else if (name === "password") {

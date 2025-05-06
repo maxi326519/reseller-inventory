@@ -1,5 +1,5 @@
 import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
-import { auth, db, storage } from "../../../firebase";
+import { auth, db, storage } from "../../../firebase/config";
 import { deleteObject, ref } from "firebase/storage";
 import { ThunkAction } from "redux-thunk";
 import { Timestamp } from "firebase/firestore";

@@ -1,6 +1,8 @@
+import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
+import { Sale, RootState, Expense, Item } from "../../../interfaces/interfaces";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import { db, auth } from "../../../firebase";
+import { db, auth } from "../../../firebase/config";
 import {
   Timestamp,
   arrayUnion,
@@ -12,8 +14,6 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { Sale, RootState, Expense, Item } from "../../../interfaces/interfaces";
-import { endOfMonth, endOfYear, startOfMonth, startOfYear } from "date-fns";
 
 export const POST_SALE = "POST_SALE";
 export const GET_SALES = "GET_SALES";
@@ -179,7 +179,7 @@ export function deleteSale(
 
       // Batch instance
       const batch = writeBatch(db);
-      
+
       // Get item
       const itemDoc = doc(itemsColl, sale.productId.toString());
       const itemSnap = await getDoc(itemDoc);

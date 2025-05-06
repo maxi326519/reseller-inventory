@@ -1,6 +1,6 @@
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import { auth } from "../../../firebase";
+import { auth } from "../../../firebase/config";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { RootState } from "../../../interfaces/interfaces";
 

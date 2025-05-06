@@ -1,12 +1,12 @@
+import { closeLoading, loading } from "../../../../../redux/actions/loading";
+import { deleteInvoice } from "../../../../../redux/actions/invoices";
+import { useDispatch } from "react-redux";
 import {
   Invoice,
   InvoiceExpenses,
   InvoiceType,
 } from "../../../../../interfaces/interfaces";
 import changeDateFormat from "../../../../../functions/changeDateFormat";
-import { closeLoading, loading } from "../../../../../redux/actions/loading";
-import { deleteInvoice } from "../../../../../redux/actions/invoices";
-import { useDispatch } from "react-redux";
 import swal from "sweetalert";
 
 import styles from "../Table.module.css";
@@ -20,7 +20,7 @@ interface Props {
 export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
   const dispatch = useDispatch();
 
-  function handleDelete(invoiceId: number) {
+  function handleDelete() {
     swal({
       title: "Warning",
       text: "Are you sure you want to delete this invoice forever?",
@@ -91,7 +91,7 @@ export default function Rows({ invoice, invoiceType, handleDetails }: Props) {
       <button
         className="btn btn-danger"
         type="button"
-        onClick={() => handleDelete(invoice.id)}
+        onClick={() => handleDelete()}
       >
         -
       </button>

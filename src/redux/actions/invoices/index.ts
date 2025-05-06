@@ -1,7 +1,7 @@
 import { startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import { db, auth, storage } from "../../../firebase";
+import { db, auth, storage } from "../../../firebase/config";
 import {
   uploadBytes,
   ref,

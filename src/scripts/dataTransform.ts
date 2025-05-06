@@ -1,5 +1,5 @@
-import { Expense, Invoice, Item, Sale } from "./interfaces/interfaces";
-import { db } from "./firebase";
+import { Expense, Invoice, Item, Sale } from "../interfaces/interfaces";
+import { db } from "../firebase/config";
 import {
   Timestamp,
   collection,

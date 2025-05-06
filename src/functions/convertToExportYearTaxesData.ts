@@ -1,6 +1,5 @@
-import { YearTaxesData } from "../hooks/useTaxes/interfaces";
 
-export function convertToExportYearTaxesData(yearData: YearTaxesData)/*:  ExportYearTaxesData */ {
+export function convertToExportYearTaxesData(/* yearData: YearTaxesData */)/*:  ExportYearTaxesData */ {
 /*     // Obtener un conjunto de todas las categorías únicas
     const uniqueCategories = new Set<string>();
     yearData.month.forEach((monthData) => {

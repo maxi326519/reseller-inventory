@@ -80,7 +80,7 @@ export default function NewPurchase() {
     setItems(items.filter((item) => item.id !== id));
   }
 
-  function handleSubmit(e: React.MouseEvent<HTMLButtonElement>): void {
+  function handleSubmit(): void {
     if (items.length > 0) {
       swal({
         text: "Do you want save the invoice?",

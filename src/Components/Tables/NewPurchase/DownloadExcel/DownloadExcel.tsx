@@ -1,5 +1,6 @@
-import styles from "./DownloadExcel.module.css";
 import Excel from "./Excel/Excel";
+
+import styles from "./DownloadExcel.module.css";
 
 interface Props {
   handleClose: () => void;
@@ -29,7 +30,7 @@ export default function DownloadExcel({ handleClose, data }: Props) {
           Do you want to download the id in excel?
         </span>
         <div className={styles.bntContainer}>
-          <Excel handleClose={handleClose} data={data} />
+          <Excel data={data} onClose={handleClose} />
           <button
             className={`btn btn-danger ${styles.cancel}`}
             type="button"

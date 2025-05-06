@@ -1,15 +1,9 @@
+import { collection, doc, getDocs, writeBatch } from "firebase/firestore";
 import { Expense, Sale, RootState } from "../../../interfaces/interfaces";
 import { Dispatch, AnyAction } from "redux";
-import {
-  collection,
-  doc,
-  getDocs,
-  setDoc,
-  writeBatch,
-} from "firebase/firestore";
 import { ThunkAction } from "redux-thunk";
 import { YearReport } from "../../../hooks/useReports/Interfaces";
-import { db, auth } from "../../../firebase";
+import { auth, db } from "../../../firebase/config";
 
 export const POST_REPORTS = "POST_REPORTS";
 export const GET_REPORTS = "GET_REPORTS";
@@ -90,6 +84,7 @@ export function updateReports(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
+      console.log(expenses, reports, sales);
       /*       let response = calculeReports(reports, expenses, true);
       if (sales) response = calculeReports(response.reports, sales, false);
       const newReports = response.reports;
@@ -130,6 +125,7 @@ export function updateReportsItems(
 ): ThunkAction<Promise<void>, RootState, null, AnyAction> {
   return async (dispatch: Dispatch<AnyAction>) => {
     try {
+      console.log(dataId, category, reports);
       /*       const { updatedReports, editedYears } = deleteDataAndUpdateTotals(
         dataId,
         category,

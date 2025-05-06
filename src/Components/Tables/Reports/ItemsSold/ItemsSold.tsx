@@ -24,7 +24,7 @@ import swal from "sweetalert";
 import DateFilter from "./DateFilter/DateFilter";
 import Table from "./Table/Table";
 import Refound from "./Refound/Refound";
-import Excel from "./Excel/Excel.jsx";
+import Excel from "./Excel/Excel";
 import Expenses from "./Expenses/Expenses";
 import Details from "../../Invoices/Details/Details";
 
@@ -60,11 +60,6 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
   }>({ item: null, saleId: 0 });
 
   const [years, setYears] = useState<number[]>([]);
-  const [dateFilter, setDateFilter] = useState({
-    year: new Date().getFullYear(),
-    month: new Date().getMonth() + 1,
-  });
-
   const [rows, setRows] = useState<Rows[]>([]);
   const [totalCost, setTotalCost] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
@@ -113,11 +108,6 @@ export default function ItemsSold({ typeReport, handleChange }: Props) {
 
   useEffect(() => {
     let categories: any = {};
-
-    // Traer las expensas
-    const year = dateFilter.year.toString();
-    let month =
-      dateFilter.month.toString() === "00" ? null : dateFilter.month.toString();
 
     // Extraer las categorias
     expenses.forEach((expense) => {

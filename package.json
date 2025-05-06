@@ -2,30 +2,44 @@
   "name": "reseller-inventory",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build && copy .htaccess ./dist",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "deploy": "firebase deploy",
+    "emulators": "firebase emulators:start"
+  },
   "dependencies": {
     "bootstrap": "^5.2.3",
     "date-fns": "^2.29.3",
     "firebase": "^9.17.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-export-excel": "0.5.3",
-    "react-google-charts": "^4.0.0",
+    "react-google-charts": "^5.2.1",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.1",
-    "react-scripts": "^4.0.3",
+    "recharts": "^2.15.3",
     "redux": "^4.2.1",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.2",
     "sweetalert": "^2.1.2",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "deploy": "react-scripts build && firebase deploy",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "typescript": "^5.2.2",
+    "vite": "^5.3.4"
   },
   "eslintConfig": {
     "extends": [

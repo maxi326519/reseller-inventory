@@ -33,13 +33,15 @@ export default function ChangeLocation({ onClose }: Props) {
 
   const handleChangeItem = (event: React.ChangeEvent<HTMLInputElement>) => {
     setItemId(event.target.value);
-    locationInputRef.current?.focus();
+    if (locationInputRef.current && window.innerWidth <= 768) {
+      locationInputRef.current?.focus();
+    }
   };
 
-  const handlePasteItem = (event: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePasteItem = () => {
     setTimeout(() => {
-      if (locationInputRef.current) {
-        locationInputRef.current.focus(); // Cambiar el foco al segundo input
+      if (locationInputRef.current && window.innerWidth <= 768) {
+        locationInputRef.current.focus(); // Cambiar el foco al segundo input solo en mobile
       }
     }, 0); // Delay to ensure paste completes in the first input
   };
@@ -66,11 +68,7 @@ export default function ChangeLocation({ onClose }: Props) {
       <div className={styles.modal}>
         <div className={styles.close}>
           <h4>Categories</h4>
-          <button
-            className="btn btn-danger"
-            type="button"
-            onClick={onClose}
-          >
+          <button className="btn btn-danger" type="button" onClick={onClose}>
             x
           </button>
         </div>
@@ -102,6 +100,18 @@ export default function ChangeLocation({ onClose }: Props) {
                 Location
               </label>
             </div>
+          </div>
+
+          <div className={styles.items}>
+            {items.data
+              .filter((item) =>
+                item.id.toString().toLocaleLowerCase().includes(itemId)
+              )
+              .map((item) => (
+                <span>
+                  {item.id} - {item.description}
+                </span>
+              ))}
           </div>
           <div className={styles.btnContainer}>
             <button className="btn btn-primary" onClick={onClose}>

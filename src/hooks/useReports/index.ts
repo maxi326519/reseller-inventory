@@ -1,7 +1,7 @@
 import { ItemReport, YearReport, ItemType, initYearReport } from "./Interfaces";
 import { Expense, RootState, Sale } from "../../interfaces/interfaces";
 import { collection, doc, getDocs } from "firebase/firestore";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../../firebase/config";
 import { useDispatch, useSelector } from "react-redux";
 import { postReports } from "../../redux/actions/reports";
 
